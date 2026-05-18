@@ -3,7 +3,7 @@ name: audit-problem-classifier
 description: 中小会计师事务所收支审计、合规审计问题整理技能。Use when the user provides audit findings, issue lists, income-and-expenditure audit findings, compliance audit findings,整改问题清单, or draft audit report problems and wants formal Chinese audit-report rewriting, issue classification, legal/regulatory basis suggestions, and audit recommendations. Ask clarifying questions first when key facts are missing or the issue description is too vague to support classification or legal characterization.
 ---
 
-# 审计问题分类与公文重述
+# 审计问题报告化助手
 
 ## 工作目标
 
