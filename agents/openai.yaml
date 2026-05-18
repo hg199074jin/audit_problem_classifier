@@ -1,0 +1,7 @@
+interface:
+  display_name: "审计问题分类"
+  short_description: "将审计发现分类、规范重述并生成管理建议。"
+  default_prompt: "Use $audit-problem-classifier to classify and rewrite these audit findings into a formal audit issue report."
+
+policy:
+  allow_implicit_invocation: true
