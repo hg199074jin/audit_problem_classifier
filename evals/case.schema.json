@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/audit-problem-classifier/evals/case.schema.json",
+  "title": "Audit Problem Classifier V2 Eval Case",
+  "type": "object",
+  "required": ["id", "domain", "prompt", "context", "expected", "forbidden"],
+  "properties": {
+    "id": {"type": "string", "minLength": 1},
+    "domain": {"type": "string", "minLength": 1},
+    "prompt": {"type": "string", "minLength": 1},
+    "context": {"type": "object"},
+    "expected": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "contains": {"type": "array", "items": {"type": "string"}},
+        "not_contains": {"type": "array", "items": {"type": "string"}},
+        "category": {"type": "string"},
+        "law_ids": {"type": "array", "items": {"type": "string"}},
+        "record_count": {"type": "integer", "minimum": 0},
+        "finding_count": {"type": "integer", "minimum": 0},
+        "voucher_total": {"type": "number"}
+      },
+      "additionalProperties": true
+    },
+    "forbidden": {"type": "array", "items": {"type": "string"}},
+    "notes": {"type": "string"},
+    "source": {"type": "string"}
+  },
+  "additionalProperties": false
+}
