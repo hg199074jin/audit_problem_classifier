@@ -143,3 +143,9 @@ def test_project_context_can_capture_public_institution_management_status():
     context = load_fixture("valid-project-context.yaml")
     context["organization"]["civil_servant_managed"] = False
     assert errors_for("project-context", context) == []
+
+
+def test_project_context_can_capture_administrative_function_status():
+    context = load_fixture("valid-project-context.yaml")
+    context["organization"]["performs_administrative_functions"] = True
+    assert errors_for("project-context", context) == []
