@@ -79,6 +79,12 @@
             "boolean",
             "null"
           ]
+        },
+        "performs_administrative_functions": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       }
     },
