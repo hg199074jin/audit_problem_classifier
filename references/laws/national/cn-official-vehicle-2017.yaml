@@ -1,0 +1,42 @@
+{
+  "id": "CN-OFFICIAL-VEHICLE-2017",
+  "title": "党政机关公务用车管理办法",
+  "document_no": null,
+  "article": null,
+  "issuer": "中共中央办公厅、国务院办公厅",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2017-12-05",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [
+      "administrative_unit",
+      "public_institution"
+    ],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "official_vehicle"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "本办法规范党政机关公务用车管理；不参照公务员法管理的事业单位公务用车按照本办法的原则管理。第三十一条规定自2017年12月5日起施行。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国家国防科技工业局（中央文件官方转载）",
+    "url": "https://www.sastind.gov.cn/n10086200/n10086319/c10240549/content.html",
+    "identifier": "2017-12-05施行",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [
+    "CN-OFFICIAL-VEHICLE-2011-HIST"
+  ],
+  "superseded_by": null
+}
