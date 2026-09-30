@@ -83,8 +83,16 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
     for needle in expected.get("not_contains", []):
         if needle in text:
             failures.append(f"not_contains: found {needle!r}")
+    structured_tokens: set[str] = set()
+    category = result.get("category")
+    if isinstance(category, str):
+        structured_tokens.add(category)
+    law_ids = result.get("law_ids")
+    if isinstance(law_ids, list):
+        structured_tokens.update(item for item in law_ids if isinstance(item, str))
+
     for needle in case.get("forbidden", []):
-        if needle in text:
+        if needle in text or needle in structured_tokens:
             failures.append(f"forbidden: found {needle!r}")
 
     if "category" in expected:
