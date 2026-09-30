@@ -73,6 +73,12 @@
             "string",
             "null"
           ]
+        },
+        "civil_servant_managed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
         }
       }
     },
