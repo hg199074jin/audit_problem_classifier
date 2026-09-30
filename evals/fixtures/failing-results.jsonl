@@ -1,0 +1,14 @@
+{"id":"p0-one-record-three-findings-no-voucher-duplication","text":"故意失败","record_count":1,"finding_count":3,"voucher_total":10000}
+{"id":"live-20260629","text":"串通报价嫌疑；未询价；FY；KJ；SW"}
+{"id":"expense-boundary","text":"其他费用报销原始凭证不齐全；其他费用报销原始凭证不规范","category":"FY"}
+{"id":"procurement-specificity","text":"存在串通报价嫌疑；未履行询价比价程序；询价报价资料不规范；采购成交资料不规范；采购方案经济性论证不足"}
+{"id":"question-first-gate","text":"待决策事项清单；汇总行取舍；空白记录归类；待落实事项处理方式；待核实"}
+{"id":"qualitative-downgrade","text":"存在串通报价嫌疑；询价资料真实性存疑；未及时足额上缴；部分应缴资金被占用；报销审核不严；待核实"}
+{"id":"p0-suspicious-quotes-not-collusive-bidding-finding","text":"存在串通报价嫌疑"}
+{"id":"p0-kaifeng-procurement-threshold","text":"不能仅因低于100万元排除"}
+{"id":"p0-no-future-law-for-2025","text":"不得作为2025年事项的直接依据"}
+{"id":"p0-no-cadre-rule-for-ordinary-worker","text":"不得自动适用仅针对干部的条款"}
+{"id":"p0-no-enterprise-training-rule-for-public-institution","text":"不得直接适用企业职工教育经费规定"}
+{"id":"p0-current-invoice-reimbursement-provision","text":"符合预期。","law_ids":["CN-INVOICE-2023-ART20"]}
+{"id":"p0-obsolete-official-vehicle-rule-not-current","text":"不得作为当前现行依据"}
+{"id":"format-hard-rules","text":"2025/05；66号凭证；2,300.00元；“优抚对象疗养纪念水壶”；实物发放未附领用清单"}
