@@ -91,3 +91,23 @@ def test_henan_threshold_rules_encode_non_leaking_scopes():
 
 def test_law_library_readme_exists():
     assert (LAW_ROOT / "README.md").exists()
+
+
+def test_official_vehicle_public_institution_scope_is_conditioned():
+    laws = {load_law(path)["id"]: load_law(path) for path in law_files()}
+    direct = laws["CN-OFFICIAL-VEHICLE-2017"]
+    assert direct["subject_scope"]["organization_types"] == ["administrative_unit"]
+
+    principle = laws["CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"]
+    assert principle["subject_scope"]["organization_types"] == ["public_institution"]
+    assert principle["rule_role"] == "supporting_basis"
+    assert any(
+        c["field"] == "organization.civil_servant_managed"
+        and c["operator"] == "eq"
+        and c["value"] is False
+        for c in principle["applies_if"]
+    )
+
+
+def test_watchlist_has_documented_entrypoint():
+    assert (LAW_ROOT / "watchlist" / "README.md").exists()
