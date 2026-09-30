@@ -117,6 +117,11 @@
         "string",
         "null"
       ]
+    },
+    "applicability_facts": {
+      "type": "object",
+      "description": "Finding-specific facts used by the law applicability gate; keys are domain-extensible.",
+      "additionalProperties": true
     }
   }
 }
