@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import argparse
 import json
+from datetime import date
 from pathlib import Path
 
 import yaml
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, FormatChecker
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_DIR = ROOT / "schemas"
@@ -29,11 +30,36 @@ def load_schema(name: str) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _parse_iso_date(value: str, field: str) -> date:
+    try:
+        return date.fromisoformat(value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{field} must be a valid ISO date: {value!r}") from exc
+
+
+def _validate_semantics(data: dict, schema_name: str) -> None:
+    if schema_name == "project-context":
+        period = data.get("audit_period") or {}
+        start = period.get("start")
+        end = period.get("end")
+        if start is not None and end is not None:
+            if _parse_iso_date(start, "audit_period.start") > _parse_iso_date(end, "audit_period.end"):
+                raise ValueError("audit_period.start must not be after audit_period.end")
+
+    if schema_name == "law":
+        start = data.get("effective_from")
+        end = data.get("effective_to")
+        if start is not None and end is not None:
+            if _parse_iso_date(start, "effective_from") > _parse_iso_date(end, "effective_to"):
+                raise ValueError("effective_from must not be after effective_to")
+
+
 def validate_file(path: Path, schema_name: str) -> None:
     data = load_data(Path(path))
     schema = load_schema(schema_name)
     Draft202012Validator.check_schema(schema)
-    Draft202012Validator(schema).validate(data)
+    Draft202012Validator(schema, format_checker=FormatChecker()).validate(data)
+    _validate_semantics(data, schema_name)
 
 
 def main() -> int:
