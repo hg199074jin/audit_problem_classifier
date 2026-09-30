@@ -1,0 +1,14 @@
+finding_id: F-001
+source_record_id: SR-001
+primary_category: FY
+secondary_type: supporting_document_missing
+facts: 实物发放未附领用清单
+evidence_status: confirmed
+decision_status: ready
+amounts:
+  voucher_amount: 10000
+  issue_amount: 10000
+  confirmed_difference: null
+  pending_amount: null
+law_candidates: []
+final_wording: null
