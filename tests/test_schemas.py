@@ -3,7 +3,8 @@ from copy import deepcopy
 from pathlib import Path
 
 import yaml
-from jsonschema import Draft202012Validator
+import pytest
+from jsonschema import Draft202012Validator, ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 SCHEMA_DIR = ROOT / "schemas"
@@ -96,3 +97,49 @@ def test_validator_exposes_required_interface():
 def test_validate_file_accepts_valid_law_fixture():
     module = _load_validator_module()
     module.validate_file(FIXTURE_DIR / "valid-law.yaml", "law")
+
+
+def test_validator_rejects_invalid_iso_dates(tmp_path):
+    module = _load_validator_module()
+    context = load_fixture("valid-project-context.yaml")
+    context["audit_period"]["start"] = "2025-13-40"
+    path = tmp_path / "bad-context.yaml"
+    path.write_text(yaml.safe_dump(context, allow_unicode=True), encoding="utf-8")
+    with pytest.raises((ValidationError, ValueError)):
+        module.validate_file(path, "project-context")
+
+
+def test_validator_rejects_inverted_date_ranges(tmp_path):
+    module = _load_validator_module()
+
+    context = load_fixture("valid-project-context.yaml")
+    context["audit_period"] = {"start": "2025-12-31", "end": "2025-01-01"}
+    context_path = tmp_path / "inverted-context.yaml"
+    context_path.write_text(yaml.safe_dump(context, allow_unicode=True), encoding="utf-8")
+    with pytest.raises(ValueError, match="audit_period"):
+        module.validate_file(context_path, "project-context")
+
+    law = load_fixture("valid-law.yaml")
+    law["effective_from"] = "2025-12-31"
+    law["effective_to"] = "2025-01-01"
+    law_path = tmp_path / "inverted-law.yaml"
+    law_path.write_text(yaml.safe_dump(law, allow_unicode=True), encoding="utf-8")
+    with pytest.raises(ValueError, match="effective"):
+        module.validate_file(law_path, "law")
+
+
+def test_finding_accepts_structured_applicability_facts():
+    finding = load_fixture("valid-finding.yaml")
+    finding["applicability_facts"] = {
+        "business_type": "service_procurement",
+        "person_type": "ordinary_employee",
+        "service_provider_type": "individual",
+        "invoice_noncompliant": True,
+    }
+    assert errors_for("finding", finding) == []
+
+
+def test_project_context_can_capture_public_institution_management_status():
+    context = load_fixture("valid-project-context.yaml")
+    context["organization"]["civil_servant_managed"] = False
+    assert errors_for("project-context", context) == []
