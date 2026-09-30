@@ -39,3 +39,14 @@ applies_if:
 ## 边界
 
 本模块只回答“该法规对象是否可能适用于当前事实”，不负责法规排序、最终法律解释或责任认定。`liability_basis` 的使用仍受证据强度和输出任务范围约束。
+
+
+## Evaluation Context
+
+`Project Context` 只保存项目级稳定事实；人员身份、业务类型、发票状态、服务提供者类型等 Finding 级事实放入 `finding.applicability_facts`。运行法规 Gate 前，由 `build_evaluation_context(project_context, finding, source_record)` 合并为一次性的 evaluation context。
+
+不得为了某一条法规把 Finding 级事实永久写进项目级 Project Context。
+
+## 来源核验
+
+即使时效、地域和主体均匹配，只要 `law.source.verified != true`，结果也必须是 `needs_review`，不得返回 `applicable` 并作为正式直接依据。
