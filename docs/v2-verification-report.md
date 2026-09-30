@@ -6,7 +6,7 @@
 **报告日期：** 2026-10-01  
 **Gate C 状态：** **PASS（仓库级实现与回归验证）**
 
-> 本报告区分“仓库级确定性验证”和“独立 Agent Skill runtime 实测”。前者已经通过；后者尚未执行，不得把基准 fixture 的 PASS 解释为模型真实运行结果。
+> 本报告区分“仓库级确定性验证”和“独立 Skill runtime 实测”。前者已经通过；后者尚未执行，不得把基准 fixture 的 PASS 解释为模型真实运行结果。
 
 ## 1. Gate C 机器验证证据
 
@@ -235,7 +235,7 @@ V2 已把首批高风险法规迁移为结构化对象，并区分 current / his
 - ✅ Final self-review CLEAN
 - ✅ P0 法规错误与关键适用边界已完成修复
 - ✅ 模式 A / B、HARD-GATE、金额去重与法规适用规则均保留
-- ⚠️ 独立 Agent Skill runtime E2E 尚未执行
+- ⚠️ 独立 Skill runtime E2E 尚未执行
 - ⚠️ 无独立 reviewer/subagent，本次 whole-branch review 为作者 self-review
 
 **Gate C（仓库级）结论：PASS。**
