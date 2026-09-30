@@ -1,0 +1,8 @@
+source_record_id: SR-001
+source_type: voucher
+event_date: '2025-05-31'
+voucher_amount: 10000
+raw_text: 某笔原始凭证记录
+source_reference:
+  voucher_no: '66'
+metadata: {}
