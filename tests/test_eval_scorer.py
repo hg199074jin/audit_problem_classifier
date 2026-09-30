@@ -101,3 +101,11 @@ def test_case_directory_loader_rejects_duplicate_case_ids(tmp_path):
     (tmp_path / "b.jsonl").write_text(json.dumps(base_case(), ensure_ascii=False) + "\n", encoding="utf-8")
     with pytest.raises(ValueError, match="duplicate case id"):
         module.load_cases(tmp_path)
+
+
+def test_forbidden_law_id_is_rejected_even_when_it_only_appears_in_structured_output():
+    case = base_case()
+    case["expected"] = {"law_ids": ["LAW-CURRENT"]}
+    case["forbidden"] = ["LAW-OLD"]
+    result = {"id": "case-1", "text": "", "law_ids": ["LAW-CURRENT", "LAW-OLD"]}
+    assert_fail(case, result, "forbidden")
