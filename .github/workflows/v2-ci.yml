@@ -1,0 +1,42 @@
+name: V2 Verification
+
+on:
+  push:
+    branches:
+      - feature/v2-audit-finding-engine
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dev dependencies
+        run: python -m pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Validate all structured laws
+        shell: bash
+        run: |
+          set -euo pipefail
+          while IFS= read -r -d '' file; do
+            python scripts/validate_v2_data.py --schema law "$file"
+          done < <(find references/laws -type f -name '*.yaml' -print0 | sort -z)
+
+      - name: Score deterministic regression fixture
+        run: python evals/score.py --cases evals/cases --results evals/fixtures/passing-results.jsonl
