@@ -13,8 +13,7 @@
   },
   "subject_scope": {
     "organization_types": [
-      "administrative_unit",
-      "public_institution"
+      "administrative_unit"
     ],
     "organization_levels": [],
     "person_types": []
@@ -24,7 +23,7 @@
   ],
   "funding_scope": [],
   "rule_role": "direct_basis",
-  "text": "本办法规范党政机关公务用车管理；不参照公务员法管理的事业单位公务用车按照本办法的原则管理。第三十一条规定自2017年12月5日起施行。",
+  "text": "本办法规范党政机关公务用车管理。第三十一条规定自2017年12月5日起施行。",
   "applies_if": [],
   "excludes_if": [],
   "source": {
