@@ -79,7 +79,13 @@ python evals/score.py --cases evals/cases --results evals/fixtures/passing-resul
 
 最终 Gate C 需确认两者继续服从 HARD-GATE、profile、证据措辞和法规适用性规则。
 
-## 6. 待完成的 Gate C 项
+## 6. Gate C 过程记录
+
+- 2026-10-01：发布文档契约检查 GREEN；
+- 2026-10-01：创建 Draft PR #1，仅用于 Gate C CI/审查，不授权合并；
+- 当前等待 GitHub Actions 对 PR head 执行 V2 Verification。
+
+## 7. 待完成的 Gate C 项
 
 - [ ] 最终分支完整 `pytest -q`；
 - [ ] 全部结构化法规逐文件 schema validation；
