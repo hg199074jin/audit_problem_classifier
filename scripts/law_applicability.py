@@ -10,6 +10,44 @@ class ApplicabilityResult(NamedTuple):
     reasons: list[str]
 
 
+def build_evaluation_context(
+    project_context: dict,
+    finding: dict | None = None,
+    source_record: dict | None = None,
+) -> dict:
+    """Combine validated project facts with Finding-specific applicability facts.
+
+    Project Context stays project-scoped. Finding-specific facts such as
+    business_type, person_type, provider type, invoice status, or threshold
+    amounts live under finding.applicability_facts and are merged only for
+    law evaluation.
+    """
+    context: dict[str, Any] = {
+        "jurisdiction": dict(project_context.get("jurisdiction") or {}),
+        "organization": dict(project_context.get("organization") or {}),
+    }
+    if "funding" in project_context:
+        funding = project_context.get("funding")
+        context["funding"] = list(funding) if isinstance(funding, list) else funding
+
+    if source_record and source_record.get("event_date") is not None:
+        context["event_date"] = source_record["event_date"]
+
+    if finding:
+        facts = finding.get("applicability_facts") or {}
+        if not isinstance(facts, dict):
+            raise TypeError("finding.applicability_facts must be an object")
+        context.update(facts)
+
+        amounts = finding.get("amounts") or {}
+        if "amount" not in context and isinstance(amounts, dict):
+            issue_amount = amounts.get("issue_amount")
+            if issue_amount is not None:
+                context["amount"] = issue_amount
+
+    return context
+
+
 def _coerce_date(value: Any) -> date | None:
     if value is None:
         return None
@@ -75,6 +113,10 @@ def evaluate_applicability(
     which candidate is legally preferable.
     """
     needs_review: list[str] = []
+
+    source = law.get("source") or {}
+    if source.get("verified") is not True:
+        needs_review.append("法规来源尚未核验，不能作为已确认依据")
 
     # 1. Effective period / status.
     status = law.get("status")
