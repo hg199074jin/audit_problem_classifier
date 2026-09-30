@@ -1,7 +1,7 @@
 interface:
-  display_name: "审计问题报告化助手"
-  short_description: "把审计发现整理成报告问题段落、分类、依据和建议。"
-  default_prompt: "Use $audit-problem-classifier to classify and rewrite these audit findings into a formal audit issue report."
+  display_name: "审计问题认定与报告化助手 V2"
+  short_description: "把审计发现转成可追溯 Finding，并校验法规适用、证据强度和金额口径。"
+  default_prompt: "Use $audit-problem-classifier. Build Project Context first, enforce the HARD-GATE before material professional judgments, then classify Findings, apply law applicability filters, control evidence-based wording, and produce the requested audit report mode."
 
 policy:
   allow_implicit_invocation: true
