@@ -182,3 +182,51 @@ def test_rule_document_uses_same_three_state_vocabulary_and_filter_order():
     order = ["时效", "地域", "主体", "事项", "资金", "事实/证据"]
     positions = [text.index(token) for token in order]
     assert positions == sorted(positions)
+
+
+def test_unverified_source_never_returns_applicable():
+    law = base_law()
+    law["source"] = {"verified": False}
+    result = evaluate(law=law)
+    assert result.status == "needs_review"
+    assert any("来源" in reason or "核验" in reason for reason in result.reasons)
+
+
+def test_build_evaluation_context_merges_project_finding_and_source_record():
+    module = load_module()
+    assert hasattr(module, "build_evaluation_context")
+
+    project = {
+        "jurisdiction": {"country": "CN", "province": "Henan", "city": "Kaifeng"},
+        "organization": {
+            "level": "municipal",
+            "type": "public_institution",
+            "civil_servant_managed": False,
+        },
+        "audit_period": {"start": "2025-01-01", "end": "2025-12-31"},
+        "funding": ["fiscal_funds"],
+    }
+    finding = {
+        "finding_id": "F-1",
+        "source_record_id": "SR-1",
+        "primary_category": "CG",
+        "facts": "采购服务",
+        "evidence_status": "confirmed",
+        "decision_status": "ready",
+        "amounts": {"issue_amount": 800000},
+        "applicability_facts": {
+            "business_type": "service_procurement",
+            "person_type": "ordinary_employee",
+            "invoice_noncompliant": True,
+        },
+    }
+    source_record = {"source_record_id": "SR-1", "source_type": "voucher", "event_date": "2025-06-01"}
+    context = module.build_evaluation_context(project, finding, source_record)
+
+    assert context["jurisdiction"]["city"] == "Kaifeng"
+    assert context["organization"]["civil_servant_managed"] is False
+    assert context["business_type"] == "service_procurement"
+    assert context["person_type"] == "ordinary_employee"
+    assert context["amount"] == 800000
+    assert context["event_date"] == "2025-06-01"
+    assert context["funding"] == ["fiscal_funds"]
