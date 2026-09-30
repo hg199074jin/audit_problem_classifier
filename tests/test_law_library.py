@@ -84,5 +84,10 @@ def test_henan_threshold_rules_encode_non_leaking_scopes():
     assert county["subject_scope"]["organization_levels"] == ["county"]
     assert any(c["field"] == "amount" and c["operator"] == "gte" and c["value"] == 300000 for c in county.get("applies_if", []))
 
+    for law_id, law in laws.items():
+        if law_id.startswith("HENAN-GP-2020-"):
+            assert law["document_no"] == "豫财办〔2020〕4号", f"{law_id}: wrong document number"
+            assert law["source"]["identifier"] == "豫财办〔2020〕4号"
+
 def test_law_library_readme_exists():
     assert (LAW_ROOT / "README.md").exists()
