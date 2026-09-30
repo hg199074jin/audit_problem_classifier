@@ -111,3 +111,29 @@ def test_official_vehicle_public_institution_scope_is_conditioned():
 
 def test_watchlist_has_documented_entrypoint():
     assert (LAW_ROOT / "watchlist" / "README.md").exists()
+
+
+def test_government_purchase_service_rules_condition_public_institution_reference():
+    laws = {load_law(path)["id"]: load_law(path) for path in law_files()}
+
+    for article in ("ART10", "ART18"):
+        direct = laws[f"CN-GOV-PURCHASE-SERVICES-2020-{article}"]
+        assert direct["subject_scope"]["organization_types"] == ["administrative_unit"]
+
+        ref = laws[f"CN-GOV-PURCHASE-SERVICES-2020-{article}-PUBLIC-INSTITUTION-REF"]
+        assert ref["subject_scope"]["organization_types"] == ["public_institution"]
+        assert ref["funding_scope"] == ["fiscal_funds"]
+        assert any(
+            c["field"] == "organization.performs_administrative_functions"
+            and c["operator"] == "eq"
+            and c["value"] is True
+            for c in ref["applies_if"]
+        )
+
+    art18 = laws["CN-GOV-PURCHASE-SERVICES-2020-ART18-PUBLIC-INSTITUTION-REF"]
+    assert any(
+        c["field"] == "service_provider_type"
+        and c["operator"] == "eq"
+        and c["value"] == "individual"
+        for c in art18["applies_if"]
+    )
