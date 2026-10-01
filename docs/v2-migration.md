@@ -129,3 +129,13 @@ python scripts/validate_v2_data.py --schema law references/laws/national/<file>.
 ## 9. 迁移原则
 
 不要把 V1 legacy 法规“批量复制成 V2”。每个正式 Law Object 必须重新核验官方来源、版本、时效和适用范围。V2 的目标不是法规数量最大，而是**不在不适用时自信引用**。
+
+
+## Implementation deviations from frozen spec
+
+V2 Design Spec 保留为批准时的冻结输入，不回写历史以掩盖实现演进。当前实现存在以下已知、经批准的目录/模型差异：
+
+- Spec 示例曾把 `jurisdiction` 表达为列表；实现采用结构化对象（country/province/city/county），以便做确定性地域过滤。
+- Spec 目录树预留 `references/laws/kaifeng/`；V2.0 尚未建立该目录，因为当前没有完成结构化迁移并核验的开封地方 Law Object。后续有正式本地规则时再创建，不用空目录伪装覆盖。
+- Spec 早期示意把 eval 放在 `evals/*.jsonl`；实现统一使用 `evals/cases/*.jsonl`，并由 `evals/score.py` 递归读取案例目录。
+- Gate E 后续把 machine-result contract 演进为版本化契约；版本变化记录在验证报告，不修改已完成 Gate 的历史结论。
