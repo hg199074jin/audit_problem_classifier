@@ -9,8 +9,11 @@ from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import NamedTuple
 
+from jsonschema import Draft202012Validator
+
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.0.8"
+CONTRACT_VERSION = "2.0.9"
+RESULT_SCHEMA_PATH = ROOT / "evals" / "result.schema.json"
 
 STRUCTURED_LIST_FIELDS = (
     "finding_types",
@@ -121,6 +124,10 @@ KNOWN_CONCLUSION_CODES = {
     "unverified_law_requires_review",
     "government_procurement_scope_not_met",
     "liability_basis_not_default",
+}
+
+DIAGNOSTIC_CONCLUSION_CODES = {
+    "unverified_law_requires_review",
 }
 
 MUTUALLY_EXCLUSIVE_CONCLUSIONS = (
@@ -235,21 +242,35 @@ def _score_format_lint(case: dict, text: str, failures: list[str]) -> None:
             failures.append(f"format_forbid: found {violation!r}")
 
 
-def _known_law_ids() -> set[str]:
-    ids: set[str] = set()
+def _load_law_catalog() -> dict[str, dict]:
+    catalog: dict[str, dict] = {}
     law_root = ROOT / "references" / "laws"
     try:
         import yaml
     except ImportError:
-        return ids
+        return catalog
     for path in law_root.rglob("*.yaml"):
         try:
             data = yaml.safe_load(path.read_text(encoding="utf-8"))
         except Exception:
             continue
         if isinstance(data, dict) and isinstance(data.get("id"), str):
-            ids.add(data["id"])
-    return ids
+            catalog[data["id"]] = data
+    return catalog
+
+
+def _known_law_ids() -> set[str]:
+    return set(_load_law_catalog())
+
+
+def _validate_result_schema(result: dict) -> list[str]:
+    schema = json.loads(RESULT_SCHEMA_PATH.read_text(encoding="utf-8"))
+    validator = Draft202012Validator(schema)
+    failures: list[str] = []
+    for error in sorted(validator.iter_errors(result), key=lambda item: list(item.path)):
+        path = ".".join(str(part) for part in error.path) or "<root>"
+        failures.append(f"result schema/type: {path}: {error.message}")
+    return failures
 
 
 def _is_empty(value) -> bool:
@@ -286,7 +307,8 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
         if pair <= conclusions:
             failures.append(f"conclusion_codes: mutually exclusive codes present {sorted(pair)!r}")
 
-    known_laws = _known_law_ids()
+    law_catalog = _load_law_catalog()
+    known_laws = set(law_catalog)
     for field in ("law_ids", "excluded_law_ids"):
         values = set(result.get(field) or [])
         unknown_laws = sorted(values - known_laws)
@@ -294,6 +316,8 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
             failures.append(f"{field}: unknown law id(s) {unknown_laws!r}")
 
     raw_roles = result.get("law_roles")
+    if law_ids and not isinstance(raw_roles, dict):
+        failures.append("law_roles: complete mapping required for selected law_ids")
     if raw_roles is not None:
         if not isinstance(raw_roles, dict):
             failures.append("law_roles must be an object mapping law_id to role")
@@ -306,9 +330,24 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
             non_selected = sorted(role_keys - law_ids)
             if non_selected:
                 failures.append(f"law_roles keys must be selected law_ids: {non_selected!r}")
+            missing_roles = sorted(law_ids - role_keys)
+            if missing_roles:
+                failures.append(f"law_roles: complete mapping missing selected law_ids: {missing_roles!r}")
             unknown_roles = sorted({role for role in raw_roles.values() if role not in allowed_roles})
             if unknown_roles:
                 failures.append(f"law_roles: unknown role value(s) {unknown_roles!r}")
+            for law_id in sorted(role_keys.intersection(law_ids).intersection(known_laws)):
+                catalog_role = law_catalog[law_id].get("rule_role")
+                actual_role = raw_roles.get(law_id)
+                if catalog_role != actual_role:
+                    failures.append(
+                        f"law_roles: {law_id} role {actual_role!r} does not match Law Object rule_role {catalog_role!r}"
+                    )
+            if (
+                any(role == "liability_basis" for role in raw_roles.values())
+                and (case.get("context") or {}).get("user_requested_liability_analysis") is not True
+            ):
+                failures.append("law_roles: liability_basis requires explicit user_requested_liability_analysis=true")
 
     sections = set(result.get("report_sections") or [])
     unknown_sections = sorted(sections - KNOWN_REPORT_SECTIONS)
@@ -337,7 +376,82 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
             failures.append("needs_review gate cannot emit formal law_roles")
 
 
-def _derived_coverage(case: dict) -> tuple[int, Decimal] | None:
+def _validate_case_graph(case: dict, failures: list[str]) -> None:
+    context = case.get("context") or {}
+    records = context.get("source_records")
+    if records is None:
+        return
+    if not isinstance(records, list):
+        failures.append("case graph: source_records must be a list")
+        return
+
+    record_ids: set[str] = set()
+    for record in records:
+        if not isinstance(record, dict):
+            failures.append("case graph: each source_record must be an object")
+            continue
+        record_id = record.get("source_record_id")
+        if not isinstance(record_id, str) or not record_id:
+            failures.append("case graph: source_record_id missing or invalid")
+            continue
+        if record_id in record_ids:
+            failures.append(f"case graph: duplicate source_record_id {record_id}")
+        record_ids.add(record_id)
+        amount = record.get("voucher_amount")
+        if amount is not None:
+            try:
+                decimal_amount = Decimal(str(amount))
+            except (InvalidOperation, ValueError, TypeError):
+                failures.append(f"case graph: invalid voucher_amount for {record_id}")
+            else:
+                if decimal_amount < 0:
+                    failures.append(f"case graph: negative voucher_amount for {record_id}")
+
+    findings = context.get("findings")
+    if findings is None:
+        return
+    if not isinstance(findings, list):
+        failures.append("case graph: findings must be a list")
+        return
+
+    finding_ids: set[str] = set()
+    for finding in findings:
+        if not isinstance(finding, dict):
+            failures.append("case graph: each finding must be an object")
+            continue
+        finding_id = finding.get("finding_id")
+        source_record_id = finding.get("source_record_id")
+        if not isinstance(finding_id, str) or not finding_id:
+            failures.append("case graph: finding_id missing or invalid")
+        elif finding_id in finding_ids:
+            failures.append(f"case graph: duplicate finding_id {finding_id}")
+        else:
+            finding_ids.add(finding_id)
+        if source_record_id not in record_ids:
+            failures.append(
+                f"case graph: orphan finding {finding_id!r} references unknown source_record_id {source_record_id!r}"
+            )
+        amounts = finding.get("amounts") or {}
+        if isinstance(amounts, dict):
+            for field, value in amounts.items():
+                if value is None:
+                    continue
+                try:
+                    decimal_value = Decimal(str(value))
+                except (InvalidOperation, ValueError, TypeError):
+                    failures.append(f"case graph: invalid finding amount {field} for {finding_id}")
+                    continue
+                if decimal_value < 0:
+                    failures.append(f"case graph: negative finding amount {field} for {finding_id}")
+
+    requested = context.get("requested_findings")
+    if requested is not None and requested != len(findings):
+        failures.append(
+            f"case graph: requested_findings {requested!r} does not match structured findings {len(findings)!r}"
+        )
+
+
+def _derived_coverage(case: dict) -> tuple[int, Decimal, int | None] | None:
     records = (case.get("context") or {}).get("source_records")
     if not isinstance(records, list):
         return None
@@ -356,12 +470,26 @@ def _derived_coverage(case: dict) -> tuple[int, Decimal] | None:
         amount = record.get("voucher_amount")
         if amount is not None:
             total += Decimal(str(amount))
-    return len(unique), total
+    findings = (case.get("context") or {}).get("findings")
+    derived_findings = len(findings) if isinstance(findings, list) else None
+    if derived_findings is None:
+        requested_findings = (case.get("context") or {}).get("requested_findings")
+        if isinstance(requested_findings, int):
+            derived_findings = requested_findings
+    return len(unique), total, derived_findings
 
 
 def score_case(case: dict, result: dict) -> CaseOutcome:
     failures: list[str] = []
     case_id = case["id"]
+
+    schema_failures = _validate_result_schema(result)
+    failures.extend(schema_failures)
+    if schema_failures:
+        return CaseOutcome(case_id, False, failures)
+
+    _validate_case_graph(case, failures)
+
     text = result.get("text")
     if not isinstance(text, str):
         failures.append("text: missing or not a string")
@@ -423,10 +551,14 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
             missing = sorted(expected_set - actual_set)
             if missing:
                 failures.append(f"{field}: missing required values {missing!r}")
+            if field == "conclusion_codes":
+                unexpected = sorted(actual_set - expected_set - DIAGNOSTIC_CONCLUSION_CODES)
+                if unexpected:
+                    failures.append(f"unexpected conclusion_codes: {unexpected!r}")
 
     derived = _derived_coverage(case)
     if derived is not None:
-        derived_count, derived_total = derived
+        derived_count, derived_total, derived_finding_count = derived
         if result.get("record_count") != derived_count:
             failures.append(
                 f"record_count: derived {derived_count!r}, got {result.get('record_count')!r}"
@@ -435,10 +567,9 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
             failures.append(
                 f"voucher_total: derived {derived_total!r}, got {result.get('voucher_total')!r}"
             )
-        requested_findings = (case.get("context") or {}).get("requested_findings")
-        if requested_findings is not None and result.get("finding_count") != requested_findings:
+        if derived_finding_count is not None and result.get("finding_count") != derived_finding_count:
             failures.append(
-                f"finding_count: derived/requested {requested_findings!r}, got {result.get('finding_count')!r}"
+                f"finding_count: derived {derived_finding_count!r}, got {result.get('finding_count')!r}"
             )
     else:
         if "record_count" in expected and result.get("record_count") != expected["record_count"]:
