@@ -2,11 +2,12 @@
 
 **分支：** `feature/v2-audit-finding-engine`  
 **设计基线：** `docs/v2-architecture@942f942671a2659b408b1b7fe28da1068f85388a`  
-**已验证实现 Head：** `3d65df2ec838da2eb2257e5b54a9e952defd4a60`  
+**Gate C 已验证实现 Head：** `3d65df2ec838da2eb2257e5b54a9e952defd4a60`  
+**V2.0.1 remediation 已验证 Head：** `21580ee28fa4a94f387bd25c77dbac4f716edd84`  
 **报告日期：** 2026-10-01  
 **Gate C 状态：** **PASS（仓库级实现与回归验证）**
 
-> 本报告区分“仓库级确定性验证”和“独立 Skill runtime 实测”。前者已经通过；后者尚未执行，不得把基准 fixture 的 PASS 解释为模型真实运行结果。
+> 本报告区分“仓库级确定性验证”和“独立 Skill runtime 实测”。Gate D 首轮真实 runtime 已于 2026-10-01 执行并 FAIL（2/14），其主要原因是 V2.0 评测协议对中文语义使用了过度字面化的 contains/not_contains/forbidden；同时发现 1 个真实格式执行缺陷。V2.0.1 已针对这些问题完成 remediation，第二次独立 Skill runtime Gate D 待执行。
 
 ## 1. Gate C 机器验证证据
 
@@ -196,28 +197,100 @@ V2 已把首批高风险法规迁移为结构化对象，并区分 current / his
 
 因此 final-review 修复不是“先改代码再补测试”，而是经过实际 RED → GREEN。
 
-## 8. 尚未执行的独立 Skill Runtime 验收
+## 8. Gate D 独立 Skill Runtime 验收
 
-**独立、干净的 Agent Skill runtime 端到端实测尚未执行。**
+### 8.1 首轮 Gate D：已执行，FAIL
 
-当前 GitHub Actions 能证明：
+2026-10-01，ZCode 在隔离安装环境中对 PR #1 head `f4afe27828044981e5ec1328dd8d26b1d24ca572` 执行了 14 个独立 runtime 案例。
 
-- 数据结构正确；
-- 规则契约正确；
-- 法规对象可校验；
-- applicability engine 正常；
-- deterministic scorer 正常；
-- 回归 fixtures 满足契约。
+防污染措施包括：
 
-但它不能证明某个实际 Agent runtime 加载本 Skill 后，对 14 个 prompt 的生成结果全部达到预期。
+- 安装树剥离 `evals/`、`tests/`、`docs/`、fixtures 等；
+- runtime 只读取 `prompt + context`；
+- 14 个案例使用独立 subagent 上下文；
+- 编排器不补专业语义字段；
+- 生成完成后才运行 scorer。
 
-因此：
+原始 scorer 结果：
 
-- `evals/fixtures/passing-results.jsonl` 只是评分器的已知良好 fixture；
-- 不得把它表述为 ChatGPT/ZCode/其他模型的真实生成结果；
-- 正式大规模投入使用前，可以在 ZCode 或其他可加载本分支 Skill 的独立 runtime 中生成 candidate results，再交给 `evals/score.py` 评分。
+- **2/14 PASS**
+- **12/14 FAIL**
 
-这一项是**运行时验收项**，不是当前仓库级 Gate C 的伪装完成项。
+逐项复核后：
+
+- 4 例主要属于 `forbidden/not_contains` 对中文否定句的裸子串误报；
+- 7 例主要属于 `contains` 绑定唯一中文措辞造成的假阴性；
+- 1 例 `format-hard-rules` 存在真实 runtime 缺陷：ASCII 直引号未规范为中文弯引号，且 `记账-66号凭证` 未规范为 `66号凭证`。
+
+因此 Gate D 首轮正式结论仍为 **FAIL**，但不得把 2/14 解读为专业行为只有 14% 正确，也不得人工改判为 13/14 或 PASS。
+
+原始报告：PR #1 issue comment `5922412607`。
+
+### 8.2 V2.0.1 Gate-D Remediation：已完成并冻结
+
+Remediation 只处理三项：
+
+1. **专业语义结构化**
+   - `gate_status`
+   - `category`
+   - `finding_types`
+   - `conclusion_codes`
+   - `applicability_status`
+   - `law_ids`
+   - `excluded_law_ids`
+   - `record_count / finding_count / voucher_total`
+
+2. **scorer 职责降级**
+   - 非 `report-format` 案例禁止使用 literal `contains/not_contains` 判断专业语义；
+   - 正文否定句不再因为出现“构成串通投标”等字样被自动判错；
+   - 法规排除通过 `excluded_law_ids` 判断；
+   - 不引入 LLM-as-judge。
+
+3. **真实格式缺陷修复**
+   - 新增 `rules/report-format.md`；
+   - 新增 `scripts/report_format_lint.py`；
+   - 强制中文弯引号、`X号凭证`、`YYYY/MM` 等最终格式自检；
+   - Mode B 模板本身改为干净格式示例。
+
+V2.0.1 合同版本：`2.0.1`。
+
+GitHub Actions Run `36799605462` 对 remediation head `21580ee28fa4a94f387bd25c77dbac4f716edd84` 验证结果：
+
+- **80 tests passed**
+- **32/32 Law Object schema validation**
+- **14/14 deterministic fixture passed**
+
+### 8.3 V2.0.1 Contract Freeze Manifest
+
+第二次 Gate D 开始后，以下 contract/scorer 文件不得根据 runtime 输出再修改 expected 来追 PASS：
+
+- `evals/case.schema.json` — blob `fc21e61d6097da786c920d63f8530f533b2d9888`
+- `evals/cases/amount-coverage.jsonl` — `a68df3709e5c49b3cdc51d9cbc433ff8a75a5d8a`
+- `evals/cases/classification.jsonl` — `b00c333ecf3e46b700a6d87532d37418f21982ac`
+- `evals/cases/evidence-wording.jsonl` — `db28f0854bda84d55d7285c71d590f21cae82573`
+- `evals/cases/law-applicability.jsonl` — `3b5d30f364d917adca15013edf7983a4f089d096`
+- `evals/cases/report-format.jsonl` — `aff17231b9ceeec009938d94ea46d81b8180e1f9`
+- `evals/score.py` — `add39f7e35e5ecbd8a9c0b9df7d2abdd2a153478`
+- `rules/result-contract.md` — `e9f3730156d496747b3d60acd0233bd7d0b95172`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `scripts/report_format_lint.py` — `69eedf7cdd1db296940c8b22aacbb10b74c03849`
+
+编排器在第二次 Gate D 中只可以机械添加 `id` 与 `contract_version`；其余机器语义字段必须来自 runtime 自己。
+
+### 8.4 下一步
+
+第二次独立 Skill runtime Gate D **待执行**。
+
+仍要求：
+
+- 14 个案例独立生成；
+- 相同防污染协议；
+- 并发建议 ≤4；
+- scorer 使用冻结后的 V2.0.1 contract；
+- **14/14 PASS 才能关闭 Gate D**；
+- Gate D 开始后，不得根据输出修改 expected/scorer/case 来追 PASS。
+
+`evals/fixtures/passing-results.jsonl` 仍只是 scorer 自测 fixture，不能冒充真实 runtime 结果。
 
 ## 9. 已知 V2.1 扩展项
 
@@ -235,7 +308,7 @@ V2 已把首批高风险法规迁移为结构化对象，并区分 current / his
 - ✅ Final self-review CLEAN
 - ✅ P0 法规错误与关键适用边界已完成修复
 - ✅ 模式 A / B、HARD-GATE、金额去重与法规适用规则均保留
-- ⚠️ 独立 Skill runtime E2E 尚未执行
+- ⚠️ Gate D 首轮独立 Skill runtime 已执行但 FAIL；V2.0.1 第二次 Gate D 待执行
 - ⚠️ 无独立 reviewer/subagent，本次 whole-branch review 为作者 self-review
 
 **Gate C（仓库级）结论：PASS。**
