@@ -68,9 +68,9 @@ def test_runtime_contract_fields_are_scored_structurally():
         "text": "措辞完全自由，不要求固定短语。",
         "gate_status": "proceed",
         "applicability_status": "not_applicable",
-        "finding_types": ["future_law", "other"],
-        "conclusion_codes": ["future_law_not_direct_basis", "other"],
-        "law_ids": ["LAW-CURRENT", "LAW-SUPPORT"],
+        "finding_types": ["future_law"],
+        "conclusion_codes": ["future_law_not_direct_basis"],
+        "law_ids": ["LAW-CURRENT"],
         "excluded_law_ids": ["LAW-FUTURE"],
     }
     outcome = scorer.score_case(case, result)
@@ -95,7 +95,6 @@ def test_semantic_forbidden_word_in_negated_prose_does_not_fail_without_structur
         "id": "negation",
         "text": "现有证据不能认定构成串通投标。",
         "conclusion_codes": [
-            "collusive_bidding_suspected",
             "collusive_bidding_not_established",
         ],
     }
