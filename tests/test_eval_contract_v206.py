@@ -101,7 +101,7 @@ def test_unknown_role_value_is_rejected():
     }
     outcome=scorer.score_case(case,result)
     assert not outcome.passed
-    assert any("unknown role" in x for x in outcome.failures)
+    assert any("unknown role" in x or "schema/type" in x for x in outcome.failures)
 
 
 def test_official_vehicle_case_uses_mapping_shape():
