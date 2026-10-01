@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.0.7）
+# Machine Result Contract（V2.0.8）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.0.7"`
+`contract_version = "2.0.8"`
 
 ## 字段
 
@@ -126,9 +126,18 @@ Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contrac
 - `gate_status=needs_review` 时，不得输出正式 `law_ids/law_roles`；`law_roles` 为空时使用 `{}` 或省略。
 - `law_ids` 与 `excluded_law_ids` 不得交集。
 
+## 空值 pin 语义
+
+当 expected 对 object/list 字段显式写入空值时，**空值 pin 断言空性**，而不是要求 runtime 必须字面发射该空容器。
+
+- 对 `law_roles: {}`：runtime 缺省与显式 `{}` 都表示“本案没有任何法规角色”，均满足空性断言；
+- 若 runtime 发出任何非空 role mapping，则空 pin 必须 FAIL；
+- 对非空 `law_roles` expected，仍要求精确 law_id → role mapping，不得宽松匹配；
+- 该规则不改变未知顶层键、伪 Law ID、role key 必须属于 `law_ids` 等安全约束。
+
 ## 评分原则
 
-专业语义由结构化字段评分。V2.0.7 不再对所有数组“一刀切 exact”：
+专业语义由结构化字段评分。V2.0.8 不再对所有数组“一刀切 exact”：
 
 - case 在 `expected` 中声明的数组默认表示“这些值必须出现”；
 - 只有 case 把字段列入 `expected.exact_fields` 时才要求精确集合；
