@@ -79,12 +79,6 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "voucher_amount": {
-          "type": [
-            "number",
-            "null"
-          ]
-        },
         "issue_amount": {
           "type": [
             "number",
@@ -120,8 +114,71 @@
     },
     "applicability_facts": {
       "type": "object",
-      "description": "Finding-specific facts used by the law applicability gate; keys are domain-extensible.",
+      "description": "Finding-specific facts for law applicability. Project-level reserved keys are forbidden.",
+      "propertyNames": {
+        "not": {
+          "enum": [
+            "jurisdiction",
+            "organization",
+            "funding",
+            "event_date",
+            "audit_period"
+          ]
+        }
+      },
       "additionalProperties": true
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision_status": {
+            "const": "final"
+          }
+        },
+        "required": [
+          "decision_status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence_status": {
+            "const": "confirmed"
+          },
+          "final_wording": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "final_wording"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence_status": {
+            "enum": [
+              "pending",
+              "conflicting"
+            ]
+          }
+        },
+        "required": [
+          "evidence_status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "decision_status": {
+            "not": {
+              "const": "final"
+            }
+          }
+        }
+      }
+    }
+  ]
 }
