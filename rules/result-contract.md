@@ -28,6 +28,14 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 字段按任务需要输出；未发生的语义不要为了“填满字段”而编造。
 
+### Domain emission profiles
+
+为了防止“测试金额却顺带定性”“只改格式却顺带引用法规”造成假绿：
+
+- `amount-coverage`：只输出覆盖统计相关字段（`record_count / finding_count / voucher_total`，以及必要的 `gate_status`）；不得发射分类、Finding 类型、专业结论、法规或报告章节字段。
+- `report-format`：可输出 `finding_types` 以确认被改写事项类型，但不得发射 `conclusion_codes / applicability_status / law_ids / excluded_law_ids / law_roles / report_mode / report_sections`。
+- 其他 domain 按任务需要输出，但继续受全局不变量和以下发射纪律约束。
+
 ### 发射纪律
 
 - `report_sections` 只在 `context.report_mode` 明确存在时发射。
