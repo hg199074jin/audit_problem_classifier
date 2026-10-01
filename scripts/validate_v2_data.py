@@ -63,7 +63,12 @@ def _validate_semantics(data: dict, schema_name: str) -> None:
             if _parse_iso_date(start, "effective_from") > _parse_iso_date(end, "effective_to"):
                 raise ValueError("effective_from must not be after effective_to")
 
-        if data.get("status") == "effective":
+        status = data.get("status")
+        if status in {"repealed", "superseded"}:
+            if not start or not end:
+                raise ValueError("historical law requires effective_from and effective_to")
+
+        if status == "effective":
             if not start:
                 raise ValueError("effective law requires effective_from")
             source = data.get("source") or {}
