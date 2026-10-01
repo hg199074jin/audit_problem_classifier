@@ -28,7 +28,7 @@ def test_conservative_unverified_review_code_is_allowed_without_predeclared_cont
     scorer=load_scorer()
     case={
         "contract_version":"2.0.9","id":"x","domain":"classification","prompt":"x","context":{},
-        "expected":{"conclusion_codes":["collusive_bidding_not_established","decision_required_pending_items"]},
+        "expected":{"conclusion_codes":["collusive_bidding_not_established"]},
     }
     result={
         "contract_version":"2.0.9","id":"x","text":"",
@@ -73,7 +73,7 @@ def test_needs_review_does_not_suppress_independent_evidence_conclusion():
     scorer=load_scorer()
     case={
         "contract_version":"2.0.9","id":"x","domain":"classification","prompt":"x","context":{},
-        "expected":{"conclusion_codes":["collusive_bidding_not_established"]},
+        "expected":{"conclusion_codes":["collusive_bidding_not_established","decision_required_pending_items"]},
     }
     result={
         "contract_version":"2.0.9","id":"x","text":"",
