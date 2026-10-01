@@ -18,7 +18,9 @@ description: 中小会计师事务所收支审计、合规审计问题报告化�
 3. `rules/evidence-and-wording.md` — 证据与定性措辞；
 4. `rules/law-applicability.md` — 法规时效/地域/主体/事项/资金/事实过滤；
 5. `rules/coverage-and-amount.md` — 原始记录、Finding 与金额去重；
-6. `profiles/firm-default.yaml` — 已稳定的格式习惯。
+6. `rules/report-format.md` — 最终交付文字的格式硬规则与 lint；
+7. `rules/result-contract.md` — 调用方明确要求机器可评测结果时使用的结构化字段；
+8. `profiles/firm-default.yaml` — 已稳定的格式习惯。
 
 规则冲突时：HARD-GATE > 本 Skill 编排 > rules 专业规则 > references 案例/模板。案例不得覆盖规则。
 
@@ -37,7 +39,7 @@ description: 中小会计师事务所收支审计、合规审计问题报告化�
 9. **法规适用过滤**：先查结构化法规库；按 `rules/law-applicability.md` 的时效→地域→主体→事项→资金→事实/证据顺序过滤。`needs_review` 不得伪装为正式直接依据。
 10. **定性措辞**：按 `rules/evidence-and-wording.md` 控制定性梯度，嫌疑不写认定、占用不写挪用、少收不写损失、补签不写倒签。
 11. **报告化输出**：根据用户确认的模式选择分类整理报告或专项审核报告模板；同一小项集中列示直接依据，必要时再列支持性依据。
-12. **覆盖/金额/法规/格式自检**：核对 Source Record 覆盖、Finding 数、金额去重、法规效力/适用性以及 profile 格式后再交付。
+12. **覆盖/金额/法规/格式自检**：核对 Source Record 覆盖、Finding 数、金额去重、法规效力/适用性，并按 `rules/report-format.md` 做独立最终格式 lint 后再交付。调用方要求机器结果时，同时按 `rules/result-contract.md` 输出结构化字段。
 
 ## 法规使用原则
 
@@ -61,7 +63,7 @@ description: 中小会计师事务所收支审计、合规审计问题报告化�
 
 ## 格式与写作
 
-- 格式默认值从 `profiles/firm-default.yaml` 读取：日期 `YYYY/MM`、金额千分位两位小数、中文弯引号、`X号凭证`。
+- 格式默认值从 `profiles/firm-default.yaml` 读取，并强制执行 `rules/report-format.md`：日期 `YYYY/MM`、金额千分位两位小数、中文弯引号、`X号凭证`。
 - 使用正式、克制、可核验的审计语言；只写证据能够支撑的事实。
 - 明细表已有日期、凭证号、摘要和金额时，审计重述不机械重复。
 - 普通费用按问题性质归并标题；采购问题按最具体二级类型拆分。
@@ -77,5 +79,5 @@ description: 中小会计师事务所收支审计、合规审计问题报告化�
 - Source Record 拆分后记录数和凭证金额是否重复；
 - 高风险措辞是否超过证据强度；
 - 法规是否匹配年度、地域、主体、事项和资金性质；
-- 模式 A / B、日期、金额、引号、凭证格式是否符合 profile；
+- 模式 A / B、日期、金额、引号、凭证格式是否符合 profile，且最终格式 lint 无违规；
 - 未核验法规是否明确标注待核验。
