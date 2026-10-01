@@ -6,7 +6,9 @@
 **V2.0.1 remediation 已验证 Head：** `21580ee28fa4a94f387bd25c77dbac4f716edd84`  
 **V2.0.2 semantic-fix 已验证 Head：** `985d5be71601515360064f1d23f95aac22f73901`  
 **报告日期：** 2026-10-01  
-**Gate C 状态：** **PASS（仓库级实现与回归验证）**
+**Gate C 状态：** PASS（历史仓库级验证）  
+**Gate D 状态：** PASS（有效覆盖14/14，见 PR #1 评论 5925118925）  
+**Gate E 状态：** FAIL（独立 reviewer：5 Critical + 4 Important；当前进入 V2.0.3 remediation）
 
 > 本报告区分“仓库级确定性验证”和“独立 Skill runtime 实测”。Gate D 首轮真实 runtime FAIL（2/14），推动 V2.0.1 完成结构化评分与格式 lint；V2.0.1 第二次真实 runtime 为 13/14 PASS，唯一失败暴露出 conclusion code 语义建模过度约束。V2.0.2 已完成最小语义纠偏并重新冻结，下一次 Gate D 待执行。
 
@@ -97,7 +99,7 @@ V2 已把首批高风险法规迁移为结构化对象，并区分 current / his
 ### 3.1 已确认的重要修复
 
 - 现行《中华人民共和国发票管理办法》中“不符合规定的发票不得作为财务报销凭证”使用**第二十条**；旧第二十一条进入 historical。
-- 河南省政府采购目录及标准的正确文号锁定为 **豫财办〔2020〕4号**，不再沿用原库中的“豫财购〔2020〕4号”。
+- 河南省政府采购目录及标准的正确文号锁定为 **豫财购〔2020〕4号**，不再沿用原库中的“豫财购〔2020〕4号”。
 - 河南政府采购不得再用“全省统一100万元/400万元”的粗略口径，已经按省级、郑州市本级、其他市级、县级及货物/服务/工程拆分。
 - 2011年公务用车旧办法、2010年评比达标表彰试行办法、旧廉洁从政准则、旧行政/事业单位会计制度、财建〔2002〕394号等移入 historical。
 - 财政部令第102号《政府购买服务管理办法》成为“政府购买服务不得变相用工”的主依据之一。
@@ -392,3 +394,29 @@ TDD 证据：
 **Gate C（仓库级）结论：PASS。**
 
 本报告属于最后的文档更新；该报告提交后，PR head 仍应由同一 `V2 Verification` workflow 再执行一次成功检查，方可进入合并决策。
+
+
+## 11. Gate E Independent Review
+
+2026-10-01，独立第二 reviewer 使用全新 Codex CLI 上下文、只读沙箱，对 PR #1 做 whole-branch review。形成 findings 前未读取 PR comments、verification report 或先验 review verdict。
+
+结果：
+
+- **Gate E：FAIL**
+- Critical：5
+- Important：4
+- 后续独立 code-review 又复现并扩展为 3 P0 + 6 P1 + 1 P2 + 3 P3。
+
+合并前阻塞项包括：
+
+1. Finding `applicability_facts` 可覆盖 Project Context；
+2. effective 法规缺 `effective_from` 时可能绕过时效过滤；
+3. 河南政府采购对象缺政府采购主体/财政性资金/范围前置；
+4. scorer 对安全关键列表采用 subset 语义，可容忍危险额外结论；
+5. blocked / needs_review 缺跨字段不变量；
+6. voucher_amount 在 Finding 与 Source Record 双重存在且 scorer 不重算；
+7. pending/conflicting Finding 可被标 final；
+8. effective Law Object provenance 约束不足；
+9. 缺财政部令102号、事业单位公务用车、watchlist/unverified、工程资金边界、liability basis、Mode A/B 完整 runtime eval。
+
+V2.0.3 remediation 采用 TDD，先建立 Gate E RED tests，再逐项修复。Gate E 修复完成后必须重新由独立 reviewer 复核；当前 PR 仍保持 Draft，不得合并。
