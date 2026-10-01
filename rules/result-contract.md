@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.0.6）
+# Machine Result Contract（V2.0.7）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.0.6"`
+`contract_version = "2.0.7"`
 
 ## 字段
 
@@ -20,13 +20,27 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `record_count`
 - `finding_count`
 - `voucher_total`
-- `law_roles`: **对象映射**，key 为本次实际输出的 `law_id`，value 只允许 `direct_basis | supporting_basis | liability_basis`。不得再输出角色字符串数组；没有 `law_ids` 时省略或输出空对象 `{}`。
+- `law_roles`: **law_id → role 对象映射**，key 为本次实际输出的 `law_id`，value 只允许 `direct_basis | supporting_basis | liability_basis`。不得再输出角色字符串数组；没有 `law_ids` 时省略或输出空对象 `{}`。
 - `report_mode`: `classification_report | special_audit_report`
 - `report_sections`: **仅在输入 context 明确带有 `report_mode` 时输出**，并且只能使用下面的稳定章节代码，不得输出中文标题、编号前缀、封面/目录页等展示文本：
   - Mode A：`mode_a_overview_coverage`、`mode_a_classification_summary`、`mode_a_classification_details`、`mode_a_management_recommendations`、`mode_a_followup_materials`
   - Mode B：`mode_b_engagement_purpose`、`mode_b_entity_overview`、`mode_b_major_findings`、`mode_b_opinions_recommendations`、`mode_b_report_use_scope`
 
 字段按任务需要输出；未发生的语义不要为了“填满字段”而编造。
+
+## 编排器保真规则
+
+Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contract_version`**。
+
+对 runtime 原始 JSON：
+
+- 不得过滤、删除、重命名或修复 runtime 原始顶层键；
+- 不得把错误字段移动到“正确”位置；
+- 不得把 dict/list/string 互相转换；
+- 未知顶层键必须原样保留进入 scorer，由 scorer 判定 FAIL；
+- 如果 runtime 原始 JSON 不是对象或无法解析，应直接记为机器结果格式失败。
+
+这样可以防止非法 machine output 被编排层“清洗”后假绿。
 
 ### `law_roles` canonical shape
 
@@ -114,7 +128,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## 评分原则
 
-专业语义由结构化字段评分。V2.0.6 不再对所有数组“一刀切 exact”：
+专业语义由结构化字段评分。V2.0.7 不再对所有数组“一刀切 exact”：
 
 - case 在 `expected` 中声明的数组默认表示“这些值必须出现”；
 - 只有 case 把字段列入 `expected.exact_fields` 时才要求精确集合；
