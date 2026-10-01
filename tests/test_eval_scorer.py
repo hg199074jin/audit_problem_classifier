@@ -18,7 +18,7 @@ def load_module():
 
 def base_case():
     return {
-        "contract_version": "2.0.1",
+        "contract_version": "2.0.2",
         "id": "case-1",
         "domain": "classification",
         "prompt": "x",
@@ -32,7 +32,7 @@ def base_case():
 
 def base_result():
     return {
-        "contract_version": "2.0.1",
+        "contract_version": "2.0.2",
         "id": "case-1",
         "text": "正文可以自由表述。",
         "category": "FY",
@@ -87,7 +87,7 @@ def test_record_finding_counts_and_voucher_total_are_structured_assertions():
 
 def test_report_format_text_checks_are_allowed_only_in_report_format_domain():
     case = {
-        "contract_version": "2.0.1",
+        "contract_version": "2.0.2",
         "id": "fmt",
         "domain": "report-format",
         "prompt": "x",
@@ -100,7 +100,7 @@ def test_report_format_text_checks_are_allowed_only_in_report_format_domain():
         },
     }
     result = {
-        "contract_version": "2.0.1",
+        "contract_version": "2.0.2",
         "id": "fmt",
         "text": "2025/05，66号凭证。",
     }
@@ -112,7 +112,7 @@ def test_report_format_text_checks_are_allowed_only_in_report_format_domain():
 
 def test_format_lint_is_applied_to_report_format_case():
     case = {
-        "contract_version": "2.0.1",
+        "contract_version": "2.0.2",
         "id": "fmt",
         "domain": "report-format",
         "prompt": "x",
@@ -126,7 +126,7 @@ def test_format_lint_is_applied_to_report_format_case():
         },
     }
     good = {
-        "contract_version": "2.0.1",
+        "contract_version": "2.0.2",
         "id": "fmt",
         "text": "2025/05，66号凭证，列支“纪念水壶”。",
     }
