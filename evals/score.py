@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.0.6"
+CONTRACT_VERSION = "2.0.7"
 
 STRUCTURED_LIST_FIELDS = (
     "finding_types",
@@ -31,6 +31,25 @@ STRUCTURED_SCALAR_FIELDS = (
     "finding_count",
     "report_mode",
 )
+
+ALLOWED_RESULT_FIELDS = {
+    "id",
+    "contract_version",
+    "text",
+    "gate_status",
+    "category",
+    "finding_types",
+    "conclusion_codes",
+    "applicability_status",
+    "law_ids",
+    "excluded_law_ids",
+    "record_count",
+    "finding_count",
+    "voucher_total",
+    "law_roles",
+    "report_mode",
+    "report_sections",
+}
 
 KNOWN_FINDING_TYPES = {
     "procurement_quote_collusion_suspected",
@@ -238,6 +257,10 @@ def _is_empty(value) -> bool:
 
 
 def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> None:
+    unknown_top_level = sorted(set(result) - ALLOWED_RESULT_FIELDS)
+    for field in unknown_top_level:
+        failures.append(f"unknown top-level field: {field}")
+
     domain = case.get("domain")
     for field in DOMAIN_FORBIDDEN_FIELDS.get(domain, set()):
         value = result.get(field)
