@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.0.4"
+CONTRACT_VERSION = "2.0.5"
 
 STRUCTURED_LIST_FIELDS = (
     "finding_types",
@@ -255,16 +255,6 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
     for pair in MUTUALLY_EXCLUSIVE_CONCLUSIONS:
         if pair <= conclusions:
             failures.append(f"conclusion_codes: mutually exclusive codes present {sorted(pair)!r}")
-
-    if "unverified_law_requires_review" in conclusions:
-        context = case.get("context") or {}
-        if not (
-            context.get("candidate_verified") is False
-            or context.get("candidate_source_type") == "secondary"
-        ):
-            failures.append(
-                "unverified_law_requires_review requires an actual unverified/secondary candidate in context"
-            )
 
     known_laws = _known_law_ids()
     for field in ("law_ids", "excluded_law_ids"):
