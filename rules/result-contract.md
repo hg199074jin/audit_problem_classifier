@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.0.1）
+# Machine Result Contract（V2.0.2）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.0.1"`
+`contract_version = "2.0.2"`
 
 ## 字段
 
@@ -35,6 +35,12 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `accounting_issue`
 - `tax_issue`
 - `distribution_list_missing`
+
+## 结论码语义边界
+
+- `travel_subsidy_pending_review`：用于“是否可以领取该项差旅/交通补助”本身仍需要补充主办方保障安排、制度适用或其他事实后才能判断的情形。
+- `reimbursement_review_insufficient`：只有在已有证据能够确认报销审核程序或必要附件存在缺陷时，才表示已经可以认定“报销审核不充分/不严”。
+- 二者**不构成蕴含关系**：出现 `travel_subsidy_pending_review` 时，不要求同时输出 `reimbursement_review_insufficient`；只有两个事实条件分别成立时，二者才可以同时出现。
 
 ## 当前稳定 conclusion_codes
 
