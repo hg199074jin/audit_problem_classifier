@@ -11,8 +11,13 @@ SUPPORTED_RULES = {
     "no_raw_dot_date",
 }
 
-_ASCII_CHINESE_QUOTES = re.compile(r'["\'][^"\'\n]*[\u4e00-\u9fff][^"\'\n]*["\']')
-_UNNORMALIZED_VOUCHER = re.compile(r'(?:记账|转账|收款|付款)\s*[-—－]?\s*\d+\s*号凭证')
+_ASCII_PAIRED_CHINESE_QUOTES = re.compile(r'["\'][^"\'\n]*[\u4e00-\u9fff][^"\'\n]*["\']')
+_ASCII_QUOTE_ADJACENT_CHINESE = re.compile(
+    r'(?:"|\')[\u4e00-\u9fff]|[\u4e00-\u9fff](?:"|\')'
+)
+_UNNORMALIZED_VOUCHER = re.compile(
+    r'(?:记账|记帐|转账|转帐|收款|付款)\s*[-—－]?\s*\d+\s*号凭证'
+)
 _RAW_DOT_DATE = re.compile(r'\b20\d{2}\.\d{1,2}(?:\.\d{1,2})?\b')
 
 
@@ -21,7 +26,7 @@ def lint_report_text(text: str) -> list[str]:
         raise TypeError("report text must be a string")
 
     violations: list[str] = []
-    if _ASCII_CHINESE_QUOTES.search(text):
+    if _ASCII_PAIRED_CHINESE_QUOTES.search(text) or _ASCII_QUOTE_ADJACENT_CHINESE.search(text):
         violations.append("ascii_chinese_quotes")
     if _UNNORMALIZED_VOUCHER.search(text):
         violations.append("unnormalized_voucher_reference")
