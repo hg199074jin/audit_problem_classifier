@@ -976,3 +976,157 @@ V2.0.8 RED：4 failed，分别对应 contract version、空 mapping 省略、非
 - `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
 
 下一次 V2.0.8 archive replay 开始后，上述 frozen 文件不得根据结果修改以追 PASS。
+
+
+## 18. Final Gate E Findings and V2.0.9 Remediation
+
+### 18.1 Final Gate E blind review
+
+V2.0.8 frozen head `a290225fdf053a7157bdecfd97ada9c8b4f407c0` 在 Gate D 21/21 PASS 后，执行最终独立 second review。
+
+Phase A 使用无 `.git`、无 verification report、无 PR comments/历史 verdict 的 sanitized bundle，由全新 Codex CLI `gpt-5.6-luna` reviewer 盲审并先冻结 findings。结果：
+
+- **Critical: 3**
+- **Important: 4**
+- **Minor: 1**
+- **Gate E: FAIL**
+
+原始 reviewer 报告 SHA-256：`467181d088ec6b8d684d9a291100ac9a5af2338c0feebb0dc9a6437c3129c413`。
+
+Phase B 在 Phase A 冻结后才读取旧 Gate E / code-review，确认历史 E-001~E-009 / CR-001~CR-013 全部 CLOSED，0 REGRESSED，0 NOT VERIFIED。旧问题闭合不能补救 Phase A 新 finding，因此 Gate E 维持 FAIL。
+
+完整回写：PR #1 comment `5935849843`。
+
+### 18.2 V2.0.9 remediation map
+
+#### F-001 — Critical — machine-result / eval integrity
+
+修复：
+
+- 新增 `evals/result.schema.json`，machine result 在任何集合运算/语义评分前先做结构与类型校验；
+- `law_ids` 非空时必须给出完整 `law_roles` mapping；
+- role 必须与对应 Law Object 的 `rule_role` 一致；
+- `liability_basis` 只有 `context.user_requested_liability_analysis=true` 时允许；
+- expected 未声明的实质性 `conclusion_codes` 默认视为危险额外项并 FAIL；当前仅 `unverified_law_requires_review` 作为诊断型额外码允许；
+- unknown code / unknown Law ID / role-key 不在 selected law_ids / role mismatch 继续 FAIL。
+
+#### F-002 — Critical — mixed funding
+
+修复：
+
+- Source Record 新增 item-level `funding`；
+- `build_evaluation_context()` 允许 Source Record 资金归属收窄 Project Context 的混合资金；
+- funding Gate 改为三态：
+  - 全部实际资金在 allowed scope 内 → 继续；
+  - 完全无交集 → `not_applicable`；
+  - 允许/不允许资金混合且当前事项未完成单笔归属 → `needs_review`。
+
+不再使用“任一交集即适用”。
+
+#### F-003 — Critical — historical effective period
+
+修复：
+
+- `repealed|superseded` Law Object 必须同时具备 `effective_from` 与 `effective_to`；
+- evaluator 缺任一历史边界时 fail-closed 到 `needs_review`；
+- 补齐三个 historical 对象的官方核验起始日：
+  - `CN-ADMIN-ACCOUNTING-2013-HIST` → 2014-01-01；
+  - `CN-INTEGRITY-2010-HIST` → 2010-01-18（发布即施行）；
+  - `CN-PUBLIC-INSTITUTION-ACCOUNTING-2012-HIST` → 2013-01-01。
+
+#### F-004 — Important — result contract types
+
+修复：
+
+- 新增独立 `evals/result.schema.json`；
+- known fields 类型、枚举、非负数量/金额、unknown top-level fields 在 scorer 语义层前统一校验；
+- malformed result 不再因为 `set()` / 比较操作抛异常。
+
+#### F-005 — Important — Source Record / Finding collection integrity
+
+修复：
+
+- Source Record ID 唯一；
+- Finding ID 唯一；
+- Finding 必须引用真实 Source Record；
+- voucher/finding 金额不得为负；
+- 有结构化 `findings` 时，`finding_count` 从实际 Finding 集合推导；
+- `requested_findings` 与结构化 Finding 数必须一致；
+- record_count / voucher_total 继续从 Source Records 去重重算。
+
+#### F-006 — Important — eval coverage
+
+新增 5 个正式 runtime cases，案例总数由 21 增至 **26**：
+
+1. `p2-undercollection-not-loss`：少收仍可追偿 ≠ 已造成损失；
+2. `p2-post-signing-not-backdating`：先履行后补签 ≠ 倒签；
+3. `p2-invoice-irregularity-not-false-invoicing`：发票信息异常 ≠ 虚开发票；
+4. `mode-a-integrated-law-amount`：Mode A 一体化校验法规适用 + role + Source Record/Finding + 金额去重；
+5. `mode-b-integrated-law-amount`：Mode B 同样一体化校验。
+
+#### F-007 — Important — evaluator provenance bypass
+
+修复：
+
+- evaluator 本身现在要求 `official|official_archive` 且 `verified=true`；
+- 即使 source type/verified 正确，只要 URL 与 official identifier 同时缺失，也只能 `needs_review`；
+- validator 规则继续保留，形成 schema/validator/evaluator 多层防线。
+
+#### F-008 — Minor — malformed input fail-closed
+
+本轮一并修复：
+
+- 非法日期值不再冒泡 ValueError/TypeError，转为 `needs_review`；
+- `in/not_in` 条件类型错误转为 `ConditionFactTypeError` 后 `needs_review`；
+- `gte/lte` 的既有 fail-closed 保持。
+
+### 18.3 TDD evidence
+
+Initial RED — GitHub Actions Run `36895081139`：
+
+- **24 failed, 142 passed**
+- failures 精确覆盖 F-001~F-008 及 5 个缺失案例；
+- 无无关环境/语法故障。
+
+Intermediate GREEN — Run `36896568098`：
+
+- **166 tests passed**
+- Law Objects 验证继续通过；
+- deterministic fixture 仍为旧 2.0.8，故该 Run 在 fixture stage 失败；这证明实现测试已绿、fixture 尚未迁移。
+
+Repository-level GREEN — Run `36897239048`：
+
+- **166 tests passed**
+- **32/32 Law Objects validated**
+- **26/26 deterministic fixture passed**
+
+### 18.4 V2.0.9 Freeze Manifest
+
+Frozen runtime / contract / data-validation blobs:
+
+- `evals/case.schema.json` — `ea701c7ae010baebb505d38efacd4793478f6eda`
+- `evals/result.schema.json` — `2bdc0fa9516d9886a02fc0ef807a3834c5845117`
+- `evals/cases/amount-coverage.jsonl` — `58b276c625243963b5563fb093c7da328d2a183d`
+- `evals/cases/classification.jsonl` — `f7a198134b81a3b4cc148b4f7b0f6541af01afcc`
+- `evals/cases/evidence-wording.jsonl` — `63f8c35fffbdb0d321212f3426cb9999336c9a56`
+- `evals/cases/law-applicability.jsonl` — `c77c7c1724953e66f3726d2cb631c0cd74f493ab`
+- `evals/cases/report-format.jsonl` — `05db7bdf6700b6c9ff289c422afe88e8c4236066`
+- `evals/cases/report-modes.jsonl` — `de3b7ef84caceb38fc5c83c071b116ea6a35d66f`
+- `evals/score.py` — `d56e00b9fe9ae31d47f92f1e2a7de2f28eff8de6`
+- `evals/README.md` — `c352931433c7fa9de6e1dd3c33fa3f0b24ce77bb`
+- `rules/result-contract.md` — `00ec7babe08f38b0adec10ac216336470dc084ed`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/law-applicability.md` — `0a2f24488142aac7f65b57b4336f21f98d741b80`
+- `rules/coverage-and-amount.md` — `762a0600cc37b7e832eaa4326e94a31a3c30fc3d`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `a184540492fe034cc3edf2d88980bf799da694cd`
+- `scripts/validate_v2_data.py` — `b404ef05d8036946449ec565b74b1844f9a557e8`
+- `schemas/project-context.schema.json` — `cb54ad8d8d919ad6148585f345f9685db3d00cf5`
+- `schemas/source-record.schema.json` — `ac6f5a72673aad4d7715391d62368e03f3dacebe`
+- `schemas/finding.schema.json` — `a9a5541d2d34eaf309a28e953734388bcc8aad9b`
+- `schemas/law.schema.json` — `c5831edb299b22cdde69c799d2e463745a5522e8`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+V2.0.9 Gate D 开始后，上述 frozen files 不得根据 runtime 输出修改来追 PASS。若发现新的真实缺陷，必须 STOP 并进入新的 remediation/version cycle。
