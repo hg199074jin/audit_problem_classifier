@@ -7,7 +7,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 def load_scorer():
     path = ROOT / "evals" / "score.py"
-    spec = importlib.util.spec_from_file_location("score_v208", path)
+    spec = importlib.util.spec_from_file_location("score_v209", path)
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
     return module
@@ -15,7 +15,7 @@ def load_scorer():
 
 def base_case():
     return {
-        "contract_version": "2.0.8",
+        "contract_version": "2.0.9",
         "id": "x",
         "domain": "classification",
         "prompt": "x",
@@ -27,22 +27,22 @@ def base_case():
     }
 
 
-def test_v208_contract_version():
+def test_v209_contract_version():
     schema=json.loads((ROOT/"evals/case.schema.json").read_text(encoding="utf-8"))
-    assert schema["properties"]["contract_version"]["const"] == "2.0.8"
+    assert schema["properties"]["contract_version"]["const"] == "2.0.9"
     versions=set()
     for path in (ROOT/"evals/cases").glob("*.jsonl"):
         for raw in path.read_text(encoding="utf-8").splitlines():
             if raw.strip():
                 versions.add(json.loads(raw)["contract_version"])
-    assert versions == {"2.0.8"}
+    assert versions == {"2.0.9"}
 
 
 def test_list_expectations_are_required_subset_by_default():
     scorer=load_scorer()
     case=base_case()
     result={
-        "contract_version":"2.0.8","id":"x","text":"",
+        "contract_version":"2.0.9","id":"x","text":"",
         "finding_types":[
             "expense_supporting_documents_incomplete",
             "expense_supporting_documents_nonstandard",
@@ -61,7 +61,7 @@ def test_exact_fields_opt_in_rejects_extra_values():
     case=base_case()
     case["expected"]["exact_fields"]=["finding_types"]
     result={
-        "contract_version":"2.0.8","id":"x","text":"",
+        "contract_version":"2.0.9","id":"x","text":"",
         "finding_types":[
             "expense_supporting_documents_incomplete",
             "expense_supporting_documents_nonstandard",
@@ -76,12 +76,12 @@ def test_exact_fields_opt_in_rejects_extra_values():
 def test_field_absent_from_expected_does_not_mean_empty():
     scorer=load_scorer()
     case={
-        "contract_version":"2.0.8","id":"x","domain":"law-applicability","prompt":"x",
+        "contract_version":"2.0.9","id":"x","domain":"law-applicability","prompt":"x",
         "context":{"event_date":"2025-01-01"},
         "expected":{"conclusion_codes":["future_law_not_direct_basis"]},
     }
     result={
-        "contract_version":"2.0.8","id":"x","text":"",
+        "contract_version":"2.0.9","id":"x","text":"",
         "conclusion_codes":["future_law_not_direct_basis"],
         "excluded_law_ids":["CN-INVOICE-2010-ART21-HIST"],
     }
@@ -92,11 +92,11 @@ def test_field_absent_from_expected_does_not_mean_empty():
 def test_unknown_law_id_is_rejected_even_when_field_not_expected():
     scorer=load_scorer()
     case={
-        "contract_version":"2.0.8","id":"x","domain":"law-applicability","prompt":"x",
+        "contract_version":"2.0.9","id":"x","domain":"law-applicability","prompt":"x",
         "context":{},"expected":{"conclusion_codes":["future_law_not_direct_basis"]},
     }
     result={
-        "contract_version":"2.0.8","id":"x","text":"",
+        "contract_version":"2.0.9","id":"x","text":"",
         "conclusion_codes":["future_law_not_direct_basis"],
         "excluded_law_ids":["FAKE-LEGACY-ID"],
     }
@@ -109,7 +109,7 @@ def test_report_sections_only_emit_for_explicit_report_mode_context():
     scorer=load_scorer()
     case=base_case()
     result={
-        "contract_version":"2.0.8","id":"x","text":"",
+        "contract_version":"2.0.9","id":"x","text":"",
         "finding_types":["expense_supporting_documents_incomplete"],
         "conclusion_codes":["collusive_bidding_not_established"],
         "report_sections":["mode_a_overview_coverage"],
@@ -122,7 +122,7 @@ def test_report_sections_only_emit_for_explicit_report_mode_context():
 def test_report_sections_use_canonical_codes_not_titles():
     scorer=load_scorer()
     case={
-        "contract_version":"2.0.8","id":"x","domain":"report-mode","prompt":"x",
+        "contract_version":"2.0.9","id":"x","domain":"report-mode","prompt":"x",
         "context":{"report_mode":"classification_report"},
         "expected":{
             "report_mode":"classification_report",
@@ -137,7 +137,7 @@ def test_report_sections_use_canonical_codes_not_titles():
         },
     }
     good={
-        "contract_version":"2.0.8","id":"x","text":"",
+        "contract_version":"2.0.9","id":"x","text":"",
         "report_mode":"classification_report",
         "report_sections":[
             "mode_a_overview_coverage",
@@ -158,7 +158,7 @@ def test_unverified_review_code_may_be_emitted_from_runtime_analysis_path():
     scorer=load_scorer()
     case=base_case()
     result={
-        "contract_version":"2.0.8","id":"x","text":"",
+        "contract_version":"2.0.9","id":"x","text":"",
         "finding_types":["expense_supporting_documents_incomplete"],
         "conclusion_codes":[
             "collusive_bidding_not_established",
@@ -197,12 +197,12 @@ def test_live_classification_case_has_project_context_needed_to_proceed():
 def test_amount_coverage_rejects_unrelated_semantic_fields():
     scorer=load_scorer()
     case={
-        "contract_version":"2.0.8","id":"x","domain":"amount-coverage","prompt":"x",
+        "contract_version":"2.0.9","id":"x","domain":"amount-coverage","prompt":"x",
         "context":{"source_records":[{"source_record_id":"SR-1","voucher_amount":10000}],"requested_findings":3},
         "expected":{"record_count":1,"finding_count":3,"voucher_total":10000},
     }
     result={
-        "contract_version":"2.0.8","id":"x","text":"",
+        "contract_version":"2.0.9","id":"x","text":"",
         "record_count":1,"finding_count":3,"voucher_total":10000,
         "conclusion_codes":["funds_occupied"],
     }
@@ -214,11 +214,11 @@ def test_amount_coverage_rejects_unrelated_semantic_fields():
 def test_report_format_rejects_unrelated_semantic_conclusions():
     scorer=load_scorer()
     case={
-        "contract_version":"2.0.8","id":"x","domain":"report-format","prompt":"x","context":{},
+        "contract_version":"2.0.9","id":"x","domain":"report-format","prompt":"x","context":{},
         "expected":{"finding_types":["distribution_list_missing"]},
     }
     result={
-        "contract_version":"2.0.8","id":"x","text":"2025/05，66号凭证。",
+        "contract_version":"2.0.9","id":"x","text":"2025/05，66号凭证。",
         "finding_types":["distribution_list_missing"],
         "conclusion_codes":["funds_occupied"],
     }
