@@ -186,6 +186,7 @@ V2 已取消“河南统一按100万元/400万元判断”的粗略规则。
 - `evals/cases/evidence-wording.jsonl`
 - `evals/cases/amount-coverage.jsonl`
 - `evals/cases/report-format.jsonl`
+- `evals/cases/report-modes.jsonl`
 
 确定性评分器：
 
