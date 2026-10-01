@@ -273,5 +273,30 @@
         "null"
       ]
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "effective"
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "effective_from"
+        ],
+        "properties": {
+          "effective_from": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
+    }
+  ]
 }
