@@ -1,31 +1,145 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.invalid/audit-problem-classifier/evals/case.schema.json",
-  "title": "Audit Problem Classifier V2 Eval Case",
+  "title": "Audit Problem Classifier V2.0.1 Eval Case",
   "type": "object",
-  "required": ["id", "domain", "prompt", "context", "expected", "forbidden"],
+  "required": [
+    "contract_version",
+    "id",
+    "domain",
+    "prompt",
+    "context",
+    "expected"
+  ],
   "properties": {
-    "id": {"type": "string", "minLength": 1},
-    "domain": {"type": "string", "minLength": 1},
-    "prompt": {"type": "string", "minLength": 1},
-    "context": {"type": "object"},
+    "contract_version": {
+      "const": "2.0.1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "context": {
+      "type": "object"
+    },
     "expected": {
       "type": "object",
       "minProperties": 1,
       "properties": {
-        "contains": {"type": "array", "items": {"type": "string"}},
-        "not_contains": {"type": "array", "items": {"type": "string"}},
-        "category": {"type": "string"},
-        "law_ids": {"type": "array", "items": {"type": "string"}},
-        "record_count": {"type": "integer", "minimum": 0},
-        "finding_count": {"type": "integer", "minimum": 0},
-        "voucher_total": {"type": "number"}
+        "gate_status": {
+          "enum": [
+            "proceed",
+            "blocked",
+            "needs_review"
+          ]
+        },
+        "category": {
+          "type": "string"
+        },
+        "finding_types": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "conclusion_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "applicability_status": {
+          "enum": [
+            "applicable",
+            "not_applicable",
+            "needs_review"
+          ]
+        },
+        "law_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "excluded_law_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "finding_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "voucher_total": {
+          "type": "number"
+        },
+        "text_checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "not_contains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "regex": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "not_regex": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "format_forbid": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ascii_chinese_quotes",
+              "unnormalized_voucher_reference",
+              "raw_dot_date"
+            ]
+          }
+        }
       },
-      "additionalProperties": true
+      "additionalProperties": false
     },
-    "forbidden": {"type": "array", "items": {"type": "string"}},
-    "notes": {"type": "string"},
-    "source": {"type": "string"}
+    "notes": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    }
   },
   "additionalProperties": false
 }
