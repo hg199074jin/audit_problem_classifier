@@ -46,12 +46,33 @@ def _validate_semantics(data: dict, schema_name: str) -> None:
             if _parse_iso_date(start, "audit_period.start") > _parse_iso_date(end, "audit_period.end"):
                 raise ValueError("audit_period.start must not be after audit_period.end")
 
+    if schema_name == "finding":
+        evidence = data.get("evidence_status")
+        decision = data.get("decision_status")
+        if decision == "final":
+            if evidence != "confirmed":
+                raise ValueError("final finding requires evidence_status=confirmed")
+            wording = data.get("final_wording")
+            if not isinstance(wording, str) or not wording.strip():
+                raise ValueError("final finding requires non-empty final_wording")
+
     if schema_name == "law":
         start = data.get("effective_from")
         end = data.get("effective_to")
         if start is not None and end is not None:
             if _parse_iso_date(start, "effective_from") > _parse_iso_date(end, "effective_to"):
                 raise ValueError("effective_from must not be after effective_to")
+
+        if data.get("status") == "effective":
+            if not start:
+                raise ValueError("effective law requires effective_from")
+            source = data.get("source") or {}
+            if source.get("type") not in {"official", "official_archive"}:
+                raise ValueError("effective law requires official or official_archive source")
+            if source.get("verified") is not True:
+                raise ValueError("effective law requires verified source")
+            if not (source.get("url") or source.get("identifier")):
+                raise ValueError("effective law requires traceable source url or identifier")
 
 
 def validate_file(path: Path, schema_name: str) -> None:
