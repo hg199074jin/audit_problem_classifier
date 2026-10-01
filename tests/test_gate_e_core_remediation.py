@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pytest
 import yaml
-from jsonschema import Draft202012Validator
+from jsonschema import Draft202012Validator, ValidationError
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -172,7 +172,7 @@ def test_finding_semantics_reject_pending_final_and_final_without_wording(tmp_pa
     bad["final_wording"] = "结论"
     p = tmp_path / "pending-final.yaml"
     p.write_text(yaml.safe_dump(bad, allow_unicode=True), encoding="utf-8")
-    with pytest.raises(ValueError):
+    with pytest.raises((ValueError, ValidationError)):
         validator.validate_file(p, "finding")
 
     bad = deepcopy(finding)
@@ -181,7 +181,7 @@ def test_finding_semantics_reject_pending_final_and_final_without_wording(tmp_pa
     bad["final_wording"] = None
     p = tmp_path / "final-no-wording.yaml"
     p.write_text(yaml.safe_dump(bad, allow_unicode=True), encoding="utf-8")
-    with pytest.raises(ValueError):
+    with pytest.raises((ValueError, ValidationError)):
         validator.validate_file(p, "finding")
 
 
