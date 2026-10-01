@@ -6,7 +6,6 @@ facts: 实物发放未附领用清单
 evidence_status: confirmed
 decision_status: ready
 amounts:
-  voucher_amount: 10000
   issue_amount: 10000
   confirmed_difference: null
   pending_amount: null
