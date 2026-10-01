@@ -531,3 +531,70 @@ Frozen contract / engine blobs:
 - `schemas/law.schema.json` — `3efe2660f5df6d6fe16ca09c97551840c54a0ae2`
 
 下一次独立 Skill runtime Gate D 开始后，上述 contract / engine 文件不得根据 runtime 输出修改以追求 PASS。若发现真实缺陷，只记录并 STOP，由新的 contract version 或新的 remediation cycle 处理。
+
+## 13. V2.0.3 Runtime Failure and V2.0.4 Contract Repair
+
+### 13.1 V2.0.3 Gate D Runtime
+
+2026-10-01，ZCode 按冻结 head `052576a7985102ec9f9ede5093827118545040d1` 对 21 个案例执行独立 Skill runtime。
+
+结果：
+
+- **2/21 PASS**；
+- format lint：**21/21 PASS**；
+- Freeze Manifest：16/16 blob SHA 匹配，Drift = NONE；
+- 未修改 code / case / expected / scorer / fixture。
+
+该轮的主体失败不是专业行为整体失效，而是 V2.0.3 在修复 Gate E CR-004 时把所有列表字段统一改成 exact-set，导致 expected 最小集合与 runtime 合法补充信息发生系统性冲突。
+
+同时暴露四个真实 contract 设计问题：
+
+1. `excluded_law_ids / law_roles / report_sections` 的发射范围没有定义清楚；
+2. `applicability_status` 未明确是“目标候选法规状态”还是“整体法规选择结果”；
+3. `report_sections` 使用中文章节标题做精确字符串比较，容易被编号/“表”等展示差异误伤；
+4. `mode-a-complete-regression` 与 `format-hard-rules` 对“缺领用清单”使用了不同 finding type。
+
+原始报告：PR #1 issue comment `5928759146`。
+
+### 13.2 V2.0.4 评分与发射语义
+
+V2.0.4 不回退到无约束 subset，也不继续一刀切 exact，而采用字段分级语义：
+
+- expected 中的列表默认表示 **required subset**；
+- 只有写入 `expected.exact_fields` 的字段才使用 exact-set；
+- 未出现在 expected 中的字段不等于必须为空，但仍受全局安全不变量约束；
+- unknown finding/conclusion code、伪 Law ID、互斥结论、`law_ids ∩ excluded_law_ids`、HARD-GATE 跨字段冲突继续直接 FAIL；
+- Law ID 必须存在于结构化法规库；
+- `unverified_law_requires_review` 只能在实际候选确属 secondary/unverified 时发射。
+
+### 13.3 V2.0.4 发射纪律
+
+- `excluded_law_ids` 只列本案实际候选中被排除的结构化 Law ID，不得全库扫描式罗列；
+- `law_roles` 只描述实际输出的正向 `law_ids`；
+- `report_sections` 只在 `context.report_mode` 明确存在时输出；
+- `report_sections` 使用稳定机器章节代码，不比较中文标题、编号、封面或目录；
+- `applicability_status` 仅表示用户问题中明确指向的目标候选法规状态；
+- `amount-coverage` 不得夹带分类/定性/法规字段；
+- `report-format` 不得夹带专业结论或法规字段；
+- `gate_status=blocked` 时不得输出 `applicability_status`。
+
+### 13.4 Case 修正
+
+- `live-20260629` 补足 V2 所需 Project Context，避免在“预期继续分类”的案例中故意制造缺上下文 HARD-GATE；
+- Mode A / Mode B `report_sections` 改为稳定代码；
+- Mode A 与 format-hard-rules 对“缺领用清单”统一为 `distribution_list_missing`；
+- 明确封闭候选集合的法规案例对 `law_ids / excluded_law_ids / law_roles` 使用 opt-in exact。
+
+### 13.5 TDD / Repository Verification
+
+V2.0.4 首轮 RED：7 failed（版本、subset/exact、Law ID 合法性、report_sections 发射、分类口径、Project Context）。
+
+补充 domain emission profile 后再次 RED：2 failed（amount-coverage 和 report-format 仍容忍无关专业结论）。
+
+修复后 GitHub Actions Run `36848654905`：
+
+- **114 tests passed**；
+- **32/32 Law Objects validated**；
+- **21/21 deterministic fixture passed**。
+
+V2.0.4 仍需在冻结 head 上执行一次完整 21-case 独立 Skill runtime Gate D；通过后再进入新的独立 Gate E second review。
