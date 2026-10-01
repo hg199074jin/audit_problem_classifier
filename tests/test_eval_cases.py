@@ -10,15 +10,20 @@ CASE_FILES = [
     "amount-coverage.jsonl",
     "report-format.jsonl",
 ]
-REQUIRED = {"id", "domain", "prompt", "context", "expected", "forbidden"}
+REQUIRED = {"contract_version", "id", "domain", "prompt", "context", "expected"}
 MACHINE_KEYS = {
-    "contains",
-    "not_contains",
+    "gate_status",
     "category",
+    "finding_types",
+    "conclusion_codes",
+    "applicability_status",
     "law_ids",
+    "excluded_law_ids",
     "record_count",
     "finding_count",
     "voucher_total",
+    "text_checks",
+    "format_forbid",
 }
 
 
@@ -38,15 +43,15 @@ def load_cases():
     return cases
 
 
-def test_eval_files_exist_and_rows_have_required_contract():
+def test_eval_files_exist_and_rows_have_v201_contract():
     cases = load_cases()
     assert cases, "eval case set must not be empty"
     for path, line_no, item in cases:
         missing = REQUIRED - item.keys()
         assert not missing, f"{path}:{line_no} missing fields: {sorted(missing)}"
+        assert item["contract_version"] == "2.0.1"
         assert isinstance(item["context"], dict), f"{path}:{line_no} context must be object"
         assert isinstance(item["expected"], dict), f"{path}:{line_no} expected must be object"
-        assert isinstance(item["forbidden"], list), f"{path}:{line_no} forbidden must be array"
         assert MACHINE_KEYS & item["expected"].keys(), (
             f"{path}:{line_no} expected must contain at least one machine-checkable assertion"
         )
