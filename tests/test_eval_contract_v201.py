@@ -57,10 +57,10 @@ def test_runtime_contract_fields_are_scored_structurally():
         "expected": {
             "gate_status": "proceed",
             "applicability_status": "not_applicable",
-            "finding_types": ["future_law"],
+            "finding_types": ["tax_issue"],
             "conclusion_codes": ["future_law_not_direct_basis"],
-            "law_ids": ["LAW-CURRENT"],
-            "excluded_law_ids": ["LAW-FUTURE"],
+            "law_ids": ["CN-INVOICE-2023-ART20"],
+            "excluded_law_ids": ["CN-INVOICE-2010-ART21-HIST"],
         },
     }
     result = {
@@ -68,10 +68,10 @@ def test_runtime_contract_fields_are_scored_structurally():
         "text": "措辞完全自由，不要求固定短语。",
         "gate_status": "proceed",
         "applicability_status": "not_applicable",
-        "finding_types": ["future_law"],
+        "finding_types": ["tax_issue"],
         "conclusion_codes": ["future_law_not_direct_basis"],
-        "law_ids": ["LAW-CURRENT"],
-        "excluded_law_ids": ["LAW-FUTURE"],
+        "law_ids": ["CN-INVOICE-2023-ART20"],
+        "excluded_law_ids": ["CN-INVOICE-2010-ART21-HIST"],
     }
     outcome = scorer.score_case(case, result)
     assert outcome.passed, outcome.failures
@@ -107,14 +107,14 @@ def test_structured_excluded_law_ids_are_required_when_expected():
         "prompt": "x",
         "context": {},
         "expected": {
-            "law_ids": ["LAW-CURRENT"],
-            "excluded_law_ids": ["LAW-OLD"],
+            "law_ids": ["CN-INVOICE-2023-ART20"],
+            "excluded_law_ids": ["CN-INVOICE-2010-ART21-HIST"],
         },
     }
     bad = {
         "id": "law",
         "text": "旧法不得引用。",
-        "law_ids": ["LAW-CURRENT"],
+        "law_ids": ["CN-INVOICE-2023-ART20"],
         "excluded_law_ids": [],
     }
     outcome = scorer.score_case(case, bad)
