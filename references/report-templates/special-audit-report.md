@@ -56,3 +56,16 @@
 5. 数量×单价、分项合计与总额逐笔勾稽，差额必须说明；
 6. 每个小项法规段恰好一段、条款号与条文原文完整。
 
+
+
+## 七、Machine result section codes
+
+仅在机器可评测输出且 `context.report_mode=special_audit_report` 时，`report_sections` 使用以下稳定代码：
+
+- `mode_b_engagement_purpose` → 委托目的
+- `mode_b_entity_overview` → 本单位概况
+- `mode_b_major_findings` → 审核中发现的主要问题
+- `mode_b_opinions_recommendations` → 意见和建议
+- `mode_b_report_use_scope` → 报告使用范围
+
+封面页、目录页、导语、签字盖章页属于展示结构，不进入 `report_sections`。机器字段不得携带“一、”“二、”等编号或中文标题变体。
