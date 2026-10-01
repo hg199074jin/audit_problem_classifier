@@ -6,7 +6,7 @@
   "issuer": "财政部",
   "legal_level": "accounting_standard",
   "status": "superseded",
-  "effective_from": null,
+  "effective_from": "2014-01-01",
   "effective_to": "2018-12-31",
   "jurisdiction": {
     "country": "CN"
