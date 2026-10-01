@@ -500,3 +500,34 @@ V2.0.3 修复代码在 GitHub Actions Run `36830220872` 上取得：
 3. 两项均通过后，才进入 PR #1 合并决策。
 
 PR #1 继续保持 Draft，在上述 Gate 通过前不得 merge。
+
+### 12.5 V2.0.3 Freeze Manifest
+
+Repository-level final verification before freeze:
+
+- Head: `bffc4d7e8530daaa67c3f276aa9f4fb036fd172c`
+- GitHub Actions Run: `36830615954`
+- **101 tests passed**
+- **32/32 Law Objects validated**
+- **21/21 deterministic fixture passed**
+
+Frozen contract / engine blobs:
+
+- `evals/case.schema.json` — `a5291a9a0feaa4217e0ad9e73664f93a9a0c925b`
+- `evals/cases/amount-coverage.jsonl` — `08040fc75e21db0baef38a7b465dd1aeb00946cf`
+- `evals/cases/classification.jsonl` — `54acc911f91ff2c11fe4e3d4258670d581364fa5`
+- `evals/cases/evidence-wording.jsonl` — `d4a9e947e696500daf3722a50d1a744356fa49a7`
+- `evals/cases/law-applicability.jsonl` — `1b45a608466f7630fa9e2034486ab422f0a885ed`
+- `evals/cases/report-format.jsonl` — `9da715292f3a84470d2b06b1165505eb1e148282`
+- `evals/cases/report-modes.jsonl` — `d6fe1b8a3f0da80dc825ef5c39df1a56e8a26ba1`
+- `evals/score.py` — `60f3d9d8eca067110fb3e2f23a6d96f5af784cd2`
+- `evals/README.md` — `f13131004d5113dcf286b5f275ddddb8c0701437`
+- `rules/result-contract.md` — `7608aa56ae0a29b239289b0539cca14fdd66da4f`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/law-applicability.md` — `e34ba2b575cedad24ee667042207407a717e53a2`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `17f2b784cec50c2709f37231c1f7dae7efae27c9`
+- `schemas/finding.schema.json` — `5d9fd1943eb032874e00261c0a9b95e00c3a1854`
+- `schemas/law.schema.json` — `3efe2660f5df6d6fe16ca09c97551840c54a0ae2`
+
+下一次独立 Skill runtime Gate D 开始后，上述 contract / engine 文件不得根据 runtime 输出修改以追求 PASS。若发现真实缺陷，只记录并 STOP，由新的 contract version 或新的 remediation cycle 处理。
