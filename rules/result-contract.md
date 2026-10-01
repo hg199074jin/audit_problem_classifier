@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.0.3）
+# Machine Result Contract（V2.0.4）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.0.3"`
+`contract_version = "2.0.4"`
 
 ## 字段
 
@@ -14,17 +14,27 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `category`: 单一主分类代码，如 `FY`、`CG`
 - `finding_types`: 稳定问题类型代码数组
 - `conclusion_codes`: 稳定专业结论代码数组
-- `applicability_status`: `applicable | not_applicable | needs_review`
+- `applicability_status`: `applicable | not_applicable | needs_review`。仅表示**用户问题中明确指向的目标法规/候选规则**的适用状态；如果同时讨论替代现行依据，可另列入 `law_ids`，不得把整体法规库状态混进该字段。
 - `law_ids`: 可作为当前候选/依据的结构化法规 ID
-- `excluded_law_ids`: 明确被时效、主体、地域或其他适用条件排除的法规 ID
+- `excluded_law_ids`: 明确被时效、主体、地域或其他适用条件排除的**实际候选法规 ID**。只记录本案确实被纳入判断的候选，不得把整个法规库中所有不匹配对象批量枚举进来。
 - `record_count`
 - `finding_count`
 - `voucher_total`
-- `law_roles`: 实际输出法规角色，只允许 `direct_basis | supporting_basis | liability_basis`
+- `law_roles`: 对应本次实际输出 `law_ids` 的法规角色，只允许 `direct_basis | supporting_basis | liability_basis`；没有 `law_ids` 时不要输出。
 - `report_mode`: `classification_report | special_audit_report`
-- `report_sections`: 实际生成的主要报告章节数组
+- `report_sections`: **仅在输入 context 明确带有 `report_mode` 时输出**，并且只能使用下面的稳定章节代码，不得输出中文标题、编号前缀、封面/目录页等展示文本：
+  - Mode A：`mode_a_overview_coverage`、`mode_a_classification_summary`、`mode_a_classification_details`、`mode_a_management_recommendations`、`mode_a_followup_materials`
+  - Mode B：`mode_b_engagement_purpose`、`mode_b_entity_overview`、`mode_b_major_findings`、`mode_b_opinions_recommendations`、`mode_b_report_use_scope`
 
 字段按任务需要输出；未发生的语义不要为了“填满字段”而编造。
+
+### 发射纪律
+
+- `report_sections` 只在 `context.report_mode` 明确存在时发射。
+- `unverified_law_requires_review` 只在本案**实际候选法规**确属 secondary/unverified 时发射；不能因为仓库里存在 legacy 文档或其他未核验资料就全局追加该码。
+- `excluded_law_ids` 只列本案实际候选中被排除的结构化 Law ID，不做全库扫描式罗列。
+- `law_roles` 仅描述本次实际输出的 `law_ids`；无正向法规 ID 时省略。
+- `gate_status=blocked` 时不要输出 `applicability_status`。
 
 ## 当前稳定 finding_types
 
@@ -76,4 +86,11 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## 评分原则
 
-专业语义由结构化字段评分；安全关键数组采用精确集合语义，额外输出与缺失输出同样视为失败。不得依靠正文固定短语判断专业结论。正文 literal 检查只用于真正的格式硬规则。
+专业语义由结构化字段评分。V2.0.4 不再对所有数组“一刀切 exact”：
+
+- case 在 `expected` 中声明的数组默认表示“这些值必须出现”；
+- 只有 case 把字段列入 `expected.exact_fields` 时才要求精确集合；
+- 不在 `expected` 中的字段不等于“必须为空”，但仍受全局不变量、已知代码表、Law ID 合法性与发射纪律约束；
+- unknown conclusion/finding code、伪 Law ID、互斥结论、HARD-GATE 跨字段冲突仍然直接 FAIL。
+
+不得依靠正文固定短语判断专业结论。正文 literal 检查只用于真正的格式硬规则。
