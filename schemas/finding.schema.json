@@ -83,19 +83,22 @@
           "type": [
             "number",
             "null"
-          ]
+          ],
+          "minimum": 0
         },
         "confirmed_difference": {
           "type": [
             "number",
             "null"
-          ]
+          ],
+          "minimum": 0
         },
         "pending_amount": {
           "type": [
             "number",
             "null"
-          ]
+          ],
+          "minimum": 0
         }
       }
     },
