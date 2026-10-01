@@ -65,6 +65,9 @@ KNOWN_FINDING_TYPES = {
     "accounting_issue",
     "tax_issue",
     "distribution_list_missing",
+    "receivable_undercollection",
+    "contract_signed_after_performance",
+    "invoice_information_irregularity",
 }
 
 KNOWN_REPORT_SECTIONS = {
@@ -124,6 +127,9 @@ KNOWN_CONCLUSION_CODES = {
     "unverified_law_requires_review",
     "government_procurement_scope_not_met",
     "liability_basis_not_default",
+    "recoverable_undercollection_not_loss_established",
+    "post_execution_signing_not_backdating_established",
+    "invoice_irregularity_not_false_invoicing_established",
 }
 
 DIAGNOSTIC_CONCLUSION_CODES = {
