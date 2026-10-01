@@ -10,15 +10,18 @@ from pathlib import Path
 from typing import NamedTuple
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.0.5"
+CONTRACT_VERSION = "2.0.6"
 
 STRUCTURED_LIST_FIELDS = (
     "finding_types",
     "conclusion_codes",
     "law_ids",
     "excluded_law_ids",
-    "law_roles",
     "report_sections",
+)
+
+STRUCTURED_OBJECT_FIELDS = (
+    "law_roles",
 )
 STRUCTURED_SCALAR_FIELDS = (
     "gate_status",
@@ -230,11 +233,15 @@ def _known_law_ids() -> set[str]:
     return ids
 
 
+def _is_empty(value) -> bool:
+    return value in (None, "", [], {})
+
+
 def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> None:
     domain = case.get("domain")
     for field in DOMAIN_FORBIDDEN_FIELDS.get(domain, set()):
         value = result.get(field)
-        if value not in (None, [], ""):
+        if not _is_empty(value):
             failures.append(f"{domain}: field {field} is outside this eval domain's emission profile")
 
     law_ids = set(result.get("law_ids") or [])
@@ -263,11 +270,22 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
         if unknown_laws:
             failures.append(f"{field}: unknown law id(s) {unknown_laws!r}")
 
-    roles = set(result.get("law_roles") or [])
-    if not roles <= {"direct_basis", "supporting_basis", "liability_basis"}:
-        failures.append(f"law_roles: unknown role(s) {sorted(roles - {'direct_basis','supporting_basis','liability_basis'})!r}")
-    if roles and not law_ids:
-        failures.append("law_roles cannot be emitted without law_ids")
+    raw_roles = result.get("law_roles")
+    if raw_roles is not None:
+        if not isinstance(raw_roles, dict):
+            failures.append("law_roles must be an object mapping law_id to role")
+        else:
+            allowed_roles = {"direct_basis", "supporting_basis", "liability_basis"}
+            role_keys = set(raw_roles)
+            unknown_role_keys = sorted(role_keys - known_laws)
+            if unknown_role_keys:
+                failures.append(f"law_roles: unknown law id key(s) {unknown_role_keys!r}")
+            non_selected = sorted(role_keys - law_ids)
+            if non_selected:
+                failures.append(f"law_roles keys must be selected law_ids: {non_selected!r}")
+            unknown_roles = sorted({role for role in raw_roles.values() if role not in allowed_roles})
+            if unknown_roles:
+                failures.append(f"law_roles: unknown role value(s) {unknown_roles!r}")
 
     sections = set(result.get("report_sections") or [])
     unknown_sections = sorted(sections - KNOWN_REPORT_SECTIONS)
@@ -282,7 +300,7 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
         forbidden_fields = ("category", "finding_types", "applicability_status", "law_ids", "excluded_law_ids", "law_roles", "report_mode", "report_sections")
         for field in forbidden_fields:
             value = result.get(field)
-            if value not in (None, [], ""):
+            if not _is_empty(value):
                 failures.append(f"blocked gate cannot emit formal field {field}")
         for field in ("record_count", "finding_count", "voucher_total"):
             value = result.get(field)
@@ -292,7 +310,7 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
     if gate == "needs_review":
         if result.get("law_ids") not in (None, []):
             failures.append("needs_review gate cannot emit formal law_ids")
-        if result.get("law_roles") not in (None, []):
+        if not _is_empty(result.get("law_roles")):
             failures.append("needs_review gate cannot emit formal law_roles")
 
 
@@ -343,6 +361,16 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
     for field in STRUCTURED_SCALAR_FIELDS:
         if field in expected and result.get(field) != expected[field]:
             failures.append(f"{field}: expected {expected[field]!r}, got {result.get(field)!r}")
+
+    if "law_roles" in expected:
+        expected_roles = expected.get("law_roles")
+        actual_roles = result.get("law_roles")
+        if not isinstance(actual_roles, dict):
+            failures.append("law_roles: expected object mapping law_id to role")
+        elif actual_roles != expected_roles:
+            failures.append(
+                f"law_roles: expected exact mapping {expected_roles!r}, got {actual_roles!r}"
+            )
 
     exact_fields = set(expected.get("exact_fields") or [])
     for field in STRUCTURED_LIST_FIELDS:
