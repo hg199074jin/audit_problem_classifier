@@ -50,3 +50,43 @@ applies_if:
 ## 来源核验
 
 即使时效、地域和主体均匹配，只要 `law.source.verified != true`，结果也必须是 `needs_review`，不得返回 `applicable` 并作为正式直接依据。
+
+
+## Project Context 保留键
+
+`finding.applicability_facts` 只能保存 Finding 级事实，不得覆盖项目级事实。以下键属于保留键：
+
+- `jurisdiction`
+- `organization`
+- `funding`
+- `event_date`
+- `audit_period`
+
+如果 Finding 试图通过 applicability facts 写入这些键，构建 evaluation context 必须拒绝，而不是静默覆盖。
+
+## 时效 fail-closed
+
+- `status=effective` 的正式 Law Object 必须有 `effective_from`；
+- effective 法规缺少生效起点时，适用性结果只能是 `needs_review`；
+- 需要进行时效判断但缺少业务发生日时，结果只能是 `needs_review`；
+- 不能使用 audit period 猜测某一笔业务的具体发生日。
+
+## 来源 provenance
+
+正式可返回 `applicable` 的法规来源只接受：
+
+- `official`
+- `official_archive`
+
+且必须完成核验并具有可追溯 URL 或官方 identifier。二手来源即使被人工标记 `verified=true`，也不得直接升级为 `applicable`。
+
+## 政府采购前置事实
+
+地方政府采购限额/公开招标数额对象不能只依赖金额关键词。至少要先确认：
+
+- 采购主体属于政府采购法规定的国家机关、事业单位或团体组织；
+- 使用财政性资金；
+- 当前事项属于政府采购范围；
+- 分散采购限额对象还应确认不是集中采购目录内项目。
+
+这些前置事实未知时，应返回 `needs_review`，不得仅凭金额套用限额。
