@@ -31,7 +31,7 @@
 
 ### Source Record
 
-原始问题、凭证、合同、清单行等唯一覆盖单元。原始记录数和 `voucher_amount` 按唯一 `source_record_id` 统计。
+原始问题、凭证、合同、清单行等唯一覆盖单元。原始记录数和 `voucher_amount` 按唯一 `source_record_id` 统计。Source Record 还可以保存**该笔事项可明确归属的资金性质**；当 Project Context 是混合资金时，单笔 `source_record.funding` 用于收窄本 Finding 的法规适用判断。
 
 ### Finding
 
@@ -99,7 +99,7 @@ Schema：`schemas/law.schema.json`。
 
 ### historical
 
-`references/laws/historical/` 保存已废止或被替代、但可能适用于历史业务期间的法规。**historical 默认不能作为当前年度现行法规候选。**
+`references/laws/historical/` 保存已废止或被替代、但可能适用于历史业务期间的法规。**historical 默认不能作为当前年度现行法规候选。** Historical Law Object 必须有可核验的 `effective_from` 和 `effective_to`；缺任一时间边界时只能 `needs_review`，不能因只知道废止日就向更早年度无限回溯适用。
 
 ### watchlist
 
@@ -127,6 +127,15 @@ V2 已取消“河南统一按100万元/400万元判断”的粗略规则。
 - 工程。
 
 现行文件文号已复核并锁定为 **豫财购〔2020〕4号**。工程公开招标数额标准另按工程招标规定判断，不直接套用货物/服务 400万元/200万元标准。
+
+### 资金适用的混合场景
+
+当项目层同时存在财政资金与自有资金时，不允许因为“其中包含财政资金”就把财政资金专属法规直接判为适用：
+
+- 当前事项全部属于法规允许资金 → 继续；
+- 当前事项全部不属于 → `not_applicable`；
+- 项目为混合资金且当前 Source Record 尚不能归属 → `needs_review`；
+- Source Record 已能明确归属该笔资金 → 用单笔 funding 收窄项目级集合。
 
 ## HARD-GATE 与 firm profile
 
@@ -192,7 +201,7 @@ V2 已取消“河南统一按100万元/400万元判断”的粗略规则。
 
 - `evals/score.py`
 
-评分器不会调用模型/API。分类、法规 ID、原始记录数、Finding 数和金额必须通过结构化字段评分；正文字符串仅用于措辞和禁止词检查。
+评分器不会调用模型/API。V2.0.9 先用 `evals/result.schema.json` 校验 machine result 类型，再检查法规角色与 Law Object 一致性、Source Record–Finding 引用完整性、数量/金额重算和专业结论安全边界；正文字符串仅用于真正的格式检查。当前正式 Eval 共 **26 个案例**。
 
 运行：
 
@@ -254,6 +263,8 @@ audit_problem_classifier/
 ├── evals/
 │   ├── cases/
 │   ├── fixtures/
+│   ├── case.schema.json
+│   ├── result.schema.json
 │   └── score.py
 ├── tests/
 └── docs/
