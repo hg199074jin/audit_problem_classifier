@@ -4,10 +4,22 @@ from __future__ import annotations
 from datetime import date
 from typing import Any, NamedTuple
 
+RESERVED_PROJECT_FACT_KEYS = {
+    "jurisdiction",
+    "organization",
+    "funding",
+    "event_date",
+    "audit_period",
+}
+
 
 class ApplicabilityResult(NamedTuple):
     status: str
     reasons: list[str]
+
+
+class ConditionFactTypeError(ValueError):
+    pass
 
 
 def build_evaluation_context(
@@ -15,12 +27,10 @@ def build_evaluation_context(
     finding: dict | None = None,
     source_record: dict | None = None,
 ) -> dict:
-    """Combine validated project facts with Finding-specific applicability facts.
+    """Combine project-scoped facts with Finding-specific law-evaluation facts.
 
-    Project Context stays project-scoped. Finding-specific facts such as
-    business_type, person_type, provider type, invoice status, or threshold
-    amounts live under finding.applicability_facts and are merged only for
-    law evaluation.
+    Finding applicability facts are intentionally prevented from overwriting
+    project-level jurisdiction, organization, funding, event date, or audit period.
     """
     context: dict[str, Any] = {
         "jurisdiction": dict(project_context.get("jurisdiction") or {}),
@@ -29,6 +39,8 @@ def build_evaluation_context(
     if "funding" in project_context:
         funding = project_context.get("funding")
         context["funding"] = list(funding) if isinstance(funding, list) else funding
+    if "audit_period" in project_context:
+        context["audit_period"] = dict(project_context.get("audit_period") or {})
 
     if source_record and source_record.get("event_date") is not None:
         context["event_date"] = source_record["event_date"]
@@ -37,6 +49,13 @@ def build_evaluation_context(
         facts = finding.get("applicability_facts") or {}
         if not isinstance(facts, dict):
             raise TypeError("finding.applicability_facts must be an object")
+
+        reserved = sorted(RESERVED_PROJECT_FACT_KEYS.intersection(facts))
+        if reserved:
+            raise ValueError(
+                "finding.applicability_facts contains reserved project keys: "
+                + ", ".join(reserved)
+            )
         context.update(facts)
 
         amounts = finding.get("amounts") or {}
@@ -85,10 +104,11 @@ def _condition_value(context: dict, condition: dict) -> bool | None:
         return actual in expected
     if operator == "not_in":
         return actual not in expected
-    if operator == "gte":
-        return actual >= expected
-    if operator == "lte":
-        return actual <= expected
+    if operator in {"gte", "lte"}:
+        try:
+            return actual >= expected if operator == "gte" else actual <= expected
+        except TypeError as exc:
+            raise ConditionFactTypeError(field) from exc
     raise ValueError(f"unsupported condition operator: {operator}")
 
 
@@ -107,16 +127,16 @@ def evaluate_applicability(
     law: dict,
     event_date: date | None = None,
 ) -> ApplicabilityResult:
-    """Evaluate one Law Object against one project/finding context.
+    """Filter one Law Object against one evaluation context."""
 
-    The function only filters applicability. It does not rank laws or decide
-    which candidate is legally preferable.
-    """
     needs_review: list[str] = []
 
     source = law.get("source") or {}
+    source_type = source.get("type")
     if source.get("verified") is not True:
         needs_review.append("法规来源尚未核验，不能作为已确认依据")
+    if source_type not in {"official", "official_archive"}:
+        needs_review.append("法规来源不是可追溯官方来源，不能作为已确认依据")
 
     # 1. Effective period / status.
     status = law.get("status")
@@ -129,9 +149,12 @@ def evaluate_applicability(
 
     if status == "unknown":
         needs_review.append("法规效力状态未知")
+    if status == "effective" and start is None:
+        needs_review.append("现行法规缺少生效日期，无法确认时效")
     if status in {"repealed", "superseded"} and end is None:
         needs_review.append("历史法规缺少失效日期，无法确认历史适用期")
-    if start is not None or end is not None:
+
+    if start is not None or end is not None or status == "effective":
         if event is None:
             needs_review.append("缺少业务发生日期，无法判断法规时效")
         else:
@@ -139,6 +162,7 @@ def evaluate_applicability(
                 return ApplicabilityResult("not_applicable", ["业务发生日在法规生效日期之前"])
             if end is not None and event > end:
                 return ApplicabilityResult("not_applicable", ["业务发生日在法规失效日期之后"])
+
     if status == "pending" and (event is None or start is None or event >= start):
         needs_review.append("法规状态为 pending，不能作为已确认现行依据")
 
@@ -192,14 +216,22 @@ def evaluate_applicability(
 
     # 6. Required facts / evidence.
     for condition in law.get("applies_if") or []:
-        matched = _condition_value(context, condition)
+        try:
+            matched = _condition_value(context, condition)
+        except ConditionFactTypeError:
+            needs_review.append(f"适用前提事实类型不合法：{condition['field']}")
+            continue
         if matched is False:
             return ApplicabilityResult("not_applicable", [f"适用前提不满足：{condition['field']}"])
         if matched is None:
             needs_review.append(f"缺少适用前提事实：{condition['field']}")
 
     for condition in law.get("excludes_if") or []:
-        matched = _condition_value(context, condition)
+        try:
+            matched = _condition_value(context, condition)
+        except ConditionFactTypeError:
+            needs_review.append(f"排除条件事实类型不合法：{condition['field']}")
+            continue
         if matched is True:
             return ApplicabilityResult("not_applicable", [f"命中排除条件：{condition['field']}"])
         if matched is None:
