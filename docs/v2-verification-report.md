@@ -630,3 +630,97 @@ Frozen runtime / contract blobs:
 - `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
 
 从下一次 V2.0.4 Gate D runtime 开始，上述冻结文件不得根据 runtime 输出再修改来追求 PASS。若出现真实缺陷，只记录、STOP，再另开新的 remediation / contract version。
+
+## 14. V2.0.4 Runtime Result and V2.0.5 Narrow Repair
+
+### 14.1 V2.0.4 Gate D Runtime
+
+V2.0.4 frozen head `c4eabc8cd6c041828f9a90f8c4cc67750f5fc1fa` 执行 21 个独立 runtime 案例，结果：
+
+- **11/21 PASS**；
+- format lint：**21/21 PASS**；
+- 19/19 freeze SHA 匹配，Drift = NONE；
+- 未修改任何 frozen 文件。
+
+剩余 10 个 FAIL 分为：
+
+- F1 ×6：`unverified_law_requires_review` 的发射条件把“context 预声明候选”与“runtime 实际分析中遇到候选”混为一谈；
+- F2 ×3：`excluded_law_ids` 对“经 Gate 考虑并排除的相关对象”采用了过窄封闭集合；
+- F3 ×3：`finding_types` 对具体类型与上位附件类型采用了过严 exact-set；
+- F4 ×1：`procurement-specificity` 在 `needs_review` 下正文已形成“不构成串通投标”的证据层判断，但漏发 `collusive_bidding_not_established`。
+
+复核裁定：F1/F2/F3 属 contract/发射边界过严；F4 属真实 runtime 漏发。V2.0.4 仍正式记 FAIL，不人工改判。
+
+原始报告：PR #1 issue comment `5931781198`。
+
+### 14.2 V2.0.5 Narrow Repair
+
+V2.0.5 仅做四项窄修复：
+
+1. `unverified_law_requires_review` 允许由 runtime 在本案分析路径中实际遇到 secondary/unverified 候选时发射，不要求候选必须预先写入 input context；但不得因仓库中存在未核验资料就全局追加。
+2. 对 Kaifeng 阈值、102号令事业单位参照、公务用车事业单位原则三个正向法规案例，取消 `excluded_law_ids` 的封闭 exact-set；仍保留 Law ID 必须真实、不得与 `law_ids` 交集等全局安全约束。
+3. 对 `live-20260629`、Mode A、Mode B 取消 `finding_types` exact-set，允许具体问题类型与其上位附件类型并存；必需 finding type 仍必须出现。
+4. 明确 `gate_status=needs_review` 只限制尚未确认的正式法规依据与最终化判断，**不得吞掉已经独立成立的证据层结论**；正文已判断“不能认定构成串通投标”时仍应同步发 `collusive_bidding_not_established`。
+
+### 14.3 TDD / Repository Verification
+
+V2.0.5 RED：5 failed，精确对应版本、unverified review 预声明、needs_review 结论发射、finding exact、excluded exact 五类边界。
+
+兼容测试同步后，GitHub Actions Run `36865033021`：
+
+- **121 tests passed**；
+- **32/32 Law Objects validated**；
+- **21/21 deterministic fixture passed**。
+
+### 14.4 Carry-forward Impact Proof
+
+对 V2.0.4 frozen head `c4eabc8...` 与 V2.0.5 implementation head `3971fb4...` 做 whole-diff：
+
+- 未修改 `SKILL.md` 主流程；
+- 未修改 `scripts/law_applicability.py`；
+- 未修改 schemas；
+- 未修改 structured law library；
+- 未修改 Mode A/B 模板；
+- 变化仅在 eval contract / scorer / cases / fixtures / tests 与 `rules/result-contract.md`。
+
+对 V2.0.4 已真实 PASS 的 11 个案例逐案机器比对，删除 `contract_version` 后，`prompt/context/expected/notes/source` 对象完全一致：
+
+- `p0-one-record-three-findings-no-voucher-duplication`
+- `expense-boundary`
+- `question-first-gate`
+- `p0-suspicious-quotes-not-collusive-bidding-finding`
+- `p0-no-future-law-for-2025`
+- `p0-no-cadre-rule-for-ordinary-worker`
+- `p0-current-invoice-reimbursement-provision`
+- `p0-obsolete-official-vehicle-rule-not-current`
+- `p1-unverified-law-needs-review`
+- `p1-liability-basis-not-default`
+- `format-hard-rules`
+
+因此这 11 个 V2.0.4 runtime PASS 证据继续有效；V2.0.5 只需对上一轮失败的 10 个案例做独立定向复测。
+
+### 14.5 V2.0.5 Freeze Manifest
+
+Frozen runtime / contract blobs:
+
+- `evals/case.schema.json` — `82b5bfec775e060a28fc6a6a8d975f12c655ee61`
+- `evals/cases/amount-coverage.jsonl` — `bff29189bb7e5cd7a8baeb5a955e2b880580e737`
+- `evals/cases/classification.jsonl` — `1ec2dfb39c35a4ce8ab267ed0628f23b675d0295`
+- `evals/cases/evidence-wording.jsonl` — `161529e9fd0f06fcc0744a81cf370f5bb331f5b1`
+- `evals/cases/law-applicability.jsonl` — `d64b52fee7ed7f4b3b68d538de9f51c970ecaf5b`
+- `evals/cases/report-format.jsonl` — `58e874cfbad5f8d8933a8c6b05676afae57a8b2e`
+- `evals/cases/report-modes.jsonl` — `3c39345d709789d51e457f1e073e5a6740505e1c`
+- `evals/score.py` — `694907e66c953a5534dc68cea4081266451f3978`
+- `evals/README.md` — `1c42440c84bda2efcda82144e7a97b7c61888905`
+- `rules/result-contract.md` — `83993071dd6d2211656979ca188d1bdcdc11448c`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/law-applicability.md` — `e34ba2b575cedad24ee667042207407a717e53a2`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `17f2b784cec50c2709f37231c1f7dae7efae27c9`
+- `schemas/finding.schema.json` — `5d9fd1943eb032874e00261c0a9b95e00c3a1854`
+- `schemas/law.schema.json` — `3efe2660f5df6d6fe16ca09c97551840c54a0ae2`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+下一次 V2.0.5 定向 Gate D 开始后，上述冻结文件不得根据 runtime 输出修改以追 PASS。
