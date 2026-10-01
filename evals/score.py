@@ -2,10 +2,29 @@
 from __future__ import annotations
 
 import argparse
+import importlib.util
 import json
+import re
 from decimal import Decimal, InvalidOperation
 from pathlib import Path
 from typing import NamedTuple
+
+ROOT = Path(__file__).resolve().parents[1]
+CONTRACT_VERSION = "2.0.1"
+
+STRUCTURED_LIST_FIELDS = (
+    "finding_types",
+    "conclusion_codes",
+    "law_ids",
+    "excluded_law_ids",
+)
+STRUCTURED_SCALAR_FIELDS = (
+    "gate_status",
+    "category",
+    "applicability_status",
+    "record_count",
+    "finding_count",
+)
 
 
 class CaseOutcome(NamedTuple):
@@ -68,6 +87,57 @@ def _same_number(actual, expected) -> bool:
         return False
 
 
+def _load_format_linter():
+    path = ROOT / "scripts" / "report_format_lint.py"
+    spec = importlib.util.spec_from_file_location("report_format_lint_for_eval", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("unable to load report format linter")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _score_text_checks(case: dict, text: str, failures: list[str]) -> None:
+    checks = (case.get("expected") or {}).get("text_checks")
+    if checks is None:
+        return
+    if case.get("domain") != "report-format":
+        failures.append("text_checks: literal text assertions are only allowed for report-format cases")
+        return
+    if not isinstance(checks, dict):
+        failures.append("text_checks: expected an object")
+        return
+
+    for needle in checks.get("contains", []):
+        if needle not in text:
+            failures.append(f"text_checks.contains: missing {needle!r}")
+    for needle in checks.get("not_contains", []):
+        if needle in text:
+            failures.append(f"text_checks.not_contains: found {needle!r}")
+    for pattern in checks.get("regex", []):
+        if re.search(pattern, text) is None:
+            failures.append(f"text_checks.regex: no match for {pattern!r}")
+    for pattern in checks.get("not_regex", []):
+        if re.search(pattern, text) is not None:
+            failures.append(f"text_checks.not_regex: matched {pattern!r}")
+
+
+def _score_format_lint(case: dict, text: str, failures: list[str]) -> None:
+    expected = case.get("expected") or {}
+    forbidden_violations = expected.get("format_forbid")
+    if forbidden_violations is None:
+        return
+    if case.get("domain") != "report-format":
+        failures.append("format_forbid: format lint is only allowed for report-format cases")
+        return
+
+    module = _load_format_linter()
+    actual_violations = set(module.lint_report_text(text))
+    for violation in forbidden_violations:
+        if violation in actual_violations:
+            failures.append(f"format_forbid: found {violation!r}")
+
+
 def score_case(case: dict, result: dict) -> CaseOutcome:
     failures: list[str] = []
     case_id = case["id"]
@@ -76,42 +146,36 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
         failures.append("text: missing or not a string")
         text = ""
 
+    case_version = case.get("contract_version")
+    if case_version is not None and result.get("contract_version") != case_version:
+        failures.append(
+            f"contract_version: expected {case_version!r}, got {result.get('contract_version')!r}"
+        )
+
     expected = case.get("expected") or {}
-    for needle in expected.get("contains", []):
-        if needle not in text:
-            failures.append(f"contains: missing {needle!r}")
-    for needle in expected.get("not_contains", []):
-        if needle in text:
-            failures.append(f"not_contains: found {needle!r}")
-    structured_tokens: set[str] = set()
-    category = result.get("category")
-    if isinstance(category, str):
-        structured_tokens.add(category)
-    law_ids = result.get("law_ids")
-    if isinstance(law_ids, list):
-        structured_tokens.update(item for item in law_ids if isinstance(item, str))
 
-    for needle in case.get("forbidden", []):
-        if needle in text or needle in structured_tokens:
-            failures.append(f"forbidden: found {needle!r}")
+    if "contains" in expected or "not_contains" in expected:
+        failures.append("legacy prose assertions are not allowed in V2.0.1; use structured fields or report-format text_checks")
+    if case.get("forbidden"):
+        failures.append("legacy forbidden assertions are not allowed in V2.0.1")
 
-    if "category" in expected:
-        actual = result.get("category")
-        if actual != expected["category"]:
-            failures.append(f"category: expected {expected['category']!r}, got {actual!r}")
+    _score_text_checks(case, text, failures)
+    _score_format_lint(case, text, failures)
 
-    if "law_ids" in expected:
-        actual_ids = result.get("law_ids")
-        if not isinstance(actual_ids, list):
-            failures.append("law_ids: structured list missing")
-        else:
-            missing = [law_id for law_id in expected["law_ids"] if law_id not in actual_ids]
-            if missing:
-                failures.append(f"law_ids: missing {missing!r}")
-
-    for field in ("record_count", "finding_count"):
+    for field in STRUCTURED_SCALAR_FIELDS:
         if field in expected and result.get(field) != expected[field]:
             failures.append(f"{field}: expected {expected[field]!r}, got {result.get(field)!r}")
+
+    for field in STRUCTURED_LIST_FIELDS:
+        if field not in expected:
+            continue
+        actual = result.get(field)
+        if not isinstance(actual, list):
+            failures.append(f"{field}: structured list missing")
+            continue
+        missing = [item for item in expected[field] if item not in actual]
+        if missing:
+            failures.append(f"{field}: missing {missing!r}")
 
     if "voucher_total" in expected and not _same_number(result.get("voucher_total"), expected["voucher_total"]):
         failures.append(
