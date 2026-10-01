@@ -82,3 +82,32 @@ def test_firm_profile_contains_stable_format_defaults_only():
     assert profile["voucher_reference"] == "{number}号凭证"
     assert profile["ordinary_expense_grouping"] == "by_issue_nature"
     assert set(profile["report_modes"]) == {"classification_report", "special_audit_report"}
+
+
+def test_skill_loads_report_format_and_machine_result_contracts():
+    text = read("SKILL.md")
+    assert "rules/report-format.md" in text
+    assert "rules/result-contract.md" in text
+
+
+def test_machine_result_contract_defines_gate_d_structured_fields():
+    text = read("rules/result-contract.md")
+    for token in (
+        "gate_status",
+        "finding_types",
+        "conclusion_codes",
+        "applicability_status",
+        "law_ids",
+        "excluded_law_ids",
+        "record_count",
+        "finding_count",
+        "voucher_total",
+    ):
+        assert token in text
+
+
+def test_report_format_rule_requires_final_lint():
+    text = read("rules/report-format.md")
+    assert "report_format_lint.py" in text
+    assert "中文弯引号" in text
+    assert "X号凭证" in text
