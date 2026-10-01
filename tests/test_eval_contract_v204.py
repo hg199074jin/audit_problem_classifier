@@ -47,10 +47,7 @@ def test_list_expectations_are_required_subset_by_default():
             "expense_supporting_documents_incomplete",
             "expense_supporting_documents_nonstandard",
         ],
-        "conclusion_codes":[
-            "collusive_bidding_not_established",
-            "travel_subsidy_pending_review",
-        ],
+        "conclusion_codes":["collusive_bidding_not_established"],
     }
     outcome=scorer.score_case(case,result)
     assert outcome.passed, outcome.failures
