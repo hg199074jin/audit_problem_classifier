@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.0.1"
+CONTRACT_VERSION = "2.0.2"
 
 STRUCTURED_LIST_FIELDS = (
     "finding_types",
@@ -155,9 +155,9 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
     expected = case.get("expected") or {}
 
     if "contains" in expected or "not_contains" in expected:
-        failures.append("legacy prose assertions are not allowed in V2.0.1; use structured fields or report-format text_checks")
+        failures.append("legacy prose assertions are not allowed in V2.0.2; use structured fields or report-format text_checks")
     if case.get("forbidden"):
-        failures.append("legacy forbidden assertions are not allowed in V2.0.1")
+        failures.append("legacy forbidden assertions are not allowed in V2.0.2")
 
     _score_text_checks(case, text, failures)
     _score_format_lint(case, text, failures)
