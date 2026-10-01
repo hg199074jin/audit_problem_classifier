@@ -1,19 +1,23 @@
 {
   "id": "HENAN-GP-2020-DISP-OTHER-MUNICIPAL-WORKS-600K",
   "title": "河南省政府集中采购目录及标准（2020年版）",
-  "document_no": "豫财办〔2020〕4号",
+  "document_no": "豫财购〔2020〕4号",
   "article": null,
   "issuer": "河南省财政厅",
   "legal_level": "normative_document",
   "status": "effective",
-  "effective_from": null,
+  "effective_from": "2020-03-09",
   "effective_to": null,
   "jurisdiction": {
     "country": "CN",
     "province": "Henan"
   },
   "subject_scope": {
-    "organization_types": [],
+    "organization_types": [
+      "administrative_unit",
+      "public_institution",
+      "social_organization"
+    ],
     "organization_levels": [
       "municipal"
     ],
@@ -22,10 +26,22 @@
   "business_scope": [
     "works_procurement"
   ],
-  "funding_scope": [],
+  "funding_scope": [
+    "fiscal_funds"
+  ],
   "rule_role": "direct_basis",
   "text": "市级（不含郑州市）工程项目分散采购限额为60万元。",
   "applies_if": [
+    {
+      "field": "government_procurement_scope",
+      "operator": "eq",
+      "value": true
+    },
+    {
+      "field": "in_centralized_catalog",
+      "operator": "eq",
+      "value": false
+    },
     {
       "field": "amount",
       "operator": "gte",
@@ -43,7 +59,7 @@
     "type": "official",
     "authority": "河南省财政厅（河南省政府采购网官方文件）",
     "url": "https://huiji.zfcg.henan.gov.cn/webfile/puyang/rootfiles/2020/03/12/1583907936947143-1583907936949453.pdf",
-    "identifier": "豫财办〔2020〕4号",
+    "identifier": "豫财购〔2020〕4号",
     "verified": true
   },
   "verified_at": "2026-09-30",
