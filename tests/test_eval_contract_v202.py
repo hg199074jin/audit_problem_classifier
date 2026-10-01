@@ -30,13 +30,13 @@ def test_result_contract_distinguishes_pending_entitlement_from_confirmed_review
     assert "只有在已有证据能够确认报销审核程序或必要附件存在缺陷时" in text
 
 
-def test_eval_contract_version_is_204():
+def test_eval_contract_version_is_205():
     cases=[]
     for path in sorted((ROOT / "evals" / "cases").glob("*.jsonl")):
         for raw in path.read_text(encoding="utf-8").splitlines():
             if raw.strip():
                 cases.append(json.loads(raw))
     assert cases
-    assert {row["contract_version"] for row in cases} == {"2.0.4"}
+    assert {row["contract_version"] for row in cases} == {"2.0.5"}
     schema=json.loads((ROOT / "evals" / "case.schema.json").read_text(encoding="utf-8"))
-    assert schema["properties"]["contract_version"]["const"] == "2.0.4"
+    assert schema["properties"]["contract_version"]["const"] == "2.0.5"
