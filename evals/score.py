@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.0.3"
+CONTRACT_VERSION = "2.0.4"
 
 STRUCTURED_LIST_FIELDS = (
     "finding_types",
@@ -28,6 +28,32 @@ STRUCTURED_SCALAR_FIELDS = (
     "finding_count",
     "report_mode",
 )
+
+KNOWN_FINDING_TYPES = {
+    "procurement_quote_collusion_suspected",
+    "procurement_inquiry_missing",
+    "procurement_quotation_material_nonstandard",
+    "procurement_award_material_nonstandard",
+    "procurement_economic_analysis_insufficient",
+    "expense_supporting_documents_incomplete",
+    "expense_supporting_documents_nonstandard",
+    "accounting_issue",
+    "tax_issue",
+    "distribution_list_missing",
+}
+
+KNOWN_REPORT_SECTIONS = {
+    "mode_a_overview_coverage",
+    "mode_a_classification_summary",
+    "mode_a_classification_details",
+    "mode_a_management_recommendations",
+    "mode_a_followup_materials",
+    "mode_b_engagement_purpose",
+    "mode_b_entity_overview",
+    "mode_b_major_findings",
+    "mode_b_opinions_recommendations",
+    "mode_b_report_use_scope",
+}
 
 KNOWN_CONCLUSION_CODES = {
     "collusive_bidding_not_established",
@@ -164,12 +190,34 @@ def _score_format_lint(case: dict, text: str, failures: list[str]) -> None:
             failures.append(f"format_forbid: found {violation!r}")
 
 
-def _score_result_invariants(result: dict, failures: list[str]) -> None:
+def _known_law_ids() -> set[str]:
+    ids: set[str] = set()
+    law_root = ROOT / "references" / "laws"
+    try:
+        import yaml
+    except ImportError:
+        return ids
+    for path in law_root.rglob("*.yaml"):
+        try:
+            data = yaml.safe_load(path.read_text(encoding="utf-8"))
+        except Exception:
+            continue
+        if isinstance(data, dict) and isinstance(data.get("id"), str):
+            ids.add(data["id"])
+    return ids
+
+
+def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> None:
     law_ids = set(result.get("law_ids") or [])
     excluded = set(result.get("excluded_law_ids") or [])
     overlap = sorted(law_ids.intersection(excluded))
     if overlap:
         failures.append(f"law_ids/excluded_law_ids overlap: {overlap!r}")
+
+    findings = set(result.get("finding_types") or [])
+    unknown_findings = sorted(findings - KNOWN_FINDING_TYPES)
+    if unknown_findings:
+        failures.append(f"finding_types: unknown codes {unknown_findings!r}")
 
     conclusions = set(result.get("conclusion_codes") or [])
     unknown = sorted(conclusions - KNOWN_CONCLUSION_CODES)
@@ -178,6 +226,37 @@ def _score_result_invariants(result: dict, failures: list[str]) -> None:
     for pair in MUTUALLY_EXCLUSIVE_CONCLUSIONS:
         if pair <= conclusions:
             failures.append(f"conclusion_codes: mutually exclusive codes present {sorted(pair)!r}")
+
+    if "unverified_law_requires_review" in conclusions:
+        context = case.get("context") or {}
+        if not (
+            context.get("candidate_verified") is False
+            or context.get("candidate_source_type") == "secondary"
+        ):
+            failures.append(
+                "unverified_law_requires_review requires an actual unverified/secondary candidate in context"
+            )
+
+    known_laws = _known_law_ids()
+    for field in ("law_ids", "excluded_law_ids"):
+        values = set(result.get(field) or [])
+        unknown_laws = sorted(values - known_laws)
+        if unknown_laws:
+            failures.append(f"{field}: unknown law id(s) {unknown_laws!r}")
+
+    roles = set(result.get("law_roles") or [])
+    if not roles <= {"direct_basis", "supporting_basis", "liability_basis"}:
+        failures.append(f"law_roles: unknown role(s) {sorted(roles - {'direct_basis','supporting_basis','liability_basis'})!r}")
+    if roles and not law_ids:
+        failures.append("law_roles cannot be emitted without law_ids")
+
+    sections = set(result.get("report_sections") or [])
+    unknown_sections = sorted(sections - KNOWN_REPORT_SECTIONS)
+    if unknown_sections:
+        failures.append(f"report_sections: unknown canonical code(s) {unknown_sections!r}")
+    context_report_mode = (case.get("context") or {}).get("report_mode")
+    if sections and context_report_mode is None:
+        failures.append("report_sections may only be emitted when context.report_mode is explicitly provided")
 
     gate = result.get("gate_status")
     if gate == "blocked":
@@ -240,16 +319,15 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
 
     _score_text_checks(case, text, failures)
     _score_format_lint(case, text, failures)
-    _score_result_invariants(result, failures)
+    _score_result_invariants(case, result, failures)
 
     for field in STRUCTURED_SCALAR_FIELDS:
         if field in expected and result.get(field) != expected[field]:
             failures.append(f"{field}: expected {expected[field]!r}, got {result.get(field)!r}")
 
-    # Safety-critical lists use exact-set semantics. Extra output is as meaningful
-    # as missing output, so both are failures.
+    exact_fields = set(expected.get("exact_fields") or [])
     for field in STRUCTURED_LIST_FIELDS:
-        if field not in expected and field not in result:
+        if field not in expected:
             continue
         expected_set = set(expected.get(field) or [])
         actual = result.get(field)
@@ -260,10 +338,16 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
         else:
             failures.append(f"{field}: structured list missing")
             continue
-        if actual_set != expected_set:
-            failures.append(
-                f"{field}: expected exact set {sorted(expected_set)!r}, got {sorted(actual_set)!r}"
-            )
+
+        if field in exact_fields:
+            if actual_set != expected_set:
+                failures.append(
+                    f"{field}: expected exact set {sorted(expected_set)!r}, got {sorted(actual_set)!r}"
+                )
+        else:
+            missing = sorted(expected_set - actual_set)
+            if missing:
+                failures.append(f"{field}: missing required values {missing!r}")
 
     derived = _derived_coverage(case)
     if derived is not None:
