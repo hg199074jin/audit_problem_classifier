@@ -297,6 +297,37 @@
           }
         }
       }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "repealed",
+              "superseded"
+            ]
+          }
+        },
+        "required": [
+          "status"
+        ]
+      },
+      "then": {
+        "required": [
+          "effective_from",
+          "effective_to"
+        ],
+        "properties": {
+          "effective_from": {
+            "type": "string",
+            "format": "date"
+          },
+          "effective_to": {
+            "type": "string",
+            "format": "date"
+          }
+        }
+      }
     }
   ]
 }
