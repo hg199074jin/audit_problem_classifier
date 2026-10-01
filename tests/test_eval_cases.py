@@ -9,6 +9,7 @@ CASE_FILES = [
     "evidence-wording.jsonl",
     "amount-coverage.jsonl",
     "report-format.jsonl",
+    "report-modes.jsonl",
 ]
 REQUIRED = {"contract_version", "id", "domain", "prompt", "context", "expected"}
 MACHINE_KEYS = {
@@ -43,13 +44,13 @@ def load_cases():
     return cases
 
 
-def test_eval_files_exist_and_rows_have_v202_contract():
+def test_eval_files_exist_and_rows_have_v203_contract():
     cases = load_cases()
     assert cases, "eval case set must not be empty"
     for path, line_no, item in cases:
         missing = REQUIRED - item.keys()
         assert not missing, f"{path}:{line_no} missing fields: {sorted(missing)}"
-        assert item["contract_version"] == "2.0.2"
+        assert item["contract_version"] == "2.0.3"
         assert isinstance(item["context"], dict), f"{path}:{line_no} context must be object"
         assert isinstance(item["expected"], dict), f"{path}:{line_no} expected must be object"
         assert MACHINE_KEYS & item["expected"].keys(), (
