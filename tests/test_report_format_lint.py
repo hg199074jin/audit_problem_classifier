@@ -35,3 +35,16 @@ def test_raw_dot_date_is_rejected():
     module = load_module()
     violations = module.lint_report_text("2025.5.31，66号凭证，列支办公费。")
     assert "raw_dot_date" in violations
+
+
+def test_report_templates_are_clean_examples_for_runtime():
+    module = load_module()
+    for relative in (
+        "references/report-templates/classification-report.md",
+        "references/report-templates/special-audit-report.md",
+    ):
+        text = (ROOT / relative).read_text(encoding="utf-8")
+        violations = module.lint_report_text(text)
+        assert "ascii_chinese_quotes" not in violations, relative
+        assert "unnormalized_voucher_reference" not in violations, relative
+        assert "raw_dot_date" not in violations, relative
