@@ -58,7 +58,6 @@ def test_finding_requires_source_record_id():
 def test_finding_supports_separate_amount_semantics():
     finding = load_fixture("valid-finding.yaml")
     finding["amounts"] = {
-        "voucher_amount": 10000,
         "issue_amount": 6000,
         "confirmed_difference": 2000,
         "pending_amount": 4000,
