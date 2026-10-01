@@ -598,3 +598,35 @@ V2.0.4 首轮 RED：7 failed（版本、subset/exact、Law ID 合法性、report
 - **21/21 deterministic fixture passed**。
 
 V2.0.4 仍需在冻结 head 上执行一次完整 21-case 独立 Skill runtime Gate D；通过后再进入新的独立 Gate E second review。
+
+### 13.6 V2.0.4 Freeze Manifest
+
+冻结前 repository-level GREEN：GitHub Actions Run `36848654905`：
+
+- **114 tests passed**；
+- **32/32 Law Objects validated**；
+- **21/21 deterministic fixture passed**。
+
+Frozen runtime / contract blobs:
+
+- `evals/case.schema.json` — `6f225e7312d6ac7aaba08bf419424b938398e5e1`
+- `evals/cases/amount-coverage.jsonl` — `a98ee855b640754dadef15bfbb6a1e761e37ea71`
+- `evals/cases/classification.jsonl` — `5372f885d375dd436a3ff19d063545a402328cd9`
+- `evals/cases/evidence-wording.jsonl` — `a7f2cba09afa9a7e6d05801d7b1fef6b2a2cc8ad`
+- `evals/cases/law-applicability.jsonl` — `aea7e79deec4e8dbea34fa5a29b715ae2aeb72c9`
+- `evals/cases/report-format.jsonl` — `021c6a5836d889522eb80669a3946ba87ad61796`
+- `evals/cases/report-modes.jsonl` — `e8183c2261d62779c1330b2921f7857a9d762049`
+- `evals/score.py` — `540ba7c550d75f6f4f24c5958476f381ed454709`
+- `evals/README.md` — `472d88760994693d46f7dd512566fed17f54f0c2`
+- `rules/result-contract.md` — `c0f49f86ed0eb2f83dfb243302080cb1f594ee48`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/law-applicability.md` — `e34ba2b575cedad24ee667042207407a717e53a2`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `17f2b784cec50c2709f37231c1f7dae7efae27c9`
+- `schemas/finding.schema.json` — `5d9fd1943eb032874e00261c0a9b95e00c3a1854`
+- `schemas/law.schema.json` — `3efe2660f5df6d6fe16ca09c97551840c54a0ae2`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+从下一次 V2.0.4 Gate D runtime 开始，上述冻结文件不得根据 runtime 输出再修改来追求 PASS。若出现真实缺陷，只记录、STOP，再另开新的 remediation / contract version。
