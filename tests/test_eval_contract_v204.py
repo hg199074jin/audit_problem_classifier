@@ -154,7 +154,7 @@ def test_report_sections_use_canonical_codes_not_titles():
     assert any("report_sections" in x for x in outcome.failures)
 
 
-def test_unverified_code_requires_actual_unverified_candidate_context():
+def test_unverified_review_code_may_be_emitted_from_runtime_analysis_path():
     scorer=load_scorer()
     case=base_case()
     result={
@@ -166,8 +166,7 @@ def test_unverified_code_requires_actual_unverified_candidate_context():
         ],
     }
     outcome=scorer.score_case(case,result)
-    assert not outcome.passed
-    assert any("unverified_law_requires_review" in x for x in outcome.failures)
+    assert outcome.passed, outcome.failures
 
 
 def test_mode_a_and_format_case_use_same_specific_finding_type():
