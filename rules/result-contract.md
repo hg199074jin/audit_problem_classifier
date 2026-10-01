@@ -1,12 +1,12 @@
-# Machine Result Contract（V2.0.8）
+# Machine Result Contract（V2.0.9）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
-Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回人类可读 `text` 与下列结构化字段。编排器可以机械添加 `id` 和 `contract_version`，但不得替模型补专业语义字段。
+Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回人类可读 `text` 与下列结构化字段。所有 machine result 必须先通过 `evals/result.schema.json` 的类型/枚举校验，再进入语义评分。编排器可以机械添加 `id` 和 `contract_version`，但不得替模型补专业语义字段。
 
 ## Contract version
 
-`contract_version = "2.0.8"`
+`contract_version = "2.0.9"`
 
 ## 字段
 
@@ -20,7 +20,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `record_count`
 - `finding_count`
 - `voucher_total`
-- `law_roles`: **law_id → role 对象映射**，key 为本次实际输出的 `law_id`，value 只允许 `direct_basis | supporting_basis | liability_basis`。不得再输出角色字符串数组；没有 `law_ids` 时省略或输出空对象 `{}`。
+- `law_roles`: **law_id → role 对象映射**。只要 `law_ids` 非空，就必须为每一个选中的 Law ID 提供且仅提供一个角色；角色必须与对应结构化 Law Object 的 `rule_role` 一致。value 只允许 `direct_basis | supporting_basis | liability_basis`。不得输出角色字符串数组；没有 `law_ids` 时省略或输出空对象 `{}`。
 - `report_mode`: `classification_report | special_audit_report`
 - `report_sections`: **仅在输入 context 明确带有 `report_mode` 时输出**，并且只能使用下面的稳定章节代码，不得输出中文标题、编号前缀、封面/目录页等展示文本：
   - Mode A：`mode_a_overview_coverage`、`mode_a_classification_summary`、`mode_a_classification_details`、`mode_a_management_recommendations`、`mode_a_followup_materials`
@@ -74,7 +74,8 @@ Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contrac
 - `report_sections` 只在 `context.report_mode` 明确存在时发射。
 - `unverified_law_requires_review` 是保守型 review 提示：当 runtime 在本案分析路径中**实际遇到并考虑了** secondary/unverified 候选时可以发射，不要求该候选必须预先写入 input context；但不能仅因为仓库中存在未核验资料就全局追加。
 - `excluded_law_ids` 只列本案实际候选中被排除的结构化 Law ID，不做全库扫描式罗列。
-- `law_roles` 仅描述本次实际输出的 `law_ids`；所有 key 必须属于 `law_ids`。推荐机器结果直接使用法规 ID→角色映射，避免平行数组丢失对应关系。
+- `law_roles` 仅描述本次实际输出的 `law_ids`；所有 key 必须属于 `law_ids`，且 `law_ids` 的每个元素都必须有对应 role；role 必须与 Law Object 的 `rule_role` 一致。
+- `liability_basis` 只有在 `context.user_requested_liability_analysis=true` 时才允许发射；普通分类/法规依据任务不得默认泄漏责任依据。
 - `gate_status=blocked` 时不要输出 `applicability_status`。
 - `gate_status=needs_review` 只限制尚未确认的正式法规依据和最终化判断；**needs_review 不得吞掉已经独立成立的证据层结论**。例如正文已经形成“现有证据不能认定构成串通投标”的判断时，仍应同步输出 `collusive_bidding_not_established`。
 
@@ -90,6 +91,9 @@ Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contrac
 - `accounting_issue`
 - `tax_issue`
 - `distribution_list_missing`
+- `receivable_undercollection`
+- `contract_signed_after_performance`
+- `invoice_information_irregularity`
 
 ## 结论码语义边界
 
@@ -119,6 +123,9 @@ Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contrac
 - `unverified_law_requires_review`
 - `government_procurement_scope_not_met`
 - `liability_basis_not_default`
+- `recoverable_undercollection_not_loss_established`
+- `post_execution_signing_not_backdating_established`
+- `invoice_irregularity_not_false_invoicing_established`
 
 ## HARD-GATE 结果不变量
 
@@ -137,11 +144,12 @@ Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contrac
 
 ## 评分原则
 
-专业语义由结构化字段评分。V2.0.8 不再对所有数组“一刀切 exact”：
+专业语义由结构化字段评分。V2.0.9 不再对所有数组“一刀切 exact”：
 
 - case 在 `expected` 中声明的数组默认表示“这些值必须出现”；
 - 只有 case 把字段列入 `expected.exact_fields` 时才要求精确集合；
-- 不在 `expected` 中的字段不等于“必须为空”，但仍受全局不变量、已知代码表、Law ID 合法性与发射纪律约束；
-- unknown conclusion/finding code、伪 Law ID、互斥结论、HARD-GATE 跨字段冲突仍然直接 FAIL。
+- 不在 `expected` 中的字段不等于“必须为空”，但仍受全局不变量、result schema、已知代码表、Law ID 合法性与发射纪律约束；
+- `conclusion_codes` 中未被 expected 要求的**实质性专业结论**默认视为危险额外项并 FAIL；当前仅 `unverified_law_requires_review` 作为诊断型 review 提示允许额外发射；
+- unknown conclusion/finding code、伪 Law ID、互斥结论、法规角色与 Law Object 不一致、HARD-GATE 跨字段冲突仍然直接 FAIL。
 
 不得依靠正文固定短语判断专业结论。正文 literal 检查只用于真正的格式硬规则。
