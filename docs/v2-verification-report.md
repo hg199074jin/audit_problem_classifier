@@ -909,3 +909,70 @@ V2.0.7 的新规则主要约束“原始 JSON → candidate result”的保真�
 - `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
 
 下一次 V2.0.7 runtime/archive verification 开始后，上述 frozen 文件不得根据结果修改以追 PASS。
+
+## 17. V2.0.7 Archive Replay Result and V2.0.8 Empty-Pin Alignment
+
+### 17.1 V2.0.7 Gate D archive-first result
+
+V2.0.7 frozen head `e68bd167ebf61e702de2360217a6a2f2afb40b58` 先对 V2.0.4/V2.0.5 已归档 raw runtime JSON 做完整 replay。
+
+Phase 1 archive replay：**17/21 PASS**。V2.0.7 raw-preservation gate 成功捕获：
+
+- 1 个非法 unknown 顶层键 `unverified_law_requires_review`；
+- 3 个旧 `law_roles` 非 canonical shape。
+
+Phase 2 只对这 4 个 FAIL 做 fresh runtime：3 个转 PASS，最终 **20/21**。
+
+唯一剩余失败：`p1-liability-basis-not-default`。expected 钉 `law_roles:{}`，runtime 按 contract 的“无 law_ids 时省略字段”纪律省略 `law_roles`。
+
+原始报告：PR #1 issue comment `5934550270`。
+
+### 17.2 Root cause
+
+scorer 对列表字段已使用“缺省=空集”语义，但 object 字段 `law_roles` 仍要求字面出现 object，形成内部不一致。
+
+`law_roles:{}` 的语义应是“本案不得存在任何法规角色”，而不是“JSON 必须字面发一个空对象”。
+
+### 17.3 V2.0.8 narrow repair
+
+V2.0.8 只修空值 pin 语义，不修改任何 Skill、法规适用、Finding 分类或法律专业语义：
+
+- expected `law_roles:{}` 视为**空性断言**；
+- runtime 省略 `law_roles` 或显式 `{}` 均满足空 pin；
+- runtime 发出任何非空 role mapping 时，空 pin 仍 FAIL；
+- expected 为非空 mapping 时，仍要求完整精确 `law_id → role` mapping；
+- V2.0.7 unknown-top-level raw-preservation gate 完整保留。
+
+### 17.4 TDD / repository verification
+
+V2.0.8 RED：4 failed，分别对应 contract version、空 mapping 省略、非空 mapping 拒绝文案和 contract 空 pin 说明。
+
+修复后 GitHub Actions Run `36886520032`：
+
+- **140 tests passed**；
+- **32/32 Law Objects validated**；
+- **21/21 deterministic fixture passed**。
+
+### 17.5 V2.0.8 Freeze Manifest
+
+- `evals/case.schema.json` — `47a6111d1b2f769d8cc4972e8e2b0e4dfa9ce86d`
+- `evals/cases/amount-coverage.jsonl` — `f1bec597c85fdbcae1490abfa972d8b227362760`
+- `evals/cases/classification.jsonl` — `a41536eb5e2f90b557480c9758d2ea02f95149be`
+- `evals/cases/evidence-wording.jsonl` — `9bec53a6525124d992aef3dc94ab814b44cca02e`
+- `evals/cases/law-applicability.jsonl` — `60088c12ccb2aa1786e49b707f4d41b60683a27f`
+- `evals/cases/report-format.jsonl` — `905c0173a64ec111ad3d8159b95d89f6c5b9cb81`
+- `evals/cases/report-modes.jsonl` — `a430d34d9340e7b680a5b8e204ab4facad2bc798`
+- `evals/score.py` — `56777bd3b821e7abb1b4dc5dc7cbefbe8b07b14f`
+- `evals/README.md` — `079688f35bfce6b3c083597c77f4e4a9fc6cbddf`
+- `rules/result-contract.md` — `8ab470f61c45a88683f88efbe985de579e6e6709`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/law-applicability.md` — `e34ba2b575cedad24ee667042207407a717e53a2`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `17f2b784cec50c2709f37231c1f7dae7efae27c9`
+- `schemas/finding.schema.json` — `5d9fd1943eb032874e00261c0a9b95e00c3a1854`
+- `schemas/law.schema.json` — `3efe2660f5df6d6fe16ca09c97551840c54a0ae2`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+下一次 V2.0.8 archive replay 开始后，上述 frozen 文件不得根据结果修改以追 PASS。
