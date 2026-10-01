@@ -8,14 +8,14 @@
 
 - 原始记录数：按唯一 `source_record_id` 统计；
 - Finding 数：按独立问题点统计；
-- `voucher_amount`：原始凭证金额，只能按 Source Record 汇总一次；
+- `voucher_amount`：**只允许由 Source Record 持有**，原始凭证金额按唯一 `source_record_id` 汇总一次；Finding 不再保存该字段；
 - `issue_amount`：与具体 Finding 直接相关的金额；
 - `confirmed_difference`：有明确依据的已确认差额；
 - `pending_amount`：证据不足、尚不能正式认定的金额。
 
 ## 禁止重复
 
-同一 Source Record 拆为多个 Finding 时，**原始记录数和 `voucher_amount` 不得重复计算**。不得因为三个 Finding 就把一张 10,000.00元凭证累计为 30,000.00元。
+同一 Source Record 拆为多个 Finding 时，**原始记录数和 `voucher_amount` 不得重复计算**。任何需要覆盖统计的机器校验都应从 Source Records 重算，而不是信任候选结果自行声明的总额。不得因为三个 Finding 就把一张 10,000.00元凭证累计为 30,000.00元。
 
 ## 覆盖校验
 
