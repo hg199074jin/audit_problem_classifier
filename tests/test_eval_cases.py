@@ -25,6 +25,10 @@ MACHINE_KEYS = {
     "voucher_total",
     "text_checks",
     "format_forbid",
+    "law_roles",
+    "report_mode",
+    "report_sections",
+    "exact_fields",
 }
 
 
@@ -44,13 +48,13 @@ def load_cases():
     return cases
 
 
-def test_eval_files_exist_and_rows_have_v203_contract():
+def test_eval_files_exist_and_rows_have_v204_contract():
     cases = load_cases()
     assert cases, "eval case set must not be empty"
     for path, line_no, item in cases:
         missing = REQUIRED - item.keys()
         assert not missing, f"{path}:{line_no} missing fields: {sorted(missing)}"
-        assert item["contract_version"] == "2.0.3"
+        assert item["contract_version"] == "2.0.4"
         assert isinstance(item["context"], dict), f"{path}:{line_no} context must be object"
         assert isinstance(item["expected"], dict), f"{path}:{line_no} expected must be object"
         assert MACHINE_KEYS & item["expected"].keys(), (
