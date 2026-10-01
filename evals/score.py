@@ -10,7 +10,7 @@ from pathlib import Path
 from typing import NamedTuple
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.0.7"
+CONTRACT_VERSION = "2.0.8"
 
 STRUCTURED_LIST_FIELDS = (
     "finding_types",
@@ -388,7 +388,12 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
     if "law_roles" in expected:
         expected_roles = expected.get("law_roles")
         actual_roles = result.get("law_roles")
-        if not isinstance(actual_roles, dict):
+        if _is_empty(expected_roles):
+            if not _is_empty(actual_roles):
+                failures.append(
+                    f"law_roles: expected empty mapping, got {actual_roles!r}"
+                )
+        elif not isinstance(actual_roles, dict):
             failures.append("law_roles: expected object mapping law_id to role")
         elif actual_roles != expected_roles:
             failures.append(
