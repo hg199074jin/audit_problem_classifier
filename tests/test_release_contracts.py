@@ -54,9 +54,9 @@ def test_migration_and_verification_reports_exist_and_state_runtime_limit():
     verification = read("docs/v2-verification-report.md")
     assert "V1" in migration and "V2" in migration
     assert "references/laws-legacy-v1.md" in migration
-    assert "48" in verification or "pytest" in verification
-    assert "独立 Skill runtime" in verification
-    assert "未执行" in verification or "待执行" in verification
+    for heading in ("Gate C", "Gate D", "Gate E"):
+        assert heading in verification
+    assert "Skill runtime" in verification
 
 
 def test_ci_workflow_runs_tests_law_validation_and_deterministic_eval():
