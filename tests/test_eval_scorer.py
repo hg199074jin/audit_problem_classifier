@@ -18,7 +18,7 @@ def load_module():
 
 def base_case():
     return {
-        "contract_version": "2.0.3",
+        "contract_version": "2.0.4",
         "id": "case-1",
         "domain": "classification",
         "prompt": "x",
@@ -32,7 +32,7 @@ def base_case():
 
 def base_result():
     return {
-        "contract_version": "2.0.3",
+        "contract_version": "2.0.4",
         "id": "case-1",
         "text": "正文可以自由表述。",
         "category": "FY",
@@ -59,8 +59,20 @@ def test_structured_fields_are_scored_without_prose_dependency():
     assert_fail(base_case(), bad, "category")
 
 
-def test_structured_list_expectations_use_exact_set_checks():
+def test_structured_list_expectations_are_required_subset_by_default():
     case = base_case()
+    result = base_result() | {
+        "finding_types": [
+            "expense_supporting_documents_incomplete",
+            "expense_supporting_documents_nonstandard",
+        ]
+    }
+    assert_pass(case, result)
+
+
+def test_exact_fields_opt_in_to_exact_set_checks():
+    case = base_case()
+    case["expected"]["exact_fields"] = ["finding_types"]
     result = base_result() | {
         "finding_types": [
             "expense_supporting_documents_incomplete",
@@ -78,7 +90,7 @@ def test_contract_version_must_match_when_case_is_versioned():
 def test_record_finding_counts_and_voucher_total_are_structured_assertions():
     case = base_case()
     case["expected"] = {"record_count": 1, "finding_count": 3, "voucher_total": 10000}
-    result = {"contract_version": "2.0.3", "id": "case-1", "text": "", "record_count": 1, "finding_count": 3, "voucher_total": 10000}
+    result = {"contract_version": "2.0.4", "id": "case-1", "text": "", "record_count": 1, "finding_count": 3, "voucher_total": 10000}
     assert_pass(case, result)
 
     bad = result | {"voucher_total": 30000}
@@ -87,7 +99,7 @@ def test_record_finding_counts_and_voucher_total_are_structured_assertions():
 
 def test_report_format_text_checks_are_allowed_only_in_report_format_domain():
     case = {
-        "contract_version": "2.0.3",
+        "contract_version": "2.0.4",
         "id": "fmt",
         "domain": "report-format",
         "prompt": "x",
@@ -100,7 +112,7 @@ def test_report_format_text_checks_are_allowed_only_in_report_format_domain():
         },
     }
     result = {
-        "contract_version": "2.0.3",
+        "contract_version": "2.0.4",
         "id": "fmt",
         "text": "2025/05，66号凭证。",
     }
@@ -112,7 +124,7 @@ def test_report_format_text_checks_are_allowed_only_in_report_format_domain():
 
 def test_format_lint_is_applied_to_report_format_case():
     case = {
-        "contract_version": "2.0.3",
+        "contract_version": "2.0.4",
         "id": "fmt",
         "domain": "report-format",
         "prompt": "x",
@@ -126,7 +138,7 @@ def test_format_lint_is_applied_to_report_format_case():
         },
     }
     good = {
-        "contract_version": "2.0.3",
+        "contract_version": "2.0.4",
         "id": "fmt",
         "text": "2025/05，66号凭证，列支“纪念水壶”。",
     }
