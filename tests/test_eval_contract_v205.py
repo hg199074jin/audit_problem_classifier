@@ -28,7 +28,7 @@ def test_conservative_unverified_review_code_is_allowed_without_predeclared_cont
     scorer=load_scorer()
     case={
         "contract_version":"2.0.9","id":"x","domain":"classification","prompt":"x","context":{},
-        "expected":{"conclusion_codes":["collusive_bidding_not_established"]},
+        "expected":{"conclusion_codes":["collusive_bidding_not_established","decision_required_pending_items"]},
     }
     result={
         "contract_version":"2.0.9","id":"x","text":"",
@@ -47,6 +47,7 @@ def test_extra_known_excluded_laws_are_diagnostic_when_not_exact():
     result={
         "contract_version":"2.0.9","id":"x","text":"",
         "law_ids":["CN-GOV-PURCHASE-SERVICES-2020-ART18-PUBLIC-INSTITUTION-REF"],
+        "law_roles":{"CN-GOV-PURCHASE-SERVICES-2020-ART18-PUBLIC-INSTITUTION-REF":"direct_basis"},
         "excluded_law_ids":["CN-GOV-PURCHASE-SERVICES-2020-ART18"],
     }
     outcome=scorer.score_case(case,result)
