@@ -45,6 +45,8 @@ applies_if:
 
 `Project Context` 只保存项目级稳定事实；人员身份、业务类型、发票状态、服务提供者类型等 Finding 级事实放入 `finding.applicability_facts`。运行法规 Gate 前，由 `build_evaluation_context(project_context, finding, source_record)` 合并为一次性的 evaluation context。
 
+Project Context 的 `funding` 可以表示项目可能涉及的资金集合；若 Source Record 已能明确归属某一笔/某一项资金，则 `source_record.funding` 可以在本次 evaluation context 中**收窄**项目级资金范围。Finding 仍不得自行覆盖项目级保留键。
+
 不得为了某一条法规把 Finding 级事实永久写进项目级 Project Context。
 
 ## 来源核验
@@ -67,8 +69,10 @@ applies_if:
 ## 时效 fail-closed
 
 - `status=effective` 的正式 Law Object 必须有 `effective_from`；
+- `status=repealed|superseded` 的 historical Law Object 必须同时有 `effective_from` 与 `effective_to`，缺任一边界只能 `needs_review`；
 - effective 法规缺少生效起点时，适用性结果只能是 `needs_review`；
 - 需要进行时效判断但缺少业务发生日时，结果只能是 `needs_review`；
+- 日期值格式非法时必须 fail-closed 到 `needs_review`，不得让 evaluator 抛异常或猜测日期；
 - 不能使用 audit period 猜测某一笔业务的具体发生日。
 
 ## 来源 provenance
@@ -78,7 +82,7 @@ applies_if:
 - `official`
 - `official_archive`
 
-且必须完成核验并具有可追溯 URL 或官方 identifier。二手来源即使被人工标记 `verified=true`，也不得直接升级为 `applicable`。
+且必须完成核验并具有可追溯 URL 或官方 identifier。即使 `type=official|official_archive` 且 `verified=true`，只要 URL 和 identifier 同时缺失，也只能 `needs_review`。二手来源即使被人工标记 `verified=true`，也不得直接升级为 `applicable`。
 
 ## 政府采购前置事实
 
@@ -90,3 +94,18 @@ applies_if:
 - 分散采购限额对象还应确认不是集中采购目录内项目。
 
 这些前置事实未知时，应返回 `needs_review`，不得仅凭金额套用限额。
+
+
+## 混合资金三态判断
+
+法规存在 `funding_scope` 时，不得使用“任一资金有交集即适用”的粗略逻辑：
+
+- 当前事项实际资金**全部**落在法规允许范围内：继续后续判断；
+- 当前事项实际资金与允许范围**完全无交集**：`not_applicable`；
+- 当前上下文同时包含允许资金与不允许资金，且尚不能把本 Finding / Source Record 归属到具体资金：`needs_review`。
+
+例如项目总体同时存在财政资金和自有资金，而当前凭证尚未明确来源时，财政资金专属政府采购规则不能直接返回 `applicable`。只有 Source Record 已明确该笔属于财政资金时，才可用其 item-level funding 收窄项目级混合资金。
+
+## 条件类型 fail-closed
+
+`gte/lte/in/not_in` 等结构化条件如果收到类型不匹配的事实，应转为 `needs_review` 并保留原因，不得把 TypeError 直接冒泡给调用方。
