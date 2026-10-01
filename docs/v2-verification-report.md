@@ -822,3 +822,90 @@ V2.0.5 → V2.0.6 的 21 个 case 逐案机器比对：删除 `contract_version`
 - `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
 
 下一次 V2.0.6 定向 Gate D 开始后，上述冻结文件不得根据 runtime 输出再修改以追求 PASS。
+
+## 16. V2.0.6 Runtime-Shape Decision and V2.0.7 Raw-Result Preservation
+
+### 16.1 V2.0.6 law_roles mapping
+
+V2.0.5 targeted runtime 的唯一失败是 `law_roles` 使用 `{law_id: role}` mapping，而旧 contract 要求字符串数组。
+
+V2.0.6 将 canonical shape 正式调整为 law_id → role mapping，并完成 TDD、schema、scorer、fixture 与 contract 迁移。该设计优于平行字符串数组，因为多个法规同时输出时不存在位置对应歧义。
+
+V2.0.6 repository verification：
+
+- **129 tests passed**；
+- **32/32 Law Objects validated**；
+- **21/21 deterministic fixture passed**。
+
+### 16.2 仍存在的 raw-result 漏洞
+
+V2.0.5 原始 runtime 还出现过一个独立问题：
+
+```json
+{"unverified_law_requires_review": true}
+```
+
+该键不属于 machine-result 顶层 contract，但旧编排流程会在机械组装时把未知顶层键丢弃，导致非法 raw JSON 可能在“清洗后”进入 scorer 并 PASS。
+
+因此仅修 law_roles shape 仍不足以关闭机器输出形态风险。
+
+### 16.3 V2.0.7 narrow repair
+
+V2.0.7 不修改任何审计、法规适用或定性语义，只增加 raw-result 保真规则：
+
+- candidate assembler 只允许机械新增 `id` 和 `contract_version`；
+- 不得过滤、删除、重命名或修复 runtime 原始顶层键；
+- 不得进行 dict/list/string 形态转换；
+- 未知顶层键必须原样进入 scorer；
+- scorer 对任何 unknown top-level field 直接 FAIL；
+- `law_roles` 继续保持 V2.0.6 的 law_id → role mapping。
+
+V2.0.7 RED：4 failed，分别对应 contract version、unknown top-level 未拒绝、编排器保真纪律缺失、law-role mapping 文案未明确。
+
+修复后 GitHub Actions Run `36878972543`：
+
+- **134 tests passed**；
+- **32/32 Law Objects validated**；
+- **21/21 deterministic fixture passed**。
+
+### 16.4 Archive-first runtime verification strategy
+
+V2.0.7 的新规则主要约束“原始 JSON → candidate result”的保真，不要求无条件重新生成全部 21 个 runtime。
+
+下一步先使用已有归档：
+
+- V2.0.4 archive：11 个真实 PASS raw outputs；
+- V2.0.5 archive：10 个 targeted raw outputs（其中 9 个当轮 PASS，1 个 law_roles shape 在 V2.0.6/2.0.7 下已成为 canonical mapping）。
+
+对这 21 份 raw JSON：
+
+1. 不过滤任何顶层键；
+2. 只机械添加当前 `id` 与 `contract_version=2.0.7`；
+3. 按当前 21 个 frozen cases 统一重新评分；
+4. 只有在当前 contract 下仍 FAIL 的案例才重新生成。
+
+这种方式既验证了 V2.0.7 的 raw-result 约束，也避免重复消耗已经存在且可审计的独立 runtime 证据。
+
+### 16.5 V2.0.7 Freeze Manifest
+
+- `evals/case.schema.json` — `58533c2a501935f16bb9efd8541a8ca1446d0fb3`
+- `evals/cases/amount-coverage.jsonl` — `b631650a3fa4519ce3aaad7248047bfeeea5758d`
+- `evals/cases/classification.jsonl` — `034399a1e53f0db263cb5b5efece6ace3d2f2fc5`
+- `evals/cases/evidence-wording.jsonl` — `6a90cba913fc9a909eaea61789ee7b2de23f8d82`
+- `evals/cases/law-applicability.jsonl` — `ed920bc6e3e31f9355a43ccb0c6c1e7b40970023`
+- `evals/cases/report-format.jsonl` — `7e6f15ce9483d158cf576138bae920ba1cb170c1`
+- `evals/cases/report-modes.jsonl` — `669d3c287a24bfa6b1e4bc62ba3d69f3dd4b0892`
+- `evals/score.py` — `94dc8cc6fc99374c97d203b7294be2f828a9c331`
+- `evals/README.md` — `e23dcc4fd647f05d11b2a9da7521f0a01b682c71`
+- `rules/result-contract.md` — `5b8047f911e5f633de552dbbfe4961c5607042d1`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/law-applicability.md` — `e34ba2b575cedad24ee667042207407a717e53a2`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `17f2b784cec50c2709f37231c1f7dae7efae27c9`
+- `schemas/finding.schema.json` — `5d9fd1943eb032874e00261c0a9b95e00c3a1854`
+- `schemas/law.schema.json` — `3efe2660f5df6d6fe16ca09c97551840c54a0ae2`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+下一次 V2.0.7 runtime/archive verification 开始后，上述 frozen 文件不得根据结果修改以追 PASS。
