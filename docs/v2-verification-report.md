@@ -420,3 +420,83 @@ TDD 证据：
 9. 缺财政部令102号、事业单位公务用车、watchlist/unverified、工程资金边界、liability basis、Mode A/B 完整 runtime eval。
 
 V2.0.3 remediation 采用 TDD，先建立 Gate E RED tests，再逐项修复。Gate E 修复完成后必须重新由独立 reviewer 复核；当前 PR 仍保持 Draft，不得合并。
+
+## 12. V2.0.3 Gate E Remediation
+
+Gate E 独立 reviewer 的 Critical / Important findings 已进入 V2.0.3 合并前修复。补充 code-review 中的 P2/P3 也按风险处理。
+
+### 12.1 合并前阻塞项修复
+
+- **CR-001 / E-001 — Finding facts 污染 Project Context**
+  - `applicability_facts` 禁止写入 `jurisdiction / organization / funding / event_date / audit_period`；
+  - `build_evaluation_context()` 对保留键直接拒绝。
+
+- **CR-002 / E-002 — effective 法规缺生效起点**
+  - `status=effective` 的 Law Object 强制 `effective_from`；
+  - 缺生效日期或缺业务发生日时 fail-closed 到 `needs_review`；
+  - 河南政府采购对象补录 `effective_from=2020-03-09`。
+
+- **CR-003 / E-003 — 河南政府采购主体/资金/范围前置缺失**
+  - 限定国家机关、事业单位、团体组织；
+  - `funding_scope=[fiscal_funds]`；
+  - 增加 `government_procurement_scope=true`；
+  - 分散采购对象增加 `in_centralized_catalog=false`；
+  - 工程 delegated 对象降为 `supporting_basis`；
+  - 官方文号纠正并锁定为 **豫财购〔2020〕4号**。
+
+- **CR-004 / E-004 — scorer subset 假绿**
+  - V2.0.3 对 `finding_types / conclusion_codes / law_ids / excluded_law_ids / law_roles / report_sections` 采用精确集合语义；
+  - `law_ids` 与 `excluded_law_ids` 不得交集；
+  - unknown conclusion code 和互斥结论组合均失败。
+
+- **CR-005 / E-005 — HARD-GATE 跨字段绕过**
+  - `blocked` 禁止正式分类、Finding、法规、报告字段及非零数量/金额；
+  - `needs_review` 禁止正式 `law_ids / law_roles`。
+
+- **CR-006 / E-006 — voucher amount 重复**
+  - `voucher_amount` 只由 Source Record 持有；
+  - Finding schema 删除该字段；
+  - amount-coverage scorer 从 `source_records` 重算唯一记录数和凭证总额。
+
+- **CR-007 / E-007 — pending/conflicting 可 final**
+  - final Finding 必须 `evidence_status=confirmed` 且有非空 `final_wording`；
+  - pending/conflicting 不得 final。
+
+- **CR-008 / E-008 — provenance 仅信布尔 verified**
+  - effective 法规只接受 `official / official_archive`；
+  - 必须具备可追溯 URL 或 identifier；
+  - secondary 即使 `verified=true` 仍只能 `needs_review`。
+
+- **CR-009 / E-009 — runtime eval 覆盖不足**
+  - 新增财政部令102号事业单位参照；
+  - 新增事业单位公务用车原则适用；
+  - 新增 unverified/secondary → `needs_review`；
+  - 新增河南工程自有资金/非政府采购范围；
+  - 新增 liability_basis 不默认输出；
+  - 新增完整 Mode A / Mode B 回归；
+  - Eval 总数由 14 增至 **21**。
+
+### 12.2 其他 reviewer findings
+
+- **CR-010**：`gte/lte` 类型不匹配不再抛 TypeError，降级 `needs_review`。
+- **CR-011**：冻结 Spec 与实现差异记录在 `docs/v2-migration.md`，不篡改历史 Spec。
+- **CR-012**：release tests 去除历史测试数量魔法字符串。
+- **CR-013**：format lint 增强未闭合 ASCII 引号、`记帐/转帐` 等变体检测。
+
+### 12.3 仓库级验证
+
+V2.0.3 修复代码在 GitHub Actions Run `36830220872` 上取得：
+
+- **101 tests passed**
+- **32/32 Law Objects validated**
+- **21/21 deterministic fixture passed**
+
+该 Run 之后仅追加了 `rules/law-applicability.md` 的规则同步说明和本验证记录，因此最终 head 仍需再次执行完整 CI 后才能冻结。
+
+### 12.4 发布前剩余 Gate
+
+1. 冻结 V2.0.3 最终 head 后，对 **21 个案例**执行独立 Skill runtime Gate D；
+2. Gate D 通过后，对最终 head 再执行一次全新上下文 Gate E independent second review；
+3. 两项均通过后，才进入 PR #1 合并决策。
+
+PR #1 继续保持 Draft，在上述 Gate 通过前不得 merge。
