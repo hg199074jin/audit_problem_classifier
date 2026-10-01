@@ -44,6 +44,9 @@ def build_evaluation_context(
 
     if source_record and source_record.get("event_date") is not None:
         context["event_date"] = source_record["event_date"]
+    if source_record and source_record.get("funding") is not None:
+        source_funding = source_record.get("funding")
+        context["funding"] = list(source_funding) if isinstance(source_funding, list) else source_funding
 
     if finding:
         facts = finding.get("applicability_facts") or {}
@@ -77,6 +80,18 @@ def _coerce_date(value: Any) -> date | None:
     raise TypeError(f"unsupported date value: {value!r}")
 
 
+def _coerce_date_for_review(
+    value: Any,
+    label: str,
+    needs_review: list[str],
+) -> date | None:
+    try:
+        return _coerce_date(value)
+    except (TypeError, ValueError):
+        needs_review.append(f"{label}格式不合法，无法判断法规时效")
+        return None
+
+
 def _get_path(data: dict, path: str) -> tuple[bool, Any]:
     current: Any = data
     for part in path.split("."):
@@ -101,9 +116,15 @@ def _condition_value(context: dict, condition: dict) -> bool | None:
     if operator == "neq":
         return actual != expected
     if operator == "in":
-        return actual in expected
+        try:
+            return actual in expected
+        except TypeError as exc:
+            raise ConditionFactTypeError(field) from exc
     if operator == "not_in":
-        return actual not in expected
+        try:
+            return actual not in expected
+        except TypeError as exc:
+            raise ConditionFactTypeError(field) from exc
     if operator in {"gte", "lte"}:
         try:
             return actual >= expected if operator == "gte" else actual <= expected
@@ -137,24 +158,31 @@ def evaluate_applicability(
         needs_review.append("法规来源尚未核验，不能作为已确认依据")
     if source_type not in {"official", "official_archive"}:
         needs_review.append("法规来源不是可追溯官方来源，不能作为已确认依据")
+    if source_type in {"official", "official_archive"} and not (
+        source.get("url") or source.get("identifier")
+    ):
+        needs_review.append("法规来源缺少可追溯 URL 或官方标识，不能作为已确认依据")
 
     # 1. Effective period / status.
     status = law.get("status")
-    start = _coerce_date(law.get("effective_from"))
-    end = _coerce_date(law.get("effective_to"))
-    event = _coerce_date(event_date)
-    if event is None:
+    start = _coerce_date_for_review(law.get("effective_from"), "法规生效日期", needs_review)
+    end = _coerce_date_for_review(law.get("effective_to"), "法规失效日期", needs_review)
+    event = _coerce_date_for_review(event_date, "业务发生日期", needs_review)
+    if event is None and event_date is None:
         context_event = context.get("event_date")
-        event = _coerce_date(context_event) if context_event is not None else None
+        if context_event is not None:
+            event = _coerce_date_for_review(context_event, "业务发生日期", needs_review)
 
     if status == "unknown":
         needs_review.append("法规效力状态未知")
     if status == "effective" and start is None:
         needs_review.append("现行法规缺少生效日期，无法确认时效")
+    if status in {"repealed", "superseded"} and start is None:
+        needs_review.append("历史法规缺少生效起始日期，无法确认历史适用期")
     if status in {"repealed", "superseded"} and end is None:
         needs_review.append("历史法规缺少失效日期，无法确认历史适用期")
 
-    if start is not None or end is not None or status == "effective":
+    if start is not None or end is not None or status in {"effective", "repealed", "superseded"}:
         if event is None:
             needs_review.append("缺少业务发生日期，无法判断法规时效")
         else:
@@ -211,8 +239,12 @@ def evaluate_applicability(
             needs_review.append("缺少资金性质，无法判断资金适用范围")
         else:
             actual_set = set(actual_funding if isinstance(actual_funding, list) else [actual_funding])
-            if not actual_set.intersection(funding_scope):
+            allowed_set = set(funding_scope)
+            overlap = actual_set.intersection(allowed_set)
+            if not overlap:
                 return ApplicabilityResult("not_applicable", ["资金性质不在法规适用范围内"])
+            if not actual_set.issubset(allowed_set):
+                needs_review.append("当前事项存在混合资金且未完成单笔/单项资金归属，无法确认法规资金范围")
 
     # 6. Required facts / evidence.
     for condition in law.get("applies_if") or []:
