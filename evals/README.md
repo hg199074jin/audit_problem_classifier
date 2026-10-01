@@ -1,10 +1,10 @@
-# V2 Evals — Contract 2.0.6
+# V2 Evals — Contract 2.0.7
 
 本目录保存 Audit Problem Classifier 的可重复行为回归案例。
 
 ## 冻结版本
 
-当前 Gate D 合同版本：`2.0.6`。
+当前 Gate D 合同版本：`2.0.7`。
 
 专业语义使用结构化字段评分：
 
@@ -32,7 +32,7 @@ Gate D 首次真实 runtime 证明，裸子串无法识别中文否定句。例�
 
 语义是**未认定**，但旧 scorer 会因为出现“构成串通投标”五个字而误判。
 
-因此 V2.0.6 以后：
+因此 V2.0.7 以后：
 
 - 专业结论 → `conclusion_codes`
 - 法规入选/排除 → `law_ids` / `excluded_law_ids`
@@ -42,7 +42,7 @@ Gate D 首次真实 runtime 证明，裸子串无法识别中文否定句。例�
 
 ## Gate D 防污染与 anti-gaming
 
-下一次独立 Gate D 开始前，`2.0.6` 的 case schema、expected 和 scorer 契约必须冻结；Gate E remediation 新增案例也必须纳入同一冻结清单。
+下一次独立 Gate D 开始前，`2.0.7` 的 case schema、expected 和 scorer 契约必须冻结；Gate E remediation 新增案例也必须纳入同一冻结清单。
 
 Gate D 一旦开始：
 
@@ -62,9 +62,9 @@ Gate D 一旦开始：
 真实项目返工仍遵循 Skill-TDD：匿名化 → 先写失败案例 → 证明旧行为 FAIL → 最小修复 → 全量回归。
 
 
-## V2.0.6 列表评分语义
+## V2.0.7 列表评分语义
 
-V2.0.6 不再对所有数组字段统一使用 exact-set，也不回退到无约束 subset。
+V2.0.7 不再对所有数组字段统一使用 exact-set，也不回退到无约束 subset。
 
 - 默认：`expected` 中的列表表示“这些值必须出现”；
 - 若某字段写入 `expected.exact_fields`，则该字段要求精确集合；
