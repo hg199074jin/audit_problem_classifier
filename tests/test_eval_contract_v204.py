@@ -193,3 +193,36 @@ def test_live_classification_case_has_project_context_needed_to_proceed():
     assert context["organization"]["type"] == "public_institution"
     assert context["audit_period"]["start"]
     assert context["audit_period"]["end"]
+
+
+def test_amount_coverage_rejects_unrelated_semantic_fields():
+    scorer=load_scorer()
+    case={
+        "contract_version":"2.0.4","id":"x","domain":"amount-coverage","prompt":"x",
+        "context":{"source_records":[{"source_record_id":"SR-1","voucher_amount":10000}],"requested_findings":3},
+        "expected":{"record_count":1,"finding_count":3,"voucher_total":10000},
+    }
+    result={
+        "contract_version":"2.0.4","id":"x","text":"",
+        "record_count":1,"finding_count":3,"voucher_total":10000,
+        "conclusion_codes":["funds_occupied"],
+    }
+    outcome=scorer.score_case(case,result)
+    assert not outcome.passed
+    assert any("amount-coverage" in x and "conclusion_codes" in x for x in outcome.failures)
+
+
+def test_report_format_rejects_unrelated_semantic_conclusions():
+    scorer=load_scorer()
+    case={
+        "contract_version":"2.0.4","id":"x","domain":"report-format","prompt":"x","context":{},
+        "expected":{"finding_types":["distribution_list_missing"]},
+    }
+    result={
+        "contract_version":"2.0.4","id":"x","text":"2025/05，66号凭证。",
+        "finding_types":["distribution_list_missing"],
+        "conclusion_codes":["funds_occupied"],
+    }
+    outcome=scorer.score_case(case,result)
+    assert not outcome.passed
+    assert any("report-format" in x and "conclusion_codes" in x for x in outcome.failures)
