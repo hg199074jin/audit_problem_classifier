@@ -43,7 +43,7 @@ def base_law():
         "funding_scope": ["fiscal_funds"],
         "applies_if": [],
         "excludes_if": [],
-        "source": {"verified": True},
+        "source": {"type": "official", "verified": True, "url": "https://example.invalid"},
     }
 
 
