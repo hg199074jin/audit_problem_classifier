@@ -4,10 +4,11 @@
 **设计基线：** `docs/v2-architecture@942f942671a2659b408b1b7fe28da1068f85388a`  
 **Gate C 已验证实现 Head：** `3d65df2ec838da2eb2257e5b54a9e952defd4a60`  
 **V2.0.1 remediation 已验证 Head：** `21580ee28fa4a94f387bd25c77dbac4f716edd84`  
+**V2.0.2 semantic-fix 已验证 Head：** `985d5be71601515360064f1d23f95aac22f73901`  
 **报告日期：** 2026-10-01  
 **Gate C 状态：** **PASS（仓库级实现与回归验证）**
 
-> 本报告区分“仓库级确定性验证”和“独立 Skill runtime 实测”。Gate D 首轮真实 runtime 已于 2026-10-01 执行并 FAIL（2/14），其主要原因是 V2.0 评测协议对中文语义使用了过度字面化的 contains/not_contains/forbidden；同时发现 1 个真实格式执行缺陷。V2.0.1 已针对这些问题完成 remediation，第二次独立 Skill runtime Gate D 待执行。
+> 本报告区分“仓库级确定性验证”和“独立 Skill runtime 实测”。Gate D 首轮真实 runtime FAIL（2/14），推动 V2.0.1 完成结构化评分与格式 lint；V2.0.1 第二次真实 runtime 为 13/14 PASS，唯一失败暴露出 conclusion code 语义建模过度约束。V2.0.2 已完成最小语义纠偏并重新冻结，下一次 Gate D 待执行。
 
 ## 1. Gate C 机器验证证据
 
@@ -277,16 +278,93 @@ GitHub Actions Run `36799605462` 对 remediation head `21580ee28fa4a94f387bd25c7
 
 编排器在第二次 Gate D 中只可以机械添加 `id` 与 `contract_version`；其余机器语义字段必须来自 runtime 自己。
 
-### 8.4 下一步
+### 8.4 第二次 Gate D：已执行，FAIL（13/14）
 
-第二次独立 Skill runtime Gate D **待执行**。
+2026-10-01，ZCode 按 V2.0.1 frozen contract 对 head `06c8eb197f589c62e9cec9871a40b8c437b4c3a6` 再次执行独立 runtime E2E。
+
+结果：
+
+- **13/14 PASS**
+- `format-hard-rules` 已 PASS，首轮真实格式缺陷确认修复；
+- 14 份输出全部通过 `report_format_lint.py`；
+- 唯一失败：`qualitative-downgrade` 缺 `reimbursement_review_insufficient`。
+
+runtime 已正确输出更具体的：
+
+- `travel_subsidy_pending_review`
+
+并保留：
+
+- `decision_required_pending_items`
+
+原始报告：PR #1 issue comment `5923598828`。
+
+### 8.5 对 13/14 唯一失败的复核裁定
+
+该失败**不是 Skill 漏掉必须存在的专业结论**，而是 V2.0.1 expected 对两个 conclusion code 的语义关系定义过度。
+
+事实输入仅能支持：
+
+- 差旅/交通补助是否可领取仍需补充主办方保障安排、制度适用等事实；
+- 因此 `travel_subsidy_pending_review` 是适当且更精确的结论码。
+
+而 `reimbursement_review_insufficient` 表示已经有证据能够确认报销审核程序或必要附件本身存在缺陷。两者不是同一事实层级，也**不构成蕴含关系**。
+
+因此，不能规定“出现 `travel_subsidy_pending_review` 时必须同时出现 `reimbursement_review_insufficient`”。
+
+这不是把 V2.0.1 的 13/14 人工改判为 PASS；V2.0.1 Gate D 仍保持 FAIL。该问题通过新 contract version **2.0.2** 正式修复，并要求整套 14 例重新运行。
+
+### 8.6 V2.0.2 Semantic Fix：已完成并验证
+
+V2.0.2 只做一个专业语义纠偏：
+
+- `travel_subsidy_pending_review`：事项实体结论仍待核实；
+- `reimbursement_review_insufficient`：只有已有证据能够确认报销审核程序或必要附件存在缺陷时才使用；
+- 两者可以同时出现，但不存在默认父子/伴随关系。
+
+同时将全套 Gate D contract version 统一升级为 `2.0.2`。
+
+GitHub Actions Run `36807246067` 对 head `985d5be71601515360064f1d23f95aac22f73901` 验证结果：
+
+- **83 tests passed**
+- **32/32 Law Object schema validation**
+- **14/14 deterministic fixture passed**
+
+TDD 证据：
+
+- RED：`3 failed, 80 passed`
+  - qualitative-downgrade 仍要求双码；
+  - result-contract 未说明语义边界；
+  - contract version 仍为 2.0.1；
+- GREEN：`83 passed`。
+
+### 8.7 V2.0.2 Contract Freeze Manifest
+
+下一次 Gate D 开始后，以下 contract/scorer 文件不得根据 runtime 输出再修改 expected 来追 PASS：
+
+- `evals/case.schema.json` — blob `6f2ab4b49f71b50c512c46a92bd65ab26b11d39d`
+- `evals/cases/amount-coverage.jsonl` — `da6a5557ed95e96dedb36bbcefc312b3f7524e22`
+- `evals/cases/classification.jsonl` — `573215fdf38cebf9d080398a19e8790eca46cdaf`
+- `evals/cases/evidence-wording.jsonl` — `d19000d9b6e7b98c5d9f05022c234595cc53c338`
+- `evals/cases/law-applicability.jsonl` — `9f1bdd86e57940515ab14cf6f8c6c4f657543c20`
+- `evals/cases/report-format.jsonl` — `a226a4597e4f61347a82d9e2ff6726da647d7fe9`
+- `evals/score.py` — `4379f30f3c0f3e46ef2f899e9bd3cde0e475f769`
+- `evals/README.md` — `ded84d6f043bba2786393e7c516cb1f4c3b31d2b`
+- `rules/result-contract.md` — `dbd2b028a3a3964f6defaf7c710f120aa67d3b59`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `scripts/report_format_lint.py` — `69eedf7cdd1db296940c8b22aacbb10b74c03849`
+
+### 8.8 下一步
+
+下一次独立 Skill runtime Gate D **待执行**。
 
 仍要求：
 
 - 14 个案例独立生成；
 - 相同防污染协议；
 - 并发建议 ≤4；
-- scorer 使用冻结后的 V2.0.1 contract；
+- scorer 使用冻结后的 V2.0.2 contract；
+- 编排器只可机械添加 `id` 与 `contract_version = "2.0.2"`；
 - **14/14 PASS 才能关闭 Gate D**；
 - Gate D 开始后，不得根据输出修改 expected/scorer/case 来追 PASS。
 
@@ -308,7 +386,7 @@ GitHub Actions Run `36799605462` 对 remediation head `21580ee28fa4a94f387bd25c7
 - ✅ Final self-review CLEAN
 - ✅ P0 法规错误与关键适用边界已完成修复
 - ✅ 模式 A / B、HARD-GATE、金额去重与法规适用规则均保留
-- ⚠️ Gate D 首轮独立 Skill runtime 已执行但 FAIL；V2.0.1 第二次 Gate D 待执行
+- ⚠️ Gate D 首轮 2/14 FAIL；V2.0.1 第二次 13/14 FAIL；V2.0.2 已修复唯一语义过度约束，下一次 Gate D 待执行
 - ⚠️ 无独立 reviewer/subagent，本次 whole-branch review 为作者 self-review
 
 **Gate C（仓库级）结论：PASS。**
