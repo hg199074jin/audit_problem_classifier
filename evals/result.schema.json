@@ -1,0 +1,126 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/audit-problem-classifier/evals/result.schema.json",
+  "title": "Audit Problem Classifier Machine Result V2.0.9",
+  "type": "object",
+  "required": [
+    "id",
+    "contract_version",
+    "text"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "contract_version": {
+      "const": "2.0.9"
+    },
+    "text": {
+      "type": "string"
+    },
+    "gate_status": {
+      "enum": [
+        "proceed",
+        "blocked",
+        "needs_review"
+      ]
+    },
+    "category": {
+      "enum": [
+        "ZD",
+        "YS",
+        "ZJ",
+        "ZC",
+        "CG",
+        "XM",
+        "FY",
+        "SJ",
+        "KJ",
+        "NK",
+        "SW",
+        "QT"
+      ]
+    },
+    "finding_types": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "conclusion_codes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "applicability_status": {
+      "enum": [
+        "applicable",
+        "not_applicable",
+        "needs_review"
+      ]
+    },
+    "law_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "excluded_law_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "record_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "finding_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "voucher_total": {
+      "type": "number",
+      "minimum": 0
+    },
+    "law_roles": {
+      "type": "object",
+      "propertyNames": {
+        "type": "string",
+        "minLength": 1
+      },
+      "additionalProperties": {
+        "enum": [
+          "direct_basis",
+          "supporting_basis",
+          "liability_basis"
+        ]
+      }
+    },
+    "report_mode": {
+      "enum": [
+        "classification_report",
+        "special_audit_report"
+      ]
+    },
+    "report_sections": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}
