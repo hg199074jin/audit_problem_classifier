@@ -23,3 +23,16 @@
 ## 五、后续核查资料清单
 
 **报告编制说明：** AI 可辅助整理，最终事实、证据、金额、法规和处理口径由专业审计人员复核。
+
+
+## Machine result section codes
+
+仅在机器可评测输出且 `context.report_mode=classification_report` 时，`report_sections` 使用以下稳定代码；正文仍保留正常中文标题：
+
+- `mode_a_overview_coverage` → 基本情况及覆盖校验
+- `mode_a_classification_summary` → 问题分类汇总表
+- `mode_a_classification_details` → 分类问题详述
+- `mode_a_management_recommendations` → 管理建议
+- `mode_a_followup_materials` → 后续核查资料清单
+
+不得把“问题分类汇总表”等中文标题直接写入机器字段，也不得带章节编号。
