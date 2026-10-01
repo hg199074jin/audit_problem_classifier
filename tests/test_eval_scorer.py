@@ -18,17 +18,26 @@ def load_module():
 
 def base_case():
     return {
+        "contract_version": "2.0.1",
         "id": "case-1",
-        "domain": "test",
+        "domain": "classification",
         "prompt": "x",
         "context": {},
-        "expected": {"contains": ["应出现"]},
-        "forbidden": ["禁止词"],
+        "expected": {
+            "category": "FY",
+            "finding_types": ["expense_supporting_documents_incomplete"],
+        },
     }
 
 
 def base_result():
-    return {"id": "case-1", "text": "这里应出现正确措辞"}
+    return {
+        "contract_version": "2.0.1",
+        "id": "case-1",
+        "text": "正文可以自由表述。",
+        "category": "FY",
+        "finding_types": ["expense_supporting_documents_incomplete"],
+    }
 
 
 def assert_pass(case, result):
@@ -44,42 +53,99 @@ def assert_fail(case, result, fragment):
     assert any(fragment in failure for failure in outcome.failures), outcome.failures
 
 
-def test_contains_and_not_contains_and_forbidden_are_checked_against_text():
+def test_structured_fields_are_scored_without_prose_dependency():
+    assert_pass(base_case(), base_result())
+    bad = base_result() | {"category": "KJ"}
+    assert_fail(base_case(), bad, "category")
+
+
+def test_structured_list_expectations_are_subset_checks():
     case = base_case()
-    case["expected"]["not_contains"] = ["错误结论"]
-    assert_pass(case, base_result())
+    result = base_result() | {
+        "finding_types": [
+            "expense_supporting_documents_incomplete",
+            "expense_supporting_documents_nonstandard",
+        ]
+    }
+    assert_pass(case, result)
 
-    bad = base_result() | {"text": "应出现，但错误结论也出现"}
-    assert_fail(case, bad, "not_contains")
 
-    bad = base_result() | {"text": "应出现，但包含禁止词"}
-    assert_fail(case, bad, "forbidden")
-
-
-def test_structured_category_and_law_ids_do_not_pass_from_prose_only():
-    case = base_case()
-    case["expected"] = {"category": "FY", "law_ids": ["LAW-1"]}
-    prose_only = {"id": "case-1", "text": "FY LAW-1"}
-    assert_fail(case, prose_only, "category")
-
-    structured = {"id": "case-1", "text": "", "category": "FY", "law_ids": ["LAW-1", "LAW-2"]}
-    assert_pass(case, structured)
+def test_contract_version_must_match_when_case_is_versioned():
+    bad = base_result() | {"contract_version": "2.0"}
+    assert_fail(base_case(), bad, "contract_version")
 
 
 def test_record_finding_counts_and_voucher_total_are_structured_assertions():
     case = base_case()
     case["expected"] = {"record_count": 1, "finding_count": 3, "voucher_total": 10000}
-    result = {"id": "case-1", "text": "", "record_count": 1, "finding_count": 3, "voucher_total": 10000}
+    result = base_result() | {"record_count": 1, "finding_count": 3, "voucher_total": 10000}
     assert_pass(case, result)
 
     bad = result | {"voucher_total": 30000}
     assert_fail(case, bad, "voucher_total")
 
 
+def test_report_format_text_checks_are_allowed_only_in_report_format_domain():
+    case = {
+        "contract_version": "2.0.1",
+        "id": "fmt",
+        "domain": "report-format",
+        "prompt": "x",
+        "context": {},
+        "expected": {
+            "text_checks": {
+                "contains": ["2025/05"],
+                "not_contains": ["2025.5.31"],
+            }
+        },
+    }
+    result = {
+        "contract_version": "2.0.1",
+        "id": "fmt",
+        "text": "2025/05，66号凭证。",
+    }
+    assert_pass(case, result)
+
+    case["domain"] = "classification"
+    assert_fail(case, result, "text_checks")
+
+
+def test_format_lint_is_applied_to_report_format_case():
+    case = {
+        "contract_version": "2.0.1",
+        "id": "fmt",
+        "domain": "report-format",
+        "prompt": "x",
+        "context": {},
+        "expected": {
+            "format_forbid": [
+                "ascii_chinese_quotes",
+                "unnormalized_voucher_reference",
+                "raw_dot_date",
+            ]
+        },
+    }
+    good = {
+        "contract_version": "2.0.1",
+        "id": "fmt",
+        "text": "2025/05，66号凭证，列支“纪念水壶”。",
+    }
+    assert_pass(case, good)
+
+    bad = good | {"text": '2025.5.31，记账-66号凭证，列支 "纪念水壶"。'}
+    assert_fail(case, bad, "format_forbid")
+
+
+def test_legacy_prose_semantic_assertions_are_rejected():
+    case = base_case()
+    case["expected"] = {"contains": ["固定措辞"]}
+    result = base_result() | {"text": "固定措辞"}
+    assert_fail(case, result, "legacy prose")
+
+
 def test_missing_result_id_fails_score_all():
     module = load_module()
-    case = base_case()
-    report = module.score_all([case], [])
+    report = module.score_all([base_case()], [])
     assert not report.passed
     assert any("missing result" in failure for failure in report.failures)
 
@@ -101,11 +167,3 @@ def test_case_directory_loader_rejects_duplicate_case_ids(tmp_path):
     (tmp_path / "b.jsonl").write_text(json.dumps(base_case(), ensure_ascii=False) + "\n", encoding="utf-8")
     with pytest.raises(ValueError, match="duplicate case id"):
         module.load_cases(tmp_path)
-
-
-def test_forbidden_law_id_is_rejected_even_when_it_only_appears_in_structured_output():
-    case = base_case()
-    case["expected"] = {"law_ids": ["LAW-CURRENT"]}
-    case["forbidden"] = ["LAW-OLD"]
-    result = {"id": "case-1", "text": "", "law_ids": ["LAW-CURRENT", "LAW-OLD"]}
-    assert_fail(case, result, "forbidden")
