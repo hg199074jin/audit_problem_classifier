@@ -85,18 +85,15 @@ def test_semantic_forbidden_word_in_negated_prose_does_not_fail_without_structur
         "prompt": "x",
         "context": {},
         "expected": {
-            "conclusion_codes": [
-                "collusive_bidding_suspected",
-                "collusive_bidding_not_established",
-            ]
+            "finding_types": ["procurement_quote_collusion_suspected"],
+            "conclusion_codes": ["collusive_bidding_not_established"],
         },
     }
     result = {
         "id": "negation",
         "text": "现有证据不能认定构成串通投标。",
-        "conclusion_codes": [
-            "collusive_bidding_not_established",
-        ],
+        "finding_types": ["procurement_quote_collusion_suspected"],
+        "conclusion_codes": ["collusive_bidding_not_established"],
     }
     outcome = scorer.score_case(case, result)
     assert outcome.passed, outcome.failures
