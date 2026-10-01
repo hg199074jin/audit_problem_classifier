@@ -55,6 +55,29 @@ KNOWN_REPORT_SECTIONS = {
     "mode_b_report_use_scope",
 }
 
+DOMAIN_FORBIDDEN_FIELDS = {
+    "amount-coverage": {
+        "category",
+        "finding_types",
+        "conclusion_codes",
+        "applicability_status",
+        "law_ids",
+        "excluded_law_ids",
+        "law_roles",
+        "report_mode",
+        "report_sections",
+    },
+    "report-format": {
+        "conclusion_codes",
+        "applicability_status",
+        "law_ids",
+        "excluded_law_ids",
+        "law_roles",
+        "report_mode",
+        "report_sections",
+    },
+}
+
 KNOWN_CONCLUSION_CODES = {
     "collusive_bidding_not_established",
     "funds_not_fully_remitted",
@@ -208,6 +231,12 @@ def _known_law_ids() -> set[str]:
 
 
 def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> None:
+    domain = case.get("domain")
+    for field in DOMAIN_FORBIDDEN_FIELDS.get(domain, set()):
+        value = result.get(field)
+        if value not in (None, [], ""):
+            failures.append(f"{domain}: field {field} is outside this eval domain's emission profile")
+
     law_ids = set(result.get("law_ids") or [])
     excluded = set(result.get("excluded_law_ids") or [])
     overlap = sorted(law_ids.intersection(excluded))
