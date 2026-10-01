@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.0.5）
+# Machine Result Contract（V2.0.6）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.0.5"`
+`contract_version = "2.0.6"`
 
 ## 字段
 
@@ -20,13 +20,32 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `record_count`
 - `finding_count`
 - `voucher_total`
-- `law_roles`: 对应本次实际输出 `law_ids` 的法规角色，只允许 `direct_basis | supporting_basis | liability_basis`；没有 `law_ids` 时不要输出。
+- `law_roles`: **对象映射**，key 为本次实际输出的 `law_id`，value 只允许 `direct_basis | supporting_basis | liability_basis`。不得再输出角色字符串数组；没有 `law_ids` 时省略或输出空对象 `{}`。
 - `report_mode`: `classification_report | special_audit_report`
 - `report_sections`: **仅在输入 context 明确带有 `report_mode` 时输出**，并且只能使用下面的稳定章节代码，不得输出中文标题、编号前缀、封面/目录页等展示文本：
   - Mode A：`mode_a_overview_coverage`、`mode_a_classification_summary`、`mode_a_classification_details`、`mode_a_management_recommendations`、`mode_a_followup_materials`
   - Mode B：`mode_b_engagement_purpose`、`mode_b_entity_overview`、`mode_b_major_findings`、`mode_b_opinions_recommendations`、`mode_b_report_use_scope`
 
 字段按任务需要输出；未发生的语义不要为了“填满字段”而编造。
+
+### `law_roles` canonical shape
+
+```json
+{
+  "law_ids": ["CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"],
+  "law_roles": {
+    "CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE": "supporting_basis"
+  }
+}
+```
+
+禁止输出：
+
+```json
+{"law_roles": ["supporting_basis"]}
+```
+
+当存在多个 `law_ids` 时，mapping 直接表达每个法规对应的角色，避免数组位置歧义。
 
 ### Domain emission profiles
 
@@ -41,7 +60,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `report_sections` 只在 `context.report_mode` 明确存在时发射。
 - `unverified_law_requires_review` 是保守型 review 提示：当 runtime 在本案分析路径中**实际遇到并考虑了** secondary/unverified 候选时可以发射，不要求该候选必须预先写入 input context；但不能仅因为仓库中存在未核验资料就全局追加。
 - `excluded_law_ids` 只列本案实际候选中被排除的结构化 Law ID，不做全库扫描式罗列。
-- `law_roles` 仅描述本次实际输出的 `law_ids`；无正向法规 ID 时省略。
+- `law_roles` 仅描述本次实际输出的 `law_ids`；所有 key 必须属于 `law_ids`。推荐机器结果直接使用法规 ID→角色映射，避免平行数组丢失对应关系。
 - `gate_status=blocked` 时不要输出 `applicability_status`。
 - `gate_status=needs_review` 只限制尚未确认的正式法规依据和最终化判断；**needs_review 不得吞掉已经独立成立的证据层结论**。例如正文已经形成“现有证据不能认定构成串通投标”的判断时，仍应同步输出 `collusive_bidding_not_established`。
 
@@ -89,13 +108,13 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## HARD-GATE 结果不变量
 
-- `gate_status=blocked` 时，不得同时输出正式 `category/finding_types/law_ids/law_roles/report_mode/report_sections`，记录数、Finding 数和金额只能为空或 0。
-- `gate_status=needs_review` 时，不得输出正式 `law_ids/law_roles`。
+- `gate_status=blocked` 时，不得同时输出正式 `category/finding_types/law_ids/law_roles/report_mode/report_sections`，记录数、Finding 数和金额只能为空或 0。`law_roles` 为空时使用 `{}` 或省略。
+- `gate_status=needs_review` 时，不得输出正式 `law_ids/law_roles`；`law_roles` 为空时使用 `{}` 或省略。
 - `law_ids` 与 `excluded_law_ids` 不得交集。
 
 ## 评分原则
 
-专业语义由结构化字段评分。V2.0.5 不再对所有数组“一刀切 exact”：
+专业语义由结构化字段评分。V2.0.6 不再对所有数组“一刀切 exact”：
 
 - case 在 `expected` 中声明的数组默认表示“这些值必须出现”；
 - 只有 case 把字段列入 `expected.exact_fields` 时才要求精确集合；
