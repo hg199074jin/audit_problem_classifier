@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.0.4）
+# Machine Result Contract（V2.0.5）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.0.4"`
+`contract_version = "2.0.5"`
 
 ## 字段
 
@@ -39,10 +39,11 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 ### 发射纪律
 
 - `report_sections` 只在 `context.report_mode` 明确存在时发射。
-- `unverified_law_requires_review` 只在本案**实际候选法规**确属 secondary/unverified 时发射；不能因为仓库里存在 legacy 文档或其他未核验资料就全局追加该码。
+- `unverified_law_requires_review` 是保守型 review 提示：当 runtime 在本案分析路径中**实际遇到并考虑了** secondary/unverified 候选时可以发射，不要求该候选必须预先写入 input context；但不能仅因为仓库中存在未核验资料就全局追加。
 - `excluded_law_ids` 只列本案实际候选中被排除的结构化 Law ID，不做全库扫描式罗列。
 - `law_roles` 仅描述本次实际输出的 `law_ids`；无正向法规 ID 时省略。
 - `gate_status=blocked` 时不要输出 `applicability_status`。
+- `gate_status=needs_review` 只限制尚未确认的正式法规依据和最终化判断；**needs_review 不得吞掉已经独立成立的证据层结论**。例如正文已经形成“现有证据不能认定构成串通投标”的判断时，仍应同步输出 `collusive_bidding_not_established`。
 
 ## 当前稳定 finding_types
 
@@ -94,7 +95,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## 评分原则
 
-专业语义由结构化字段评分。V2.0.4 不再对所有数组“一刀切 exact”：
+专业语义由结构化字段评分。V2.0.5 不再对所有数组“一刀切 exact”：
 
 - case 在 `expected` 中声明的数组默认表示“这些值必须出现”；
 - 只有 case 把字段列入 `expected.exact_fields` 时才要求精确集合；
