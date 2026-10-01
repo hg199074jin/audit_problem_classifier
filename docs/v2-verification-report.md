@@ -724,3 +724,101 @@ Frozen runtime / contract blobs:
 - `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
 
 下一次 V2.0.5 定向 Gate D 开始后，上述冻结文件不得根据 runtime 输出修改以追 PASS。
+
+## 15. V2.0.5 Targeted Runtime and V2.0.6 Law-Role Mapping
+
+### 15.1 V2.0.5 Targeted Gate D
+
+V2.0.5 frozen head `88ca4dfd73a0bc8c2b9a9124a3b377864d8bde93` 对 V2.0.4 的 10 个失败案例做独立定向复测。
+
+结果：
+
+- **9/10 PASS**；
+- format lint：**10/10 PASS**；
+- 19/19 freeze SHA 匹配，Drift = NONE；
+- 前一轮 11 个真实 PASS 的 carry-forward 证据经机器比对继续有效。
+
+唯一失败：`p1-official-vehicle-public-institution-principle`。
+
+runtime 原始输出：
+
+```json
+{
+  "law_ids": ["CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"],
+  "law_roles": {
+    "CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE": "supporting_basis"
+  }
+}
+```
+
+V2.0.5 contract 要求 `law_roles` 为字符串数组，因此该结果因 JSON shape 违约失败。原始报告：PR #1 issue comment `5933191914`。
+
+### 15.2 复核裁定
+
+该失败不是专业语义错误，而是 `law_roles` 数据模型本身不稳定：平行字符串数组无法显式表达“哪个 law_id 对应哪个 role”，尤其在多个法规同时输出时存在位置歧义。
+
+因此不采用“强迫 runtime 始终输出字符串数组”的方案，而将 V2.0.6 的 canonical shape 调整为 **law_id → role 映射对象**。
+
+### 15.3 V2.0.6 Narrow Repair
+
+- `law_roles` 类型由 `string[]` 改为 object mapping；
+- key 必须是结构化 Law ID，且必须属于当前 `law_ids`；
+- value 只允许 `direct_basis / supporting_basis / liability_basis`；
+- array 形态明确判 FAIL；
+- blocked / needs_review / domain emission profile 对空 `law_roles` 同时接受省略或 `{}`；
+- `p1-official-vehicle-public-institution-principle` expected 改为精确 mapping；
+- `p1-liability-basis-not-default` expected 改为空 mapping `{}`。
+
+Canonical example：
+
+```json
+{
+  "law_ids": ["CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"],
+  "law_roles": {
+    "CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE": "supporting_basis"
+  }
+}
+```
+
+### 15.4 TDD / Repository Verification
+
+V2.0.6 RED：7 failed，全部集中在 contract version、law_roles schema、mapping scorer、两个 affected cases 与 canonical example。
+
+修复后 GitHub Actions Run `36877814830`：
+
+- **129 tests passed**；
+- **32/32 Law Objects validated**；
+- **21/21 deterministic fixture passed**。
+
+### 15.5 Impact Proof
+
+V2.0.5 → V2.0.6 的 21 个 case 逐案机器比对：删除 `contract_version` 后，只有两个 expected 真正变化：
+
+1. `p1-official-vehicle-public-institution-principle`：`law_roles` 数组 → law_id→role mapping；
+2. `p1-liability-basis-not-default`：`law_roles=[]` → `{}`。
+
+其余 19 个 case 的 prompt/context/expected/notes/source 完全一致。
+
+### 15.6 V2.0.6 Freeze Manifest
+
+- `evals/case.schema.json` — `104100646677f68da67e22a19c60fb7e3530789c`
+- `evals/cases/amount-coverage.jsonl` — `cd8de23bbbc3b399ea6e3ca0024033312c8773f6`
+- `evals/cases/classification.jsonl` — `7ad3c589991d479ae30aa0772445b2ffc0c1c0b7`
+- `evals/cases/evidence-wording.jsonl` — `60b39c0fea8b835f3849fef906801d167f231660`
+- `evals/cases/law-applicability.jsonl` — `df27976af1aad1b1702af914a9a9593121d83030`
+- `evals/cases/report-format.jsonl` — `14c550d11b65c89aa2c95602c2c556fc1537508e`
+- `evals/cases/report-modes.jsonl` — `ce85913a1efccae596e50f950e6801c456573b2b`
+- `evals/score.py` — `edde029afe1023657e28c11bb65c6d15ce142ce6`
+- `evals/README.md` — `39fd3c5f23d2dea1ccc9f7c8be4069644e38f6c9`
+- `rules/result-contract.md` — `086f274c6cf748c4da78f345830a109e2964dd34`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/law-applicability.md` — `e34ba2b575cedad24ee667042207407a717e53a2`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `17f2b784cec50c2709f37231c1f7dae7efae27c9`
+- `schemas/finding.schema.json` — `5d9fd1943eb032874e00261c0a9b95e00c3a1854`
+- `schemas/law.schema.json` — `3efe2660f5df6d6fe16ca09c97551840c54a0ae2`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+下一次 V2.0.6 定向 Gate D 开始后，上述冻结文件不得根据 runtime 输出再修改以追求 PASS。
