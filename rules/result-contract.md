@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.0.2）
+# Machine Result Contract（V2.0.3）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.0.2"`
+`contract_version = "2.0.3"`
 
 ## 字段
 
@@ -20,6 +20,9 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `record_count`
 - `finding_count`
 - `voucher_total`
+- `law_roles`: 实际输出法规角色，只允许 `direct_basis | supporting_basis | liability_basis`
+- `report_mode`: `classification_report | special_audit_report`
+- `report_sections`: 实际生成的主要报告章节数组
 
 字段按任务需要输出；未发生的语义不要为了“填满字段”而编造。
 
@@ -59,7 +62,18 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `enterprise_training_rule_not_applicable_to_public_institution`
 - `current_invoice_art20_direct_basis`
 - `obsolete_official_vehicle_rule_not_current`
+- `government_purchase_service_reference_applies`
+- `official_vehicle_public_institution_principle_applies`
+- `unverified_law_requires_review`
+- `government_procurement_scope_not_met`
+- `liability_basis_not_default`
+
+## HARD-GATE 结果不变量
+
+- `gate_status=blocked` 时，不得同时输出正式 `category/finding_types/law_ids/law_roles/report_mode/report_sections`，记录数、Finding 数和金额只能为空或 0。
+- `gate_status=needs_review` 时，不得输出正式 `law_ids/law_roles`。
+- `law_ids` 与 `excluded_law_ids` 不得交集。
 
 ## 评分原则
 
-专业语义由结构化字段评分；不得依靠正文里是否出现某个固定中文短语判断专业结论。正文 literal 检查只用于真正的格式硬规则。
+专业语义由结构化字段评分；安全关键数组采用精确集合语义，额外输出与缺失输出同样视为失败。不得依靠正文固定短语判断专业结论。正文 literal 检查只用于真正的格式硬规则。
