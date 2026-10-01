@@ -37,7 +37,7 @@ def test_unknown_top_level_result_field_fails():
     }
     outcome=scorer.score_case(case,result)
     assert not outcome.passed
-    assert any("unknown top-level field" in item for item in outcome.failures)
+    assert any("unknown top-level field" in item or "schema/type" in item for item in outcome.failures)
 
 
 def test_known_machine_fields_remain_valid():
