@@ -125,7 +125,15 @@
     "applicability_target": {
       "type": "string",
       "minLength": 1,
-      "description": "Explicit identity of the single rule/candidate that applicability_status refers to (a structured Law ID or a stable identifier of the user-proposed claim). Required whenever applicability_status is emitted."
+      "description": "Explicit identity of the single rule/candidate that applicability_status refers to. Must be emitted together with applicability_status (schema-enforced bidirectionally). Either a structured Law ID (then membership in law_ids/excluded_law_ids is enforced by status) or a stable candidate_rule identifier declared in the case input context."
     }
+  },
+  "dependentRequired": {
+    "applicability_status": [
+      "applicability_target"
+    ],
+    "applicability_target": [
+      "applicability_status"
+    ]
   }
 }

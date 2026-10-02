@@ -173,7 +173,15 @@
           "description": "Explicit identity of the rule/candidate that applicability_status is asserted against."
         }
       },
-      "additionalProperties": false
+      "additionalProperties": false,
+      "dependentRequired": {
+        "applicability_status": [
+          "applicability_target"
+        ],
+        "applicability_target": [
+          "applicability_status"
+        ]
+      }
     },
     "notes": {
       "type": "string"

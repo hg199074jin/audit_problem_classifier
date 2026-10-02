@@ -1165,19 +1165,21 @@ V2.0.9 Gate D（26-case runtime，ZCODE-001）17/26 PASS，9 例失败裁定如�
 
 ### 19.4 V2.1.0 Freeze Manifest
 
+> Amended by GPT-002-R1 (contract-completion patch): applicability status/target pairing made globally enforceable; old c66117e freeze superseded by the R1 final SHA. Blob list regenerated.
+
 Frozen runtime / contract / data-validation blobs:
 
-- `evals/case.schema.json` — `7919afb4de408382baddd9add67da376a1745b58`
-- `evals/result.schema.json` — `05c2a540294422622432a4448f70878eae07f052`
+- `evals/case.schema.json` — `934fd2fb8c9d5aceb1832af2e816fa1c95165961`
+- `evals/result.schema.json` — `6c1d813a0372b6176418806205a417fdcd290112`
 - `evals/cases/amount-coverage.jsonl` — `3160ee25bf6bd32865f1db324dd426239ece2d8a`
 - `evals/cases/classification.jsonl` — `98b1a74024e8a904c42d1f5717e6164cab7d8dcb`
 - `evals/cases/evidence-wording.jsonl` — `6374c72db89c6a5a4787fedd72dfe06a0b90ef93`
-- `evals/cases/law-applicability.jsonl` — `62f48e59bb2ebcf57a2c499c6b8151d0be7821cc`
+- `evals/cases/law-applicability.jsonl` — `f0324d6120f13af2e54c26c40f305cb7c5dc17a0`
 - `evals/cases/report-format.jsonl` — `191fc33e7706eaa183416221c66d8d947f6d0e6d`
-- `evals/cases/report-modes.jsonl` — `4cb5755d7d85ffe62575d5b46e4bac73fdccb3c2`
-- `evals/score.py` — `d68a3908ff0b7a804a532ba906ffebdcd61728a8`
+- `evals/cases/report-modes.jsonl` — `c985c89cb83c39f4c23ba549caa94d6fa75fca65`
+- `evals/score.py` — `09abe64ca84c3b47fa06cd41516049ab65575aa5`
 - `evals/README.md` — `0833e8282e06d4c2c1d2b89752525b7376cdaacf`
-- `rules/result-contract.md` — `8eb5ad2e4f3505d3968722f7240c682052221304`
+- `rules/result-contract.md` — `8f543f127b68d3b1ae3a656ebf049ec5113c0659`
 - `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
 - `rules/law-applicability.md` — `0a2f24488142aac7f65b57b4336f21f98d741b80`
 - `rules/coverage-and-amount.md` — `762a0600cc37b7e832eaa4326e94a31a3c30fc3d`

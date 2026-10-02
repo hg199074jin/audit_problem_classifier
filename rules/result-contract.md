@@ -14,7 +14,10 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `category`: 单一主分类代码，如 `FY`、`CG`
 - `finding_types`: 稳定问题类型代码数组
 - `conclusion_codes`: 稳定专业结论代码数组
-- `applicability_target`: **本次 `applicability_status` 明确指向的唯一目标标识**（结构化法规 ID，或用户提出的候选口径的稳定标识，如 `user_exclusion_claim:henan-1m-threshold`）。只要输出 `applicability_status`，就必须同时输出本字段；status 的语义 = 该目标的状态。被否定的错误口径与正向适用法规必须分别表达：被否定口径经 Gate 排除的进入 `excluded_law_ids`（属结构化法规时）或仅体现在正文与结论码中，正向适用法规进入 `law_ids` 并可作为 `applicability_target`。
+- `applicability_target`: **本次 `applicability_status` 明确指向的唯一目标标识**。这是全局不变量（result.schema `dependentRequired` + scorer 全局校验强制，不依赖 expected 是否钉定）：输出 `applicability_status` 必须同时输出本字段，反之亦然；status 的语义 = 该目标的状态。目标标识取值二选一：
+  1. **结构化 Law ID**：此时受成员绑定约束——`applicable` ⇒ 目标必须已被选入 `law_ids`；`not_applicable` ⇒ 目标必须列入 `excluded_law_ids`；`needs_review` ⇒ 目标不得作为正式 `law_ids` 输出；
+  2. **用户候选口径的稳定标识**（`candidate_rule:<slug>`）：候选对象不是结构化法规时使用，且该标识必须已在 input context 中声明（`candidate_rule_id` 字段，仅表示被判断对象身份，不属于答案泄漏）；不得要求 runtime 猜测只存在于 expected 的私有标签。
+  被否定的错误口径与正向适用法规必须分别表达：结构化被排除对象进入 `excluded_law_ids`，正向适用法规进入 `law_ids` 并作为 `applicability_target`；非结构化口径的否定结论体现在正文与结论码中。
 - `applicability_status`: `applicable | not_applicable | needs_review`。**必须与 `applicability_target` 成对输出**，且只表示 `applicability_target` 所指目标的状态；不得把整体法规库状态、替代法规状态或多个对象混合进该字段。
 - `law_ids`: 可作为当前候选/依据的结构化法规 ID
 - `excluded_law_ids`: 明确被时效、主体、地域或其他适用条件排除的**实际候选法规 ID**。只记录本案确实被纳入判断的候选，不得把整个法规库中所有不匹配对象批量枚举进来。

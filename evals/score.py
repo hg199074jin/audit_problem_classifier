@@ -366,6 +366,35 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
     if sections and context_report_mode is None:
         failures.append("report_sections may only be emitted when context.report_mode is explicitly provided")
 
+    status = result.get("applicability_status")
+    target = result.get("applicability_target")
+    if (status is None) != (target is None):
+        if status is not None:
+            failures.append(
+                "applicability_target: required whenever applicability_status is emitted"
+            )
+        else:
+            failures.append(
+                "applicability_status: required whenever applicability_target is emitted"
+            )
+    elif status is not None:
+        law_catalog = _load_law_catalog()
+        if target in law_catalog:
+            selected = set(result.get("law_ids") or [])
+            excluded = set(result.get("excluded_law_ids") or [])
+            if status == "applicable" and target not in selected:
+                failures.append(
+                    f"applicability_target: applicable structured target {target!r} must be selected in law_ids"
+                )
+            if status == "not_applicable" and target not in excluded:
+                failures.append(
+                    f"applicability_target: not_applicable structured target {target!r} must be listed in excluded_law_ids"
+                )
+            if status == "needs_review" and target in selected:
+                failures.append(
+                    "applicability_target: needs_review target cannot be emitted as formal law_ids"
+                )
+
     gate = result.get("gate_status")
     if gate == "blocked":
         forbidden_fields = ("category", "finding_types", "applicability_status", "applicability_target", "law_ids", "excluded_law_ids", "law_roles", "report_mode", "report_sections")
