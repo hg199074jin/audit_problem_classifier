@@ -1,10 +1,10 @@
-# V2 Evals — Contract 2.0.9
+# V2 Evals — Contract 2.1.0
 
 本目录保存 Audit Problem Classifier 的可重复行为回归案例。
 
 ## 冻结版本
 
-当前 Gate D 合同版本：`2.0.9`。
+当前 Gate D 合同版本：`2.1.0`。
 
 专业语义使用结构化字段评分：
 

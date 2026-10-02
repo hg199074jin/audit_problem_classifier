@@ -1,7 +1,7 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://example.invalid/audit-problem-classifier/evals/case.schema.json",
-  "title": "Audit Problem Classifier V2.0.9 Eval Case",
+  "title": "Audit Problem Classifier V2.1.0 Eval Case",
   "type": "object",
   "required": [
     "contract_version",
@@ -13,7 +13,7 @@
   ],
   "properties": {
     "contract_version": {
-      "const": "2.0.9"
+      "const": "2.1.0"
     },
     "id": {
       "type": "string",
@@ -166,6 +166,11 @@
               "report_sections"
             ]
           }
+        },
+        "applicability_target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Explicit identity of the rule/candidate that applicability_status is asserted against."
         }
       },
       "additionalProperties": false

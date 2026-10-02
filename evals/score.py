@@ -44,6 +44,7 @@ ALLOWED_RESULT_FIELDS = {
     "finding_types",
     "conclusion_codes",
     "applicability_status",
+    "applicability_target",
     "law_ids",
     "excluded_law_ids",
     "record_count",
@@ -89,6 +90,7 @@ DOMAIN_FORBIDDEN_FIELDS = {
         "finding_types",
         "conclusion_codes",
         "applicability_status",
+        "applicability_target",
         "law_ids",
         "excluded_law_ids",
         "law_roles",
@@ -98,6 +100,7 @@ DOMAIN_FORBIDDEN_FIELDS = {
     "report-format": {
         "conclusion_codes",
         "applicability_status",
+        "applicability_target",
         "law_ids",
         "excluded_law_ids",
         "law_roles",
@@ -365,7 +368,7 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
 
     gate = result.get("gate_status")
     if gate == "blocked":
-        forbidden_fields = ("category", "finding_types", "applicability_status", "law_ids", "excluded_law_ids", "law_roles", "report_mode", "report_sections")
+        forbidden_fields = ("category", "finding_types", "applicability_status", "applicability_target", "law_ids", "excluded_law_ids", "law_roles", "report_mode", "report_sections")
         for field in forbidden_fields:
             value = result.get(field)
             if not _is_empty(value):
@@ -518,6 +521,18 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
     for field in STRUCTURED_SCALAR_FIELDS:
         if field in expected and result.get(field) != expected[field]:
             failures.append(f"{field}: expected {expected[field]!r}, got {result.get(field)!r}")
+
+    if "applicability_target" in expected:
+        expected_target = expected.get("applicability_target")
+        actual_target = result.get("applicability_target")
+        if not isinstance(actual_target, str) or not actual_target.strip():
+            failures.append(
+                "applicability_target: missing or invalid; applicability_status requires an explicit target identity"
+            )
+        elif actual_target != expected_target:
+            failures.append(
+                f"applicability_target: expected {expected_target!r}, got {actual_target!r}"
+            )
 
     if "law_roles" in expected:
         expected_roles = expected.get("law_roles")

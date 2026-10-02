@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.0.9）
+# Machine Result Contract（V2.1.0）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.0.9"`
+`contract_version = "2.1.0"`
 
 ## 字段
 
@@ -14,7 +14,8 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `category`: 单一主分类代码，如 `FY`、`CG`
 - `finding_types`: 稳定问题类型代码数组
 - `conclusion_codes`: 稳定专业结论代码数组
-- `applicability_status`: `applicable | not_applicable | needs_review`。仅表示**用户问题中明确指向的目标法规/候选规则**的适用状态；如果同时讨论替代现行依据，可另列入 `law_ids`，不得把整体法规库状态混进该字段。
+- `applicability_target`: **本次 `applicability_status` 明确指向的唯一目标标识**（结构化法规 ID，或用户提出的候选口径的稳定标识，如 `user_exclusion_claim:henan-1m-threshold`）。只要输出 `applicability_status`，就必须同时输出本字段；status 的语义 = 该目标的状态。被否定的错误口径与正向适用法规必须分别表达：被否定口径经 Gate 排除的进入 `excluded_law_ids`（属结构化法规时）或仅体现在正文与结论码中，正向适用法规进入 `law_ids` 并可作为 `applicability_target`。
+- `applicability_status`: `applicable | not_applicable | needs_review`。**必须与 `applicability_target` 成对输出**，且只表示 `applicability_target` 所指目标的状态；不得把整体法规库状态、替代法规状态或多个对象混合进该字段。
 - `law_ids`: 可作为当前候选/依据的结构化法规 ID
 - `excluded_law_ids`: 明确被时效、主体、地域或其他适用条件排除的**实际候选法规 ID**。只记录本案确实被纳入判断的候选，不得把整个法规库中所有不匹配对象批量枚举进来。
 - `record_count`
@@ -73,11 +74,21 @@ Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contrac
 
 - `report_sections` 只在 `context.report_mode` 明确存在时发射。
 - `unverified_law_requires_review` 是保守型 review 提示：当 runtime 在本案分析路径中**实际遇到并考虑了** secondary/unverified 候选时可以发射，不要求该候选必须预先写入 input context；但不能仅因为仓库中存在未核验资料就全局追加。
-- `excluded_law_ids` 只列本案实际候选中被排除的结构化 Law ID，不做全库扫描式罗列。
+- `excluded_law_ids` 只列本案**实际候选集合**（先显式形成候选集）中确实被 Gate 排除的结构化 Law ID，不做全库扫描式罗列；作为替代现行依据被选中的对象进入 `law_ids`，不得塞进 `excluded_law_ids`。
 - `law_roles` 仅描述本次实际输出的 `law_ids`；所有 key 必须属于 `law_ids`，且 `law_ids` 的每个元素都必须有对应 role；role 必须与 Law Object 的 `rule_role` 一致。
 - `liability_basis` 只有在 `context.user_requested_liability_analysis=true` 时才允许发射；普通分类/法规依据任务不得默认泄漏责任依据。
 - `gate_status=blocked` 时不要输出 `applicability_status`。
 - `gate_status=needs_review` 只限制尚未确认的正式法规依据和最终化判断；**needs_review 不得吞掉已经独立成立的证据层结论**。例如正文已经形成“现有证据不能认定构成串通投标”的判断时，仍应同步输出 `collusive_bidding_not_established`。
+
+### 结论码发射决策（Conclusion emission policy）
+
+每个**实质性专业结论码**（区别于 `decision_required_*` 等诊断型代码）发射前必须同时满足：
+
+1. **事实前提成立**：本案输入事实足以独立支撑该结论，不得由相邻概念隐式推导（例如“发票信息异常”不得隐式推导出发射 `reimbursement_review_insufficient`——审核程序缺陷、必要附件缺失、审批责任事实缺一不可）；
+2. **属于当前任务范围**：用户请求的任务维度内（分类、定性、法规适用、金额、报告化），超出范围的概念即使“知道安全边界”也不发射；
+3. **对应明确的 Finding 或咨询对象**：不与 Finding 粒度重复表达；
+4. **不是防御性装饰**：不得为了“显得保守”而追加与本案事实无关的安全结论；
+5. **与正文认定一致**：正文已形成的判断必须同步发射（不得吞掉），正文未形成的判断不得提前发射。
 
 ## 当前稳定 finding_types
 
