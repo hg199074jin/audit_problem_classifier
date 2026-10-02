@@ -15,23 +15,23 @@ def load_scorer():
 
 def test_v209_contract_version():
     schema=json.loads((ROOT/"evals/case.schema.json").read_text(encoding="utf-8"))
-    assert schema["properties"]["contract_version"]["const"] == "2.0.9"
+    assert schema["properties"]["contract_version"]["const"] == "2.1.0"
     versions=set()
     for path in (ROOT/"evals/cases").glob("*.jsonl"):
         for raw in path.read_text(encoding="utf-8").splitlines():
             if raw.strip():
                 versions.add(json.loads(raw)["contract_version"])
-    assert versions == {"2.0.9"}
+    assert versions == {"2.1.0"}
 
 
 def test_unknown_top_level_result_field_fails():
     scorer=load_scorer()
     case={
-        "contract_version":"2.0.9","id":"x","domain":"classification","prompt":"x","context":{},
+        "contract_version":"2.1.0","id":"x","domain":"classification","prompt":"x","context":{},
         "expected":{"conclusion_codes":["collusive_bidding_not_established"]},
     }
     result={
-        "contract_version":"2.0.9","id":"x","text":"",
+        "contract_version":"2.1.0","id":"x","text":"",
         "conclusion_codes":["collusive_bidding_not_established"],
         "unverified_law_requires_review": True,
     }
@@ -44,14 +44,14 @@ def test_known_machine_fields_remain_valid():
     scorer=load_scorer()
     law_id="CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"
     case={
-        "contract_version":"2.0.9","id":"x","domain":"law-applicability","prompt":"x","context":{},
+        "contract_version":"2.1.0","id":"x","domain":"law-applicability","prompt":"x","context":{},
         "expected":{
             "law_ids":[law_id],
             "law_roles":{law_id:"supporting_basis"},
         },
     }
     result={
-        "contract_version":"2.0.9","id":"x","text":"",
+        "contract_version":"2.1.0","id":"x","text":"",
         "gate_status":"proceed",
         "applicability_status":"applicable",
         "law_ids":[law_id],

@@ -14,7 +14,7 @@ def load_scorer():
 
 def base_case(context):
     return {
-        "contract_version":"2.0.9","id":"x","domain":"amount-coverage","prompt":"x",
+        "contract_version":"2.1.0","id":"x","domain":"amount-coverage","prompt":"x",
         "context":context,
         "expected":{"record_count":1,"finding_count":1,"voucher_total":100},
     }
@@ -22,7 +22,7 @@ def base_case(context):
 
 def base_result():
     return {
-        "contract_version":"2.0.9","id":"x","text":"",
+        "contract_version":"2.1.0","id":"x","text":"",
         "record_count":1,"finding_count":1,"voucher_total":100,
     }
 

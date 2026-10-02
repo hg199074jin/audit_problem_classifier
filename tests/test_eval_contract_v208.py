@@ -15,23 +15,23 @@ def load_scorer():
 
 def test_v209_contract_version():
     schema=json.loads((ROOT/"evals/case.schema.json").read_text(encoding="utf-8"))
-    assert schema["properties"]["contract_version"]["const"] == "2.0.9"
+    assert schema["properties"]["contract_version"]["const"] == "2.1.0"
     versions=set()
     for path in (ROOT/"evals/cases").glob("*.jsonl"):
         for raw in path.read_text(encoding="utf-8").splitlines():
             if raw.strip():
                 versions.add(json.loads(raw)["contract_version"])
-    assert versions == {"2.0.9"}
+    assert versions == {"2.1.0"}
 
 
 def test_empty_law_roles_pin_accepts_omission():
     scorer=load_scorer()
     case={
-        "contract_version":"2.0.9","id":"x","domain":"law-applicability","prompt":"x","context":{},
+        "contract_version":"2.1.0","id":"x","domain":"law-applicability","prompt":"x","context":{},
         "expected":{"law_roles":{},"conclusion_codes":["liability_basis_not_default"]},
     }
     result={
-        "contract_version":"2.0.9","id":"x","text":"",
+        "contract_version":"2.1.0","id":"x","text":"",
         "conclusion_codes":["liability_basis_not_default"],
     }
     outcome=scorer.score_case(case,result)
@@ -41,11 +41,11 @@ def test_empty_law_roles_pin_accepts_omission():
 def test_empty_law_roles_pin_accepts_explicit_empty_object():
     scorer=load_scorer()
     case={
-        "contract_version":"2.0.9","id":"x","domain":"law-applicability","prompt":"x","context":{},
+        "contract_version":"2.1.0","id":"x","domain":"law-applicability","prompt":"x","context":{},
         "expected":{"law_roles":{},"conclusion_codes":["liability_basis_not_default"]},
     }
     result={
-        "contract_version":"2.0.9","id":"x","text":"",
+        "contract_version":"2.1.0","id":"x","text":"",
         "law_roles":{},
         "conclusion_codes":["liability_basis_not_default"],
     }
@@ -57,11 +57,11 @@ def test_empty_law_roles_pin_rejects_nonempty_mapping():
     scorer=load_scorer()
     law_id="CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"
     case={
-        "contract_version":"2.0.9","id":"x","domain":"law-applicability","prompt":"x","context":{},
+        "contract_version":"2.1.0","id":"x","domain":"law-applicability","prompt":"x","context":{},
         "expected":{"law_roles":{},"conclusion_codes":["liability_basis_not_default"]},
     }
     result={
-        "contract_version":"2.0.9","id":"x","text":"",
+        "contract_version":"2.1.0","id":"x","text":"",
         "law_ids":[law_id],
         "law_roles":{law_id:"liability_basis"},
         "conclusion_codes":["liability_basis_not_default"],
@@ -75,11 +75,11 @@ def test_nonempty_law_roles_pin_remains_exact_mapping():
     scorer=load_scorer()
     law_id="CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"
     case={
-        "contract_version":"2.0.9","id":"x","domain":"law-applicability","prompt":"x","context":{},
+        "contract_version":"2.1.0","id":"x","domain":"law-applicability","prompt":"x","context":{},
         "expected":{"law_ids":[law_id],"law_roles":{law_id:"supporting_basis"}},
     }
     missing={
-        "contract_version":"2.0.9","id":"x","text":"",
+        "contract_version":"2.1.0","id":"x","text":"",
         "law_ids":[law_id],
     }
     outcome=scorer.score_case(case,missing)
