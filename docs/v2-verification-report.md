@@ -1130,3 +1130,66 @@ Frozen runtime / contract / data-validation blobs:
 - `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
 
 V2.0.9 Gate D 开始后，上述 frozen files 不得根据 runtime 输出修改来追 PASS。若发现新的真实缺陷，必须 STOP 并进入新的 remediation/version cycle。
+
+
+## 19. V2.1.0 Gate D Failure Adjudication and Freeze Manifest
+
+### 19.1 V2.0.9 Gate D 失败裁定（GPT-002）
+
+V2.0.9 Gate D（26-case runtime，ZCODE-001）17/26 PASS，9 例失败裁定如下：
+
+| 类别 | 案例 | 裁定 | 处置 |
+|---|---|---|---|
+| 契约歧义 | p0-kaifeng-procurement-threshold | `applicability_status` referent 不唯一（100万错误口径 vs 50万适用法规） | 新增 `applicability_target` 显式目标绑定；status 必须与 target 成对输出；scorer 校验绑定关系 |
+| Oracle/规则冲突 | mode-a/b-integrated-law-amount | expected 钉 FY 与 rules/classification.md SW 边界冲突（直接认定对象=发票法定效力） | Rule > Case：case 修正为 SW，notes 记录规则级理由；规则未改 |
+| Runtime 过度发射 | live-20260629、expense-boundary、p2-invoice-irregularity、p0-obsolete-official-vehicle | 结论码/Finding 类型/excluded 发射超出发射纪律 | result-contract 新增结论码发射决策（5 条件）+ excluded_law_ids 候选集绑定与替代依据分流规则 |
+| Finding 粒度不稳定 | format-hard-rules、mode-a-complete-regression | 具体/泛化码并存或缺发 | classification.md 新增 Finding 粒度规范化（最具体优先、独立 Finding 判据、粒度稳定） |
+
+### 19.2 V2.1.0 变更范围
+
+- `applicability_target` 字段（result.schema / case.schema expected / result-contract / scorer 绑定校验）；
+- 结论码发射决策 5 条件与 Finding 粒度规范化规则；
+- p0-kaifeng 案例补 target 绑定并作为“被否定错误口径 + 正向替代法规”回归案例；
+- mode-a/b-integrated 案例 category 修正为 SW（Rule > Case）；
+- fixtures 与测试版本串对齐 2.1.0；新增 tests/test_eval_contract_v210.py（14 tests）。
+
+机器契约变更（schema 增字段）→ 版本升为 **2.1.0**。
+
+### 19.3 验证证据（remediation issue 内，非真实 Gate D）
+
+- pytest：**180/180 PASS**（166 存量对齐 + 14 新增）
+- 32/32 Law Objects validation
+- 26-case passing fixture：26/26 exit 0；failing fixture：25/26 exit 1（异常检测保持）
+- 报告模板 lint：PASS ×2
+- 真实 26-case runtime Gate D 为下一独立 milestone，本 issue 内未执行
+
+### 19.4 V2.1.0 Freeze Manifest
+
+Frozen runtime / contract / data-validation blobs:
+
+- `evals/case.schema.json` — `7919afb4de408382baddd9add67da376a1745b58`
+- `evals/result.schema.json` — `05c2a540294422622432a4448f70878eae07f052`
+- `evals/cases/amount-coverage.jsonl` — `3160ee25bf6bd32865f1db324dd426239ece2d8a`
+- `evals/cases/classification.jsonl` — `98b1a74024e8a904c42d1f5717e6164cab7d8dcb`
+- `evals/cases/evidence-wording.jsonl` — `6374c72db89c6a5a4787fedd72dfe06a0b90ef93`
+- `evals/cases/law-applicability.jsonl` — `62f48e59bb2ebcf57a2c499c6b8151d0be7821cc`
+- `evals/cases/report-format.jsonl` — `191fc33e7706eaa183416221c66d8d947f6d0e6d`
+- `evals/cases/report-modes.jsonl` — `4cb5755d7d85ffe62575d5b46e4bac73fdccb3c2`
+- `evals/score.py` — `d68a3908ff0b7a804a532ba906ffebdcd61728a8`
+- `evals/README.md` — `0833e8282e06d4c2c1d2b89752525b7376cdaacf`
+- `rules/result-contract.md` — `8eb5ad2e4f3505d3968722f7240c682052221304`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/law-applicability.md` — `0a2f24488142aac7f65b57b4336f21f98d741b80`
+- `rules/coverage-and-amount.md` — `762a0600cc37b7e832eaa4326e94a31a3c30fc3d`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `a184540492fe034cc3edf2d88980bf799da694cd`
+- `scripts/validate_v2_data.py` — `b404ef05d8036946449ec565b74b1844f9a557e8`
+- `schemas/project-context.schema.json` — `cb54ad8d8d919ad6148585f345f9685db3d00cf5`
+- `schemas/source-record.schema.json` — `ac6f5a72673aad4d7715391d62368e03f3dacebe`
+- `schemas/finding.schema.json` — `a9a5541d2d34eaf309a28e953734388bcc8aad9b`
+- `schemas/law.schema.json` — `c5831edb299b22cdde69c799d2e463745a5522e8`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+V2.1.0 Gate D 开始后，上述 frozen files 不得根据 runtime 输出修改来追 PASS。
