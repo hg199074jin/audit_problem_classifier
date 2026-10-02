@@ -54,6 +54,7 @@ def test_known_machine_fields_remain_valid():
         "contract_version":"2.1.0","id":"x","text":"",
         "gate_status":"proceed",
         "applicability_status":"applicable",
+        "applicability_target":law_id,
         "law_ids":[law_id],
         "law_roles":{law_id:"supporting_basis"},
         "conclusion_codes":["official_vehicle_public_institution_principle_applies"],

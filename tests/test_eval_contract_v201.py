@@ -59,6 +59,7 @@ def test_runtime_contract_fields_are_scored_structurally():
         "expected": {
             "gate_status": "proceed",
             "applicability_status": "not_applicable",
+            "applicability_target": "candidate_rule:policy-effective-2026-01-01",
             "finding_types": ["tax_issue"],
             "conclusion_codes": ["future_law_not_direct_basis"],
             "law_ids": ["CN-INVOICE-2023-ART20"],
@@ -72,6 +73,7 @@ def test_runtime_contract_fields_are_scored_structurally():
         "text": "措辞完全自由，不要求固定短语。",
         "gate_status": "proceed",
         "applicability_status": "not_applicable",
+            "applicability_target": "candidate_rule:policy-effective-2026-01-01",
         "finding_types": ["tax_issue"],
         "conclusion_codes": ["future_law_not_direct_basis"],
         "law_ids": ["CN-INVOICE-2023-ART20"],
