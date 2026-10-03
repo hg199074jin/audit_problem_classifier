@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/audit-problem-classifier/schemas/source-record.schema.json",
+  "title": "Audit Source Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "source_record_id",
+    "source_type"
+  ],
+  "properties": {
+    "source_record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_type": {
+      "enum": [
+        "voucher",
+        "contract",
+        "spreadsheet_row",
+        "document",
+        "interview",
+        "other"
+      ]
+    },
+    "event_date": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "format": "date"
+    },
+    "voucher_amount": {
+      "type": [
+        "number",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "raw_text": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "source_reference": {
+      "type": "object"
+    },
+    "metadata": {
+      "type": "object"
+    },
+    "funding": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "Funding attributable to this source record. When present, it narrows broader project-level funding for law applicability."
+    }
+  }
+}

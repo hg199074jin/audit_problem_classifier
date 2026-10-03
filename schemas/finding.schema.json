@@ -1,0 +1,187 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/audit-problem-classifier/schemas/finding.schema.json",
+  "title": "Audit Finding",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "finding_id",
+    "source_record_id",
+    "primary_category",
+    "facts",
+    "evidence_status",
+    "decision_status"
+  ],
+  "properties": {
+    "finding_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "source_record_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "primary_category": {
+      "enum": [
+        "ZD",
+        "YS",
+        "ZJ",
+        "ZC",
+        "CG",
+        "XM",
+        "FY",
+        "SJ",
+        "KJ",
+        "NK",
+        "SW",
+        "QT"
+      ]
+    },
+    "secondary_type": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "facts": {
+      "oneOf": [
+        {
+          "type": "string",
+          "minLength": 1
+        },
+        {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      ]
+    },
+    "evidence_status": {
+      "enum": [
+        "confirmed",
+        "partially_confirmed",
+        "pending",
+        "conflicting"
+      ]
+    },
+    "decision_status": {
+      "enum": [
+        "draft",
+        "pending_decision",
+        "ready",
+        "final"
+      ]
+    },
+    "amounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "issue_amount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "confirmed_difference": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        },
+        "pending_amount": {
+          "type": [
+            "number",
+            "null"
+          ],
+          "minimum": 0
+        }
+      }
+    },
+    "law_candidates": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "final_wording": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "applicability_facts": {
+      "type": "object",
+      "description": "Finding-specific facts for law applicability. Project-level reserved keys are forbidden.",
+      "propertyNames": {
+        "not": {
+          "enum": [
+            "jurisdiction",
+            "organization",
+            "funding",
+            "event_date",
+            "audit_period"
+          ]
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision_status": {
+            "const": "final"
+          }
+        },
+        "required": [
+          "decision_status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "evidence_status": {
+            "const": "confirmed"
+          },
+          "final_wording": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "final_wording"
+        ]
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "evidence_status": {
+            "enum": [
+              "pending",
+              "conflicting"
+            ]
+          }
+        },
+        "required": [
+          "evidence_status"
+        ]
+      },
+      "then": {
+        "properties": {
+          "decision_status": {
+            "not": {
+              "const": "final"
+            }
+          }
+        }
+      }
+    }
+  ]
+}

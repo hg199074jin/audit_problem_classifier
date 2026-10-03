@@ -1,0 +1,127 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/audit-problem-classifier/schemas/project-context.schema.json",
+  "title": "Audit Project Context",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "jurisdiction",
+    "organization",
+    "audit_period"
+  ],
+  "properties": {
+    "jurisdiction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "country"
+      ],
+      "properties": {
+        "country": {
+          "type": "string",
+          "minLength": 2
+        },
+        "province": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "city": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "county": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      }
+    },
+    "organization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level",
+        "type"
+      ],
+      "properties": {
+        "level": {
+          "enum": [
+            "central",
+            "provincial",
+            "municipal",
+            "county",
+            "township",
+            "other"
+          ]
+        },
+        "type": {
+          "enum": [
+            "administrative_unit",
+            "public_institution",
+            "enterprise",
+            "social_organization",
+            "other"
+          ]
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "civil_servant_managed": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        },
+        "performs_administrative_functions": {
+          "type": [
+            "boolean",
+            "null"
+          ]
+        }
+      }
+    },
+    "audit_period": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "start",
+        "end"
+      ],
+      "properties": {
+        "start": {
+          "type": "string",
+          "format": "date"
+        },
+        "end": {
+          "type": "string",
+          "format": "date"
+        }
+      }
+    },
+    "funding": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string"
+      }
+    },
+    "report_mode": {
+      "enum": [
+        "classification_report",
+        "special_audit_report"
+      ]
+    },
+    "profile": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}

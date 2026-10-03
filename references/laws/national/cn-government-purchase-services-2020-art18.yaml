@@ -1,0 +1,45 @@
+{
+  "id": "CN-GOV-PURCHASE-SERVICES-2020-ART18",
+  "title": "政府购买服务管理办法",
+  "document_no": "财政部令第102号",
+  "article": "第十八条",
+  "issuer": "财政部",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "2020-03-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [
+      "administrative_unit"
+    ],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "government_purchase_services"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十八条规定，购买主体向个人购买服务应限于确实适宜且由个人承接的情形，不得以政府购买服务名义变相用工。",
+  "applies_if": [
+    {
+      "field": "service_provider_type",
+      "operator": "eq",
+      "value": "individual"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": "https://www.mof.gov.cn/gp/xxgkml/tfs/202002/t20200217_3470373.htm",
+    "identifier": "财政部令第102号",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": null
+}

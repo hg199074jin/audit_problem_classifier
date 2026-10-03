@@ -1,29 +1,79 @@
-﻿# 审计问题报告化助手
+# 审计问题认定与报告化助手 V2
 
-面向中小会计师事务所的收支审计、合规审计和专项检查，把零散、口语化的问题清单整理成可复核、可回查、可纳入正式报告的问题分类、事实表述、候选法规依据和管理建议。
+> **Audit Finding Engine**：把零散审计发现转换为可复核的 Source Record / Finding，并在正式成文前完成 HARD-GATE、证据强度、法规适用性和金额去重检查。
 
-## 适用场景
+本项目面向中小会计师事务所的财务收支审计、合规审计、专项审核和整改问题整理。V2 不再只是“把问题写得像审计报告”，而是把**事实 → Finding → 证据 → 法规适用 → 定性 → 报告**做成可追溯、可回归验证的工作流。
 
-- 行政事业单位财务收支审计
-- 收支审计、合规审计和专项资金检查
-- 政府采购、资产管理和费用支出检查
-- 整改问题清单整理
-- 审计报告问题段落润色和规范化
+## V2 核心原则
 
-## 默认输出
+1. **HARD-GATE：先问清，后动手。** 会改变分类、重大定性、金额或法规适用的未决事项，必须先进入《待决策事项清单》；用户未答复时保持“待核实”。
+2. **一个 Source Record 可以拆多个 Finding，但不能重复统计原始记录和凭证金额。**
+3. **法规内容正确 ≠ 当前项目适用。** 先通过 Law Object 的时效、地域、主体、事项、资金和事实/证据过滤。
+4. **证据不足不升级重定性。** 嫌疑不写认定、占用不写挪用、少收不写损失、补签不写倒签。
+5. **规则、法规、案例和报告模板分层。** 案例不能反向覆盖规则，legacy 法规不能自动成为现行依据。
+6. **真实返工先变成失败 eval，再修改规则。**
 
-1. 基本情况及覆盖校验
-2. 问题分类汇总表
-3. 分类问题详述
-4. 候选法规依据
-5. 管理建议
-6. 后续核查资料清单
+## 四个核心对象
 
-用户只要求分类、重述、法规或建议时，仅输出对应部分。
+### Project Context
 
-## 分类口径
+记录当前项目的：
 
-内置分类包括：
+- 地区；
+- 单位层级；
+- 单位性质；
+- 审计期间；
+- 资金性质；
+- 报告模式；
+- profile。
+
+它决定哪些法规候选有资格进入后续判断。
+
+### Source Record
+
+原始问题、凭证、合同、清单行等唯一覆盖单元。原始记录数和 `voucher_amount` 按唯一 `source_record_id` 统计。Source Record 还可以保存**该笔事项可明确归属的资金性质**；当 Project Context 是混合资金时，单笔 `source_record.funding` 用于收窄本 Finding 的法规适用判断。
+
+### Finding
+
+独立审计认定单元。一个 Source Record 可拆多个 Finding，每个 Finding 原则上只有一个主分类和一个核心违规动作。
+
+### Law Object
+
+结构化法规条款，保存：
+
+- 法规名称、文号、条款；
+- 生效/失效时间；
+- 地域；
+- 主体；
+- 业务范围；
+- 资金范围；
+- `direct_basis / supporting_basis / liability_basis`；
+- 官方来源；
+- 最近核验日期；
+- 替代/废止关系。
+
+Schema：`schemas/law.schema.json`。
+
+## 固定工作流
+
+```text
+读取材料
+→ 建立 Project Context
+→ 待决策事项
+→ HARD-GATE
+→ Source Records
+→ Findings
+→ 分类
+→ 证据等级
+→ law applicability
+→ 定性措辞
+→ 模式 A / B 报告化
+→ 覆盖/金额/法规/格式自检
+```
+
+详细入口见 `SKILL.md`。
+
+## 12 类主分类
 
 - `ZD` 重大政策落实类
 - `YS` 预算决算类
@@ -38,80 +88,207 @@
 - `SW` 税务票据类
 - `QT` 其他问题类
 
-分类时先判断直接审计认定对象：
+具体边界以 `rules/classification.md` 为准。
 
-- `FY`：费用是否应当发生、是否应由本单位承担、支出范围标准、报销附件和支付对象；
-- `KJ`：会计科目、确认计量、账务处理和账账、账实、账表关系；
-- `SW`：纳税扣缴义务、税种税率、发票法定效力及实质涉税问题；
-- `CG`：采购需求、询价比价、供应商关联、成交资料、框架协议和采购经济性。
+## 法规知识层
 
-不得把所有附件问题归入KJ，也不得把所有发票问题归入SW。
+### 当前有效法规
 
-## 报告标题口径
+- 全国：`references/laws/national/`
+- 河南：`references/laws/henan/`
 
-- 公务接待、公务用车、会议、培训、差旅、津贴补贴等有专门制度或报告惯例的费用，按具体费用类型列示。
-- 水费、维修费、伙食费、通讯费、办公费等普通费用，不按项目名称逐项设置标题。
-- 普通费用按“其他费用报销原始凭证不齐全”“其他费用报销原始凭证不规范”“其他费用支出依据不充分”等问题性质归并。
-- 具体项目、日期、凭证号、金额和单位保留在明细表中，便于财务人员回查。
-- 采购问题按最具体性质拆分，不得统一写成“采购资料不规范”。
+### historical
 
-## 使用示例
+`references/laws/historical/` 保存已废止或被替代、但可能适用于历史业务期间的法规。**historical 默认不能作为当前年度现行法规候选。** Historical Law Object 必须有可核验的 `effective_from` 和 `effective_to`；缺任一时间边界时只能 `needs_review`，不能因只知道废止日就向更早年度无限回溯适用。
 
-```text
-请使用 $audit-problem-classifier 整理下面的审计问题清单，要求全量覆盖，按问题性质分类并形成正式报告，列出候选法规依据、管理建议和待补资料。
+### watchlist
 
-1. 某单位采购试剂时三家供应商报价内容高度一致。
-2. 报销伙食费未附每日配送明细，开票单位与实际收款人不一致。
-3. 固定资产无偿调拨记入资产处置费用。
-4. 发放讲课费未见个人所得税预扣预缴资料。
+`references/laws/watchlist/` 用于已发布未生效、修订中、来源/效力仍需确认的规则。watchlist 对象不能伪装成已核验直接依据。
+
+### V1 legacy 法规
+
+V1 原法规候选库完整保存在：
+
+- `references/laws-legacy-v1.md`
+
+它只用于历史检索和迁移参考。正式引用前必须重新核验并迁移成 Law Object。
+
+## 河南政府采购的重要修正
+
+V2 已取消“河南统一按100万元/400万元判断”的粗略规则。
+
+河南 Law Object 已区分：
+
+- 省级；
+- 郑州市本级；
+- 其他市级；
+- 县级；
+- 货物/服务；
+- 工程。
+
+现行文件文号已复核并锁定为 **豫财购〔2020〕4号**。工程公开招标数额标准另按工程招标规定判断，不直接套用货物/服务 400万元/200万元标准。
+
+### 资金适用的混合场景
+
+当项目层同时存在财政资金与自有资金时，不允许因为“其中包含财政资金”就把财政资金专属法规直接判为适用：
+
+- 当前事项全部属于法规允许资金 → 继续；
+- 当前事项全部不属于 → `not_applicable`；
+- 项目为混合资金且当前 Source Record 尚不能归属 → `needs_review`；
+- Source Record 已能明确归属该笔资金 → 用单笔 funding 收窄项目级集合。
+
+## HARD-GATE 与 firm profile
+
+重大专业判断由 `rules/decision-gate.md` 控制，不能配置化绕过。
+
+稳定格式习惯放在：
+
+- `profiles/firm-default.yaml`
+
+当前包括：
+
+- 日期：`YYYY/MM`
+- 金额：千分位 + 两位小数 + 元
+- 中文弯引号
+- `X号凭证`
+- 普通费用按问题性质归并
+- 模式 A / 模式 B
+
+这样可以做到：**重大判断必须问，稳定习惯不重复问。**
+
+## 证据与措辞
+
+见：
+
+- `rules/evidence-and-wording.md`
+
+核心边界包括：
+
+- 串通报价嫌疑 ≠ 构成串通投标；
+- 应缴资金被占用 ≠ 截留、挪用；
+- 少收仍可追收款项 ≠ 已造成损失；
+- 发票信息不准确 ≠ 虚开发票；
+- 事后补签 ≠ 倒签合同。
+
+## 报告模式
+
+### 模式 A：分类整理报告
+
+模板：
+
+- `references/report-templates/classification-report.md`
+
+### 模式 B：专项审核报告
+
+模板：
+
+- `references/report-templates/special-audit-report.md`
+
+两种模式都必须服从 HARD-GATE、分类规则、证据措辞、法规适用性和 firm profile。
+
+## Eval 与回归测试
+
+正式 V2 行为案例：
+
+- `evals/cases/classification.jsonl`
+- `evals/cases/law-applicability.jsonl`
+- `evals/cases/evidence-wording.jsonl`
+- `evals/cases/amount-coverage.jsonl`
+- `evals/cases/report-format.jsonl`
+- `evals/cases/report-modes.jsonl`
+
+确定性评分器：
+
+- `evals/score.py`
+
+评分器不会调用模型/API。V2.0.9 先用 `evals/result.schema.json` 校验 machine result 类型，再检查法规角色与 Law Object 一致性、Source Record–Finding 引用完整性、数量/金额重算和专业结论安全边界；正文字符串仅用于真正的格式检查。当前正式 Eval 共 **26 个案例**。
+
+运行：
+
+```bash
+python -m pip install -r requirements-dev.txt
+pytest -q
+python evals/score.py --cases evals/cases --results evals/fixtures/passing-results.jsonl
 ```
 
-预期分类：
+## 如何新增一条法规
 
-- 第1项：`CG`，存在串通报价嫌疑；
-- 第2项：`FY`，其他费用报销原始凭证不规范；
-- 第3项：`KJ`，会计科目使用错误；
-- 第4项：`SW`，未履行代扣代缴义务。
+1. 从官方来源核验全文、版本和效力；
+2. 确定 `effective_from / effective_to / status`；
+3. 确定地域、单位/人员主体、业务和资金范围；
+4. 区分 `direct_basis / supporting_basis / liability_basis`；
+5. 写入对应 `references/laws/**.yaml`；
+6. 运行：
 
-## 重要规则
+```bash
+python scripts/validate_v2_data.py --schema law <law-file.yaml>
+pytest tests/test_law_library.py tests/test_law_applicability.py -q
+```
 
-- 关键事实或报告口径不清时先追问，不直接定性。
-- 每条原始问题只确定一个主类；关联风险写入事实描述。
-- 一个记录拆分多个问题点时，原始记录数和凭证金额只计算一次。
-- 串通报价证据不足时只写“存在串通报价嫌疑”，不直接认定围标、串标。
-- 不编造金额、凭证号、合同号、发票号、审批过程或法规条款。
-- 法规依据不确定时标注“法规依据需人工核验”。
-- 输出结果必须由审计人员最终复核后再用于正式报告。
+如果来源、版本或效力尚未确认，应进入 watchlist 或保持 `needs_review`，不得自信补造。
+
+## 如何新增一个回归案例
+
+真实项目发生返工时：
+
+1. 匿名化案例；
+2. 先新增一个失败的 `evals/cases/*.jsonl` 案例；
+3. 确认旧行为 FAIL；
+4. 最小修改规则；
+5. 确认新行为 PASS；
+6. 跑完整测试和 Eval。
+
+这就是本项目的 Skill-TDD 维护方式。
 
 ## 目录结构
 
 ```text
-audit-problem-classifier/
-  SKILL.md
-  README.md
-  test-prompts.json
-  agents/
-    openai.yaml
-  references/
-    laws.md
-    audit-problem-examples.md
-    management-suggestions.md
+audit_problem_classifier/
+├── SKILL.md
+├── README.md
+├── agents/
+├── rules/
+├── schemas/
+├── scripts/
+├── profiles/
+├── references/
+│   ├── laws/
+│   │   ├── national/
+│   │   ├── henan/
+│   │   ├── historical/
+│   │   └── watchlist/
+│   ├── cases/
+│   ├── management-suggestions/
+│   └── report-templates/
+├── evals/
+│   ├── cases/
+│   ├── fixtures/
+│   ├── case.schema.json
+│   ├── result.schema.json
+│   └── score.py
+├── tests/
+└── docs/
 ```
 
-## 安装方式
+## V1 → V2 迁移与验证
 
-将整个目录放入当前运行时文档指定的用户级技能目录，例如：
+- 迁移说明：`docs/v2-migration.md`
+- 验证报告：`docs/v2-verification-report.md`
+- 架构设计：`docs/superpowers/specs/2026-09-30-audit-problem-classifier-v2-design.md`
+- 实施计划：`docs/superpowers/plans/2026-09-30-audit-problem-classifier-v2-implementation.md`
 
-```text
-<agent-home>/skills/audit-problem-classifier
-```
+## 安装
 
-`<agent-home>` 以当前运行时的用户配置目录为准。安装后重启或重新加载当前运行时。
+将整个仓库作为 Skill 安装到所用 Agent runtime 的用户级技能目录，并重新加载 runtime。不同 runtime 的具体目录以其官方文档为准。
 
-## 维护
+## 专业边界
 
-- 地方财政、审计、机关事务等制度放入单独的reference文件；
-- 本所报告格式和标题归并习惯写入项目级说明；
-- 新增案例时必须遵守 `SKILL.md` 的主分类优先级；
-- 案例库、管理建议和README不得与主分类决策规则冲突。
+本项目辅助审计人员整理和校准 Finding，不替代：
 
+- 审计取证；
+- 法律效力最终判断；
+- 责任追究；
+- 处罚处分决定；
+- 注册会计师/审计人员最终专业复核。
+
+V2 的首要质量目标不是“法规越多越好”，而是：**不知道时知道自己不知道，不在法规不适用时自信引用。**

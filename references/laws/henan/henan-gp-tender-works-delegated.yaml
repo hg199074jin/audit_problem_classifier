@@ -1,0 +1,50 @@
+{
+  "id": "HENAN-GP-2020-TENDER-WORKS-DELEGATED",
+  "title": "河南省政府集中采购目录及标准（2020年版）",
+  "document_no": "豫财购〔2020〕4号",
+  "article": null,
+  "issuer": "河南省财政厅",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2020-03-09",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [
+      "administrative_unit",
+      "public_institution",
+      "social_organization"
+    ],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "works_procurement"
+  ],
+  "funding_scope": [
+    "fiscal_funds"
+  ],
+  "rule_role": "supporting_basis",
+  "text": "政府采购工程招标数额标准按照《必须招标的工程项目规定》（国家发展改革委第16号令）执行，不得直接套用货物、服务400万元/200万元公开招标数额标准。",
+  "applies_if": [
+    {
+      "field": "government_procurement_scope",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省财政厅（河南省政府采购网官方文件）",
+    "url": "https://huiji.zfcg.henan.gov.cn/webfile/puyang/rootfiles/2020/03/12/1583907936947143-1583907936949453.pdf",
+    "identifier": "豫财购〔2020〕4号",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": null
+}

@@ -1,0 +1,194 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/audit-problem-classifier/evals/case.schema.json",
+  "title": "Audit Problem Classifier V2.1.1 Eval Case",
+  "type": "object",
+  "required": [
+    "contract_version",
+    "id",
+    "domain",
+    "prompt",
+    "context",
+    "expected"
+  ],
+  "properties": {
+    "contract_version": {
+      "const": "2.1.1"
+    },
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "domain": {
+      "type": "string",
+      "minLength": 1
+    },
+    "prompt": {
+      "type": "string",
+      "minLength": 1
+    },
+    "context": {
+      "type": "object"
+    },
+    "expected": {
+      "type": "object",
+      "minProperties": 1,
+      "properties": {
+        "gate_status": {
+          "enum": [
+            "proceed",
+            "blocked",
+            "needs_review"
+          ]
+        },
+        "category": {
+          "type": "string"
+        },
+        "finding_types": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "conclusion_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "applicability_status": {
+          "enum": [
+            "applicable",
+            "not_applicable",
+            "needs_review"
+          ]
+        },
+        "law_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "excluded_law_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "record_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "finding_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "voucher_total": {
+          "type": "number"
+        },
+        "text_checks": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "contains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "not_contains": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "regex": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "not_regex": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "format_forbid": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "ascii_chinese_quotes",
+              "unnormalized_voucher_reference",
+              "raw_dot_date"
+            ]
+          }
+        },
+        "report_mode": {
+          "enum": [
+            "classification_report",
+            "special_audit_report"
+          ]
+        },
+        "report_sections": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string"
+          }
+        },
+        "law_roles": {
+          "type": "object",
+          "additionalProperties": {
+            "enum": [
+              "direct_basis",
+              "supporting_basis",
+              "liability_basis"
+            ]
+          }
+        },
+        "exact_fields": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "finding_types",
+              "conclusion_codes",
+              "law_ids",
+              "excluded_law_ids",
+              "report_sections"
+            ]
+          }
+        },
+        "applicability_target": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Explicit identity of the rule/candidate that applicability_status is asserted against."
+        }
+      },
+      "additionalProperties": false,
+      "dependentRequired": {
+        "applicability_status": [
+          "applicability_target"
+        ],
+        "applicability_target": [
+          "applicability_status"
+        ]
+      }
+    },
+    "notes": {
+      "type": "string"
+    },
+    "source": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

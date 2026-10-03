@@ -1,0 +1,45 @@
+{
+  "id": "CN-INVOICE-2023-ART20",
+  "title": "中华人民共和国发票管理办法",
+  "document_no": null,
+  "article": "第二十条",
+  "issuer": "国务院",
+  "legal_level": "administrative_regulation",
+  "status": "effective",
+  "effective_from": "2023-07-20",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "invoice_reimbursement"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二十条：不符合规定的发票，不得作为财务报销凭证，任何单位和个人有权拒收。",
+  "applies_if": [
+    {
+      "field": "invoice_noncompliant",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国家税务总局政策法规库",
+    "url": "https://fgk.chinatax.gov.cn/zcfgk/c100010/c5195084/content.html",
+    "identifier": "2023年第三次修订",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [
+    "CN-INVOICE-2010-ART21-HIST"
+  ],
+  "superseded_by": null
+}

@@ -1,0 +1,274 @@
+#!/usr/bin/env python3
+from __future__ import annotations
+
+from datetime import date
+from typing import Any, NamedTuple
+
+RESERVED_PROJECT_FACT_KEYS = {
+    "jurisdiction",
+    "organization",
+    "funding",
+    "event_date",
+    "audit_period",
+}
+
+
+class ApplicabilityResult(NamedTuple):
+    status: str
+    reasons: list[str]
+
+
+class ConditionFactTypeError(ValueError):
+    pass
+
+
+def build_evaluation_context(
+    project_context: dict,
+    finding: dict | None = None,
+    source_record: dict | None = None,
+) -> dict:
+    """Combine project-scoped facts with Finding-specific law-evaluation facts.
+
+    Finding applicability facts are intentionally prevented from overwriting
+    project-level jurisdiction, organization, funding, event date, or audit period.
+    """
+    context: dict[str, Any] = {
+        "jurisdiction": dict(project_context.get("jurisdiction") or {}),
+        "organization": dict(project_context.get("organization") or {}),
+    }
+    if "funding" in project_context:
+        funding = project_context.get("funding")
+        context["funding"] = list(funding) if isinstance(funding, list) else funding
+    if "audit_period" in project_context:
+        context["audit_period"] = dict(project_context.get("audit_period") or {})
+
+    if source_record and source_record.get("event_date") is not None:
+        context["event_date"] = source_record["event_date"]
+    if source_record and source_record.get("funding") is not None:
+        source_funding = source_record.get("funding")
+        context["funding"] = list(source_funding) if isinstance(source_funding, list) else source_funding
+
+    if finding:
+        facts = finding.get("applicability_facts") or {}
+        if not isinstance(facts, dict):
+            raise TypeError("finding.applicability_facts must be an object")
+
+        reserved = sorted(RESERVED_PROJECT_FACT_KEYS.intersection(facts))
+        if reserved:
+            raise ValueError(
+                "finding.applicability_facts contains reserved project keys: "
+                + ", ".join(reserved)
+            )
+        context.update(facts)
+
+        amounts = finding.get("amounts") or {}
+        if "amount" not in context and isinstance(amounts, dict):
+            issue_amount = amounts.get("issue_amount")
+            if issue_amount is not None:
+                context["amount"] = issue_amount
+
+    return context
+
+
+def _coerce_date(value: Any) -> date | None:
+    if value is None:
+        return None
+    if isinstance(value, date):
+        return value
+    if isinstance(value, str):
+        return date.fromisoformat(value)
+    raise TypeError(f"unsupported date value: {value!r}")
+
+
+def _coerce_date_for_review(
+    value: Any,
+    label: str,
+    needs_review: list[str],
+) -> date | None:
+    try:
+        return _coerce_date(value)
+    except (TypeError, ValueError):
+        needs_review.append(f"{label}格式不合法，无法判断法规时效")
+        return None
+
+
+def _get_path(data: dict, path: str) -> tuple[bool, Any]:
+    current: Any = data
+    for part in path.split("."):
+        if not isinstance(current, dict) or part not in current:
+            return False, None
+        current = current[part]
+    return True, current
+
+
+def _condition_value(context: dict, condition: dict) -> bool | None:
+    field = condition["field"]
+    operator = condition["operator"]
+    expected = condition.get("value")
+    present, actual = _get_path(context, field)
+
+    if operator == "exists":
+        return present is bool(expected)
+    if not present:
+        return None
+    if operator == "eq":
+        return actual == expected
+    if operator == "neq":
+        return actual != expected
+    if operator == "in":
+        try:
+            return actual in expected
+        except TypeError as exc:
+            raise ConditionFactTypeError(field) from exc
+    if operator == "not_in":
+        try:
+            return actual not in expected
+        except TypeError as exc:
+            raise ConditionFactTypeError(field) from exc
+    if operator in {"gte", "lte"}:
+        try:
+            return actual >= expected if operator == "gte" else actual <= expected
+        except TypeError as exc:
+            raise ConditionFactTypeError(field) from exc
+    raise ValueError(f"unsupported condition operator: {operator}")
+
+
+def _scope_check(actual: Any, allowed: list[str], label: str) -> tuple[str | None, str | None]:
+    if not allowed:
+        return None, None
+    if actual is None:
+        return "needs_review", f"缺少{label}事实，无法判断适用范围"
+    if actual not in allowed:
+        return "not_applicable", f"{label}不在法规适用范围内"
+    return None, None
+
+
+def evaluate_applicability(
+    context: dict,
+    law: dict,
+    event_date: date | None = None,
+) -> ApplicabilityResult:
+    """Filter one Law Object against one evaluation context."""
+
+    needs_review: list[str] = []
+
+    source = law.get("source") or {}
+    source_type = source.get("type")
+    if source.get("verified") is not True:
+        needs_review.append("法规来源尚未核验，不能作为已确认依据")
+    if source_type not in {"official", "official_archive"}:
+        needs_review.append("法规来源不是可追溯官方来源，不能作为已确认依据")
+    if source_type in {"official", "official_archive"} and not (
+        source.get("url") or source.get("identifier")
+    ):
+        needs_review.append("法规来源缺少可追溯 URL 或官方标识，不能作为已确认依据")
+
+    # 1. Effective period / status.
+    status = law.get("status")
+    start = _coerce_date_for_review(law.get("effective_from"), "法规生效日期", needs_review)
+    end = _coerce_date_for_review(law.get("effective_to"), "法规失效日期", needs_review)
+    event = _coerce_date_for_review(event_date, "业务发生日期", needs_review)
+    if event is None and event_date is None:
+        context_event = context.get("event_date")
+        if context_event is not None:
+            event = _coerce_date_for_review(context_event, "业务发生日期", needs_review)
+
+    if status == "unknown":
+        needs_review.append("法规效力状态未知")
+    if status == "effective" and start is None:
+        needs_review.append("现行法规缺少生效日期，无法确认时效")
+    if status in {"repealed", "superseded"} and start is None:
+        needs_review.append("历史法规缺少生效起始日期，无法确认历史适用期")
+    if status in {"repealed", "superseded"} and end is None:
+        needs_review.append("历史法规缺少失效日期，无法确认历史适用期")
+
+    if start is not None or end is not None or status in {"effective", "repealed", "superseded"}:
+        if event is None:
+            needs_review.append("缺少业务发生日期，无法判断法规时效")
+        else:
+            if start is not None and event < start:
+                return ApplicabilityResult("not_applicable", ["业务发生日在法规生效日期之前"])
+            if end is not None and event > end:
+                return ApplicabilityResult("not_applicable", ["业务发生日在法规失效日期之后"])
+
+    if status == "pending" and (event is None or start is None or event >= start):
+        needs_review.append("法规状态为 pending，不能作为已确认现行依据")
+
+    # 2. Jurisdiction.
+    law_jur = law.get("jurisdiction") or {}
+    ctx_jur = context.get("jurisdiction") or {}
+    for field, label in (("country", "国家"), ("province", "省级地域"), ("city", "市级地域"), ("county", "县级地域")):
+        required = law_jur.get(field)
+        if required in (None, ""):
+            continue
+        actual = ctx_jur.get(field)
+        if actual in (None, ""):
+            needs_review.append(f"缺少{label}信息，无法判断地域适用")
+            continue
+        if actual != required:
+            return ApplicabilityResult("not_applicable", [f"{label}不匹配：需要 {required}，实际 {actual}"])
+
+    # 3. Subject.
+    subject = law.get("subject_scope") or {}
+    organization = context.get("organization") or {}
+    subject_checks = [
+        (organization.get("type"), subject.get("organization_types") or [], "单位性质"),
+        (organization.get("level"), subject.get("organization_levels") or [], "单位层级"),
+        (context.get("person_type"), subject.get("person_types") or [], "人员身份"),
+    ]
+    for actual, allowed, label in subject_checks:
+        outcome, reason = _scope_check(actual, allowed, label)
+        if outcome == "not_applicable":
+            return ApplicabilityResult(outcome, [reason])
+        if outcome == "needs_review":
+            needs_review.append(reason)
+
+    # 4. Business matter.
+    business_scope = law.get("business_scope") or []
+    outcome, reason = _scope_check(context.get("business_type"), business_scope, "业务事项")
+    if outcome == "not_applicable":
+        return ApplicabilityResult(outcome, [reason])
+    if outcome == "needs_review":
+        needs_review.append(reason)
+
+    # 5. Funding.
+    funding_scope = law.get("funding_scope") or []
+    if funding_scope:
+        actual_funding = context.get("funding")
+        if actual_funding is None:
+            needs_review.append("缺少资金性质，无法判断资金适用范围")
+        else:
+            actual_set = set(actual_funding if isinstance(actual_funding, list) else [actual_funding])
+            allowed_set = set(funding_scope)
+            overlap = actual_set.intersection(allowed_set)
+            if not overlap:
+                return ApplicabilityResult("not_applicable", ["资金性质不在法规适用范围内"])
+            if not actual_set.issubset(allowed_set):
+                needs_review.append("当前事项存在混合资金且未完成单笔/单项资金归属，无法确认法规资金范围")
+
+    # 6. Required facts / evidence.
+    for condition in law.get("applies_if") or []:
+        try:
+            matched = _condition_value(context, condition)
+        except ConditionFactTypeError:
+            needs_review.append(f"适用前提事实类型不合法：{condition['field']}")
+            continue
+        if matched is False:
+            return ApplicabilityResult("not_applicable", [f"适用前提不满足：{condition['field']}"])
+        if matched is None:
+            needs_review.append(f"缺少适用前提事实：{condition['field']}")
+
+    for condition in law.get("excludes_if") or []:
+        try:
+            matched = _condition_value(context, condition)
+        except ConditionFactTypeError:
+            needs_review.append(f"排除条件事实类型不合法：{condition['field']}")
+            continue
+        if matched is True:
+            return ApplicabilityResult("not_applicable", [f"命中排除条件：{condition['field']}"])
+        if matched is None:
+            needs_review.append(f"缺少排除条件事实：{condition['field']}")
+
+    if needs_review:
+        return ApplicabilityResult("needs_review", needs_review)
+    return ApplicabilityResult("applicable", ["时效、地域、主体、事项、资金及事实/证据条件均满足"])

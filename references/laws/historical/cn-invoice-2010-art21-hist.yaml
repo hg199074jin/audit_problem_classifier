@@ -1,0 +1,37 @@
+{
+  "id": "CN-INVOICE-2010-ART21-HIST",
+  "title": "中华人民共和国发票管理办法（2010年修订版）",
+  "document_no": null,
+  "article": "第二十一条",
+  "issuer": "国务院",
+  "legal_level": "administrative_regulation",
+  "status": "superseded",
+  "effective_from": "2011-02-01",
+  "effective_to": "2023-07-19",
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "invoice_reimbursement"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "2010年修订版第二十一条曾规定不符合规定的发票不得作为财务报销凭证；2023年第三次修订后该内容调整为第二十条。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official_archive",
+    "authority": "国家税务总局辽宁省税务局政策法规库",
+    "url": "https://liaoning.chinatax.gov.cn/art/2010/12/20/art_5869_2925.html",
+    "identifier": "2010年修订版第二十一条",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": "CN-INVOICE-2023-ART20"
+}
