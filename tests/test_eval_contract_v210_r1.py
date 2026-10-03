@@ -41,7 +41,7 @@ def test_result_schema_rejects_status_without_target():
     from jsonschema import Draft202012Validator
     validator = Draft202012Validator(schema)
     result = {
-        "id": "x", "contract_version": "2.1.0", "text": "",
+        "id": "x", "contract_version": "2.1.1", "text": "",
         "applicability_status": "applicable",
         "law_ids": [LAW_ID],
         "law_roles": {LAW_ID: "direct_basis"},
@@ -56,7 +56,7 @@ def test_result_schema_rejects_target_without_status():
     from jsonschema import Draft202012Validator
     validator = Draft202012Validator(schema)
     result = {
-        "id": "x", "contract_version": "2.1.0", "text": "",
+        "id": "x", "contract_version": "2.1.1", "text": "",
         "applicability_target": LAW_ID,
         "law_ids": [LAW_ID],
         "law_roles": {LAW_ID: "direct_basis"},
@@ -70,7 +70,7 @@ def test_case_schema_rejects_expected_status_without_target():
     from jsonschema import Draft202012Validator
     validator = Draft202012Validator(schema)
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "p",
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "p",
         "context": {}, "expected": {"applicability_status": "applicable"},
     }
     errors = list(validator.iter_errors(case))
@@ -80,11 +80,11 @@ def test_case_schema_rejects_expected_status_without_target():
 def test_scorer_rejects_status_without_target_globally():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
         "expected": {"law_ids": [LAW_ID]},
     }
     result = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_status": "applicable",
         "law_ids": [LAW_ID],
         "law_roles": {LAW_ID: "direct_basis"},
@@ -97,11 +97,11 @@ def test_scorer_rejects_status_without_target_globally():
 def test_scorer_rejects_target_without_status_globally():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
         "expected": {"law_ids": [LAW_ID]},
     }
     result = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_target": LAW_ID,
         "law_ids": [LAW_ID],
         "law_roles": {LAW_ID: "direct_basis"},
@@ -114,11 +114,11 @@ def test_scorer_rejects_target_without_status_globally():
 def test_scorer_applicable_structured_target_must_be_in_law_ids():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
         "expected": {},
     }
     result = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_status": "applicable",
         "applicability_target": LAW_ID,
         "law_ids": ["CN-GOV-PURCHASE-SERVICES-2020-ART18-PUBLIC-INSTITUTION-REF"],
@@ -132,11 +132,11 @@ def test_scorer_applicable_structured_target_must_be_in_law_ids():
 def test_scorer_not_applicable_structured_target_must_be_in_excluded():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
         "expected": {},
     }
     result = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_status": "not_applicable",
         "applicability_target": "CN-OFFICIAL-VEHICLE-2011-HIST",
         "excluded_law_ids": [],
@@ -149,11 +149,11 @@ def test_scorer_not_applicable_structured_target_must_be_in_excluded():
 def test_scorer_needs_review_structured_target_cannot_enter_law_ids():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
         "expected": {},
     }
     result = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_status": "needs_review",
         "applicability_target": "CN-INVOICE-2023-ART20",
         "law_ids": ["CN-INVOICE-2023-ART20"],
@@ -167,11 +167,11 @@ def test_scorer_needs_review_structured_target_cannot_enter_law_ids():
 def test_scorer_accepts_paired_status_target_structured_binding():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
         "expected": {},
     }
     result = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_status": "applicable",
         "applicability_target": LAW_ID,
         "law_ids": [LAW_ID],
@@ -184,11 +184,11 @@ def test_scorer_accepts_paired_status_target_structured_binding():
 def test_scorer_accepts_paired_user_claim_target_without_membership():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
         "expected": {},
     }
     result = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_status": "not_applicable",
         "applicability_target": "candidate_rule:policy-effective-2026-01-01",
     }

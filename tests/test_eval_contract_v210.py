@@ -1,4 +1,4 @@
-"""V2.1.0 contract tests: applicability target identity, emission policy, specificity."""
+"""V2.1.1 contract tests: applicability target identity, emission policy, specificity."""
 
 import importlib.util
 import json
@@ -26,18 +26,18 @@ def _all_cases():
 
 def test_v210_contract_version_everywhere():
     case_schema = json.loads((ROOT / "evals/case.schema.json").read_text(encoding="utf-8"))
-    assert case_schema["properties"]["contract_version"]["const"] == "2.1.0"
+    assert case_schema["properties"]["contract_version"]["const"] == "2.1.1"
     result_schema = json.loads((ROOT / "evals/result.schema.json").read_text(encoding="utf-8"))
-    assert result_schema["properties"]["contract_version"]["const"] == "2.1.0"
+    assert result_schema["properties"]["contract_version"]["const"] == "2.1.1"
     versions = {row["contract_version"] for row in _all_cases()}
-    assert versions == {"2.1.0"}
+    assert versions == {"2.1.1"}
     for name in ("passing-results", "failing-results"):
         rows = [
             json.loads(line)
             for line in (ROOT / "evals/fixtures" / f"{name}.jsonl").read_text(encoding="utf-8").splitlines()
             if line.strip()
         ]
-        assert {row["contract_version"] for row in rows} == {"2.1.0"}
+        assert {row["contract_version"] for row in rows} == {"2.1.1"}
 
 
 def test_result_schema_and_case_schema_accept_applicability_target():
@@ -53,7 +53,7 @@ def test_result_schema_and_case_schema_accept_applicability_target():
 def test_scorer_accepts_applicability_target_in_result():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "x", "context": {},
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "x", "context": {},
         "expected": {
             "applicability_target": "HENAN-GP-2020-DISP-OTHER-MUNICIPAL-GS-500K",
             "applicability_status": "applicable",
@@ -61,7 +61,7 @@ def test_scorer_accepts_applicability_target_in_result():
         },
     }
     result = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_target": "HENAN-GP-2020-DISP-OTHER-MUNICIPAL-GS-500K",
         "applicability_status": "applicable",
         "law_ids": ["HENAN-GP-2020-DISP-OTHER-MUNICIPAL-GS-500K"],
@@ -74,21 +74,21 @@ def test_scorer_accepts_applicability_target_in_result():
 def test_scorer_requires_target_when_expected_pins_it():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0", "id": "x", "domain": "law-applicability", "prompt": "x", "context": {},
+        "contract_version": "2.1.1", "id": "x", "domain": "law-applicability", "prompt": "x", "context": {},
         "expected": {
             "applicability_target": "HENAN-GP-2020-DISP-OTHER-MUNICIPAL-GS-500K",
             "applicability_status": "applicable",
         },
     }
     missing = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_status": "applicable",
     }
     outcome = scorer.score_case(case, missing)
     assert not outcome.passed
     assert any("applicability_target" in failure for failure in outcome.failures)
     mismatched = {
-        "contract_version": "2.1.0", "id": "x", "text": "",
+        "contract_version": "2.1.1", "id": "x", "text": "",
         "applicability_target": "HENAN-GP-2020-DISP-PROVINCE-GS-1M",
         "applicability_status": "not_applicable",
     }
@@ -101,11 +101,11 @@ def test_applicability_target_forbidden_in_amount_and_format_domains():
     scorer = load_scorer()
     for domain in ("amount-coverage", "report-format"):
         case = {
-            "contract_version": "2.1.0", "id": "x", "domain": domain, "prompt": "x", "context": {},
+            "contract_version": "2.1.1", "id": "x", "domain": domain, "prompt": "x", "context": {},
             "expected": {},
         }
         result = {
-            "contract_version": "2.1.0", "id": "x", "text": "",
+            "contract_version": "2.1.1", "id": "x", "text": "",
             "applicability_target": "CN-INVOICE-2023-ART20",
         }
         outcome = scorer.score_case(case, result)

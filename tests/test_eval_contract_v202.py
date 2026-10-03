@@ -37,6 +37,6 @@ def test_eval_contract_version_is_209():
             if raw.strip():
                 cases.append(json.loads(raw))
     assert cases
-    assert {row["contract_version"] for row in cases} == {"2.1.0"}
+    assert {row["contract_version"] for row in cases} == {"2.1.1"}
     schema=json.loads((ROOT / "evals" / "case.schema.json").read_text(encoding="utf-8"))
-    assert schema["properties"]["contract_version"]["const"] == "2.1.0"
+    assert schema["properties"]["contract_version"]["const"] == "2.1.1"

@@ -25,7 +25,7 @@ def load_cases():
 
 def test_v209_contract_version_and_law_roles_schema():
     schema=json.loads((ROOT/"evals/case.schema.json").read_text(encoding="utf-8"))
-    assert schema["properties"]["contract_version"]["const"] == "2.1.0"
+    assert schema["properties"]["contract_version"]["const"] == "2.1.1"
     roles=schema["properties"]["expected"]["properties"]["law_roles"]
     assert roles["type"] == "object"
     assert roles["additionalProperties"]["enum"] == [
@@ -37,14 +37,14 @@ def test_law_roles_mapping_is_accepted():
     scorer=load_scorer()
     law_id="CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"
     case={
-        "contract_version":"2.1.0","id":"x","domain":"law-applicability","prompt":"x","context":{},
+        "contract_version":"2.1.1","id":"x","domain":"law-applicability","prompt":"x","context":{},
         "expected":{
             "law_ids":[law_id],
             "law_roles":{law_id:"supporting_basis"},
         },
     }
     result={
-        "contract_version":"2.1.0","id":"x","text":"",
+        "contract_version":"2.1.1","id":"x","text":"",
         "law_ids":[law_id],
         "law_roles":{law_id:"supporting_basis"},
     }
@@ -56,11 +56,11 @@ def test_law_roles_array_shape_is_rejected():
     scorer=load_scorer()
     law_id="CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"
     case={
-        "contract_version":"2.1.0","id":"x","domain":"law-applicability","prompt":"x","context":{},
+        "contract_version":"2.1.1","id":"x","domain":"law-applicability","prompt":"x","context":{},
         "expected":{"law_ids":[law_id],"law_roles":{law_id:"supporting_basis"}},
     }
     result={
-        "contract_version":"2.1.0","id":"x","text":"",
+        "contract_version":"2.1.1","id":"x","text":"",
         "law_ids":[law_id],
         "law_roles":["supporting_basis"],
     }
@@ -74,11 +74,11 @@ def test_law_role_mapping_keys_must_be_selected_law_ids():
     selected="CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"
     extra="CN-OFFICIAL-VEHICLE-2017"
     case={
-        "contract_version":"2.1.0","id":"x","domain":"law-applicability","prompt":"x","context":{},
+        "contract_version":"2.1.1","id":"x","domain":"law-applicability","prompt":"x","context":{},
         "expected":{"law_ids":[selected]},
     }
     result={
-        "contract_version":"2.1.0","id":"x","text":"",
+        "contract_version":"2.1.1","id":"x","text":"",
         "law_ids":[selected],
         "law_roles":{extra:"supporting_basis"},
     }
@@ -91,11 +91,11 @@ def test_unknown_role_value_is_rejected():
     scorer=load_scorer()
     law_id="CN-OFFICIAL-VEHICLE-2017-PUBLIC-INSTITUTION-PRINCIPLE"
     case={
-        "contract_version":"2.1.0","id":"x","domain":"law-applicability","prompt":"x","context":{},
+        "contract_version":"2.1.1","id":"x","domain":"law-applicability","prompt":"x","context":{},
         "expected":{"law_ids":[law_id]},
     }
     result={
-        "contract_version":"2.1.0","id":"x","text":"",
+        "contract_version":"2.1.1","id":"x","text":"",
         "law_ids":[law_id],
         "law_roles":{law_id:"mystery_basis"},
     }

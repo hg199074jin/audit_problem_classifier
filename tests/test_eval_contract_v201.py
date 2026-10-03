@@ -51,7 +51,7 @@ def test_non_format_cases_use_structured_semantics_not_literal_prose_assertions(
 def test_runtime_contract_fields_are_scored_structurally():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0",
+        "contract_version": "2.1.1",
         "id": "semantic",
         "domain": "law-applicability",
         "prompt": "x",
@@ -68,7 +68,7 @@ def test_runtime_contract_fields_are_scored_structurally():
         },
     }
     result = {
-        "contract_version": "2.1.0",
+        "contract_version": "2.1.1",
         "id": "semantic",
         "text": "措辞完全自由，不要求固定短语。",
         "gate_status": "proceed",
@@ -87,7 +87,7 @@ def test_runtime_contract_fields_are_scored_structurally():
 def test_semantic_forbidden_word_in_negated_prose_does_not_fail_without_structured_violation():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0",
+        "contract_version": "2.1.1",
         "id": "negation",
         "domain": "evidence-wording",
         "prompt": "x",
@@ -98,7 +98,7 @@ def test_semantic_forbidden_word_in_negated_prose_does_not_fail_without_structur
         },
     }
     result = {
-        "contract_version": "2.1.0",
+        "contract_version": "2.1.1",
         "id": "negation",
         "text": "现有证据不能认定构成串通投标。",
         "finding_types": ["procurement_quote_collusion_suspected"],
@@ -111,7 +111,7 @@ def test_semantic_forbidden_word_in_negated_prose_does_not_fail_without_structur
 def test_structured_excluded_law_ids_are_required_when_expected():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0",
+        "contract_version": "2.1.1",
         "id": "law",
         "domain": "law-applicability",
         "prompt": "x",
@@ -123,7 +123,7 @@ def test_structured_excluded_law_ids_are_required_when_expected():
         },
     }
     bad = {
-        "contract_version": "2.1.0",
+        "contract_version": "2.1.1",
         "id": "law",
         "text": "旧法不得引用。",
         "law_ids": ["CN-INVOICE-2023-ART20"],
@@ -138,7 +138,7 @@ def test_structured_excluded_law_ids_are_required_when_expected():
 def test_literal_text_checks_are_rejected_outside_report_format_domain():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.0",
+        "contract_version": "2.1.1",
         "id": "bad-contract",
         "domain": "classification",
         "prompt": "x",
@@ -147,7 +147,7 @@ def test_literal_text_checks_are_rejected_outside_report_format_domain():
             "text_checks": {"contains": ["固定措辞"]}
         },
     }
-    result = {"contract_version": "2.1.0", "id": "bad-contract", "text": "固定措辞"}
+    result = {"contract_version": "2.1.1", "id": "bad-contract", "text": "固定措辞"}
     outcome = scorer.score_case(case, result)
     assert not outcome.passed
     assert any("text_checks" in failure for failure in outcome.failures)
