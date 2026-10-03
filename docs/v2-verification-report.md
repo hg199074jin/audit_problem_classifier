@@ -1195,3 +1195,60 @@ Frozen runtime / contract / data-validation blobs:
 - `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
 
 V2.1.0 Gate D 开始后，上述 frozen files 不得根据 runtime 输出修改来追 PASS。
+
+
+## 20. V2.1.1 Multi-defect Classification / Emission Remediation and Freeze Manifest
+
+### 20.1 V2.1.0 Gate D 失败裁定（GPT-004）
+
+V2.1.0 Gate D（ZCODE-003，Issue #5）24/26 PASS，2 例失败裁定均为 **runtime 行为缺陷（发射/粒度规则不够确定性）**，非 oracle 缺陷：
+
+| 案例 | 根因 | V2.1.1 处置 |
+|---|---|---|
+| live-20260629 | 多问题清单中 defensive/drifted conclusion emission（`invoice_irregularity_not_false_invoicing_established` 无争议触发、`reimbursement_review_insufficient` 隐式推导、`decision_required_pending_items` 防御性发射） | result-contract 新增 Safe/Negative conclusion trigger gate + `reimbursement_review_insufficient` 强化必要条件 + `decision_required_*` 触发门（决策表 `scripts/classification_emission.py`） |
+| expense-boundary | FY/SW 优先级 prose 判据不 deterministic，附带发票瑕疵被机械拆出 `invoice_information_irregularity` | classification.md 新增 FY/SW 拆分决策门（门 A 费用场景默认 FY / 门 B 独立对象 SW / 门 C FY wins DO NOT SPLIT，决策表 `invoice_split_gate`）+ 独立 Finding 三条件改合取 |
+
+### 20.2 Positive regression protection
+
+p2-invoice（safe conclusion + SW）、mode-a/b-integrated（SW + invoice_information_irregularity）、kaifeng target 设计、pairing/member 绑定全部由测试固化保护（tests/test_eval_contract_v211.py）。
+
+### 20.3 V2.1.1 变更范围
+
+- 新增 `scripts/classification_emission.py` 确定性决策表（runtime 推导事实后过门）；
+- `rules/classification.md`：FY/SW 拆分决策门 + 合取式独立 Finding 判据；
+- `rules/result-contract.md`：safe conclusion 触发门、`reimbursement_review_insufficient` 强化条件、`decision_required_*` 触发门；
+- 版本 2.0.9→2.1.1 全量对齐（schemas/cases/fixtures/README/tests）；`evals/score.py` 残留 `CONTRACT_VERSION="2.0.9"` 清理为 2.1.1；
+- oracle 未改：live-20260629 / expense-boundary expected 原样（tests 固化）。
+
+### 20.4 V2.1.1 Freeze Manifest
+
+Frozen runtime / contract / data-validation blobs:
+
+- `evals/case.schema.json` — `f1ff19d165080a5e72a690c2c4958d4cb2171339`
+- `evals/result.schema.json` — `2bf2bfe12596969c287ce2115fced5188f71cfb5`
+- `evals/cases/amount-coverage.jsonl` — `354cc910fd6916328961994b26f337e974198258`
+- `evals/cases/classification.jsonl` — `d19d0bbe52a848512975d1bbdd5cd26ed0da1927`
+- `evals/cases/evidence-wording.jsonl` — `8adb613baf5dd3289389bd1ff827143218bbe184`
+- `evals/cases/law-applicability.jsonl` — `859013995c1bcd67c854d61a22e96e163b506028`
+- `evals/cases/report-format.jsonl` — `92f78d124fa2298df9253a2b2ee98bcdec028e69`
+- `evals/cases/report-modes.jsonl` — `5146dcfae9ef27b87bf9fad230a53aca3c5b0330`
+- `evals/score.py` — `26886ee3ac1f82571479b66647617036237a25dc`
+- `evals/README.md` — `d074de57d8062268e09a87b812b4dfc984b49c95`
+- `rules/result-contract.md` — `1f639dae23ff4b0efaa1e63f0f4a2a5a677807bb`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/classification.md` — `4f70fb818a684cfa205c809f347affe34866fe9a`
+- `rules/law-applicability.md` — `0a2f24488142aac7f65b57b4336f21f98d741b80`
+- `rules/coverage-and-amount.md` — `762a0600cc37b7e832eaa4326e94a31a3c30fc3d`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `a184540492fe034cc3edf2d88980bf799da694cd`
+- `scripts/classification_emission.py` — `4dcda3c7165f275d33ddeca60bf06cf722a51de6`
+- `scripts/validate_v2_data.py` — `b404ef05d8036946449ec565b74b1844f9a557e8`
+- `schemas/project-context.schema.json` — `cb54ad8d8d919ad6148585f345f9685db3d00cf5`
+- `schemas/source-record.schema.json` — `ac6f5a72673aad4d7715391d62368e03f3dacebe`
+- `schemas/finding.schema.json` — `a9a5541d2d34eaf309a28e953734388bcc8aad9b`
+- `schemas/law.schema.json` — `c5831edb299b22cdde69c799d2e463745a5522e8`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+V2.1.1 Gate D 开始后，上述 frozen files 不得根据 runtime 输出修改来追 PASS。

@@ -12,7 +12,7 @@ from typing import NamedTuple
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.0.9"
+CONTRACT_VERSION = "2.1.1"
 RESULT_SCHEMA_PATH = ROOT / "evals" / "result.schema.json"
 
 STRUCTURED_LIST_FIELDS = (

@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.1.0）
+# Machine Result Contract（V2.1.1）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.1.0"`
+`contract_version = "2.1.1"`
 
 ## 字段
 
@@ -84,6 +84,25 @@ Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contrac
 - `gate_status=needs_review` 只限制尚未确认的正式法规依据和最终化判断；**needs_review 不得吞掉已经独立成立的证据层结论**。例如正文已经形成“现有证据不能认定构成串通投标”的判断时，仍应同步输出 `collusive_bidding_not_established`。
 
 ### 结论码发射决策（Conclusion emission policy）
+
+### Safe/Negative conclusion trigger gate（未升级定性结论的触发门）
+
+对以下"未达到更严重定性"类结论码：
+
+`invoice_irregularity_not_false_invoicing_established`、`collusive_bidding_not_established`、`misappropriation_not_established`、`post_execution_signing_not_backdating_established`、`recoverable_undercollection_not_loss_established`
+
+原则：**只有当输入事实或用户请求实际触发对应严重定性争议时才发射**，不得因相关领域事实存在就自动附带安全结论（决策表：`scripts/classification_emission.py::safe_negative_conclusion_gate`，runtime 推导 controversy_triggered 与 fact_preconditions 后必须过门）。例如：
+
+- 发票抬头不一致 ≠ 自动触发"未构成虚开发票"；只有 prompt/context 实际涉及"虚开/交易真实性/是否构成虚开"争议时才允许 `invoice_irregularity_not_false_invoicing_established`；
+- `collusive_bidding_not_established` 仅在报价异常/供应商关联等串通争议被列入本案认定范围时发射。
+
+### `reimbursement_review_insufficient` 必要条件（V2.1.1 强化）
+
+必须同时满足：①输入明确存在审核程序缺陷、必要附件缺失、审批/复核责任事实（至少其一）；②当前 Finding 确实是审核控制问题。**不得由发票抬头不一致、开票方/收款方不一致、一般凭证不规范单独推出**（决策表：`scripts/classification_emission.py::reimbursement_review_insufficient_gate`）。
+
+### `decision_required_*` 诊断码触发门
+
+`decision_required_pending_items` 只有在输入存在真实未决事实时允许发射：空白记录、纳入/排除取舍、"待落实/是否有文件/无法确认"等事项。**不得因"问题清单很复杂""存在多个事项"而防御性发射**（决策表：`scripts/classification_emission.py::decision_required_pending_items_gate`）。
 
 每个**实质性专业结论码**（区别于 `decision_required_*` 等诊断型代码）发射前必须同时满足：
 
