@@ -100,6 +100,15 @@ Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contrac
 
 必须同时满足：①输入明确存在审核程序缺陷、必要附件缺失、审批/复核责任事实（至少其一）；②当前 Finding 确实是审核控制问题。**不得由发票抬头不一致、开票方/收款方不一致、一般凭证不规范单独推出**。runtime 运行 `python3 scripts/classification_emission.py review-insufficient --input <facts.json>` 按输出的 `allowed` 执行。
 
+### 多问题清单的结论码收敛（V2.1.1 Gate D live-20260629 裁定）
+
+在多问题清单的分类整理任务中：
+
+- 只发射**当前 Finding 认定对象的结论码**，且该结论码的事实前提必须在本案输入中明确存在；
+- 附带发票瑕疵（抬头不一致、开票主体与收款主体不一致）在费用场景默认门下归 FY，**不发射** `invoice_irregularity_not_false_invoicing_established`、`reimbursement_review_insufficient` 或其他发票类结论码；
+- `decision_required_pending_items` 只有在存在真实 pending 事实时发射，"问题清单很复杂"不构成发射条件；
+- 发射每个结论码前，runtime 应过 `scripts/classification_emission.py` 对应的触发门，并确认 context 中存在对应事实前提。
+
 ### `decision_required_*` 诊断码触发门
 
 `decision_required_pending_items` 只有在输入存在真实未决事实时允许发射：空白记录、纳入/排除取舍、"待落实/是否有文件/无法确认"等事项。**不得因"问题清单很复杂""存在多个事项"而防御性发射**。runtime 运行 `python3 scripts/classification_emission.py decision-required --input <facts.json>` 按输出的 `allowed` 执行。
