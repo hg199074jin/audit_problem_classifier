@@ -188,7 +188,7 @@ def load_cases(case_dir: Path) -> list[dict]:
     case_schema_path = ROOT / "evals" / "case.schema.json"
     case_schema = json.loads(case_schema_path.read_text(encoding="utf-8")) if case_schema_path.exists() else None
     case_validator = Draft202012Validator(case_schema) if case_schema else None
-    for path in sorted(Path(case_dir).glob("*.jsonl")):
+    for path in sorted(Path(case_dir).rglob("*.jsonl")):
         for row in _read_jsonl(path):
             if case_validator:
                 errs = sorted(case_validator.iter_errors(row), key=lambda e: list(e.path))
@@ -327,13 +327,25 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
 
     # V2.2.0: known substantive conclusion codes not in expected must FAIL
     expected_codes = set((case.get("expected") or {}).get("conclusion_codes") or [])
-    _DIAG = ("decision_required_", "unverified_law_", "reimbursement_review_insufficient")
+    _DIAG = ("decision_required_", "unverified_law_")
     dangerous = sorted(
         c for c in conclusions - expected_codes
         if c in KNOWN_CONCLUSION_CODES and not c.startswith(_DIAG)
     )
     if dangerous:
         failures.append(f"conclusion_codes: substantive code(s) not declared in expected {dangerous!r}")
+    if 'reimbursement_review_insufficient' in conclusions:
+        ctx = case.get('context') or {}
+        has_review_facts = any(
+            ctx.get(key)
+            for key in ('review_procedure_defect', 'required_attachments_missing',
+                        'approval_responsibility_facts', 'review_control_facts_present')
+        )
+        if not has_review_facts:
+            failures.append(
+                'conclusion_codes: reimbursement_review_insufficient requires explicit '
+                'review-control facts in case context'
+            )
 
     law_catalog = _load_law_catalog()
     known_laws = set(law_catalog)
@@ -392,6 +404,16 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
     context_report_mode = (case.get("context") or {}).get("report_mode")
     if sections and context_report_mode is None:
         failures.append("report_sections may only be emitted when context.report_mode is explicitly provided")
+    result_report_mode = result.get("report_mode")
+    if result_report_mode and context_report_mode and result_report_mode != context_report_mode:
+        failures.append(
+            f"report_mode: result {result_report_mode!r} does not match context.report_mode {context_report_mode!r}"
+        )
+    if result_report_mode and sections:
+        mode_prefix = "mode_a_" if result_report_mode == "classification_report" else "mode_b_"
+        wrong = sorted(s for s in sections if not s.startswith(mode_prefix))
+        if wrong:
+            failures.append(f"report_sections: section code(s) {wrong!r} do not match mode {result_report_mode!r}")
 
     status = result.get("applicability_status")
     target = result.get("applicability_target")
@@ -584,7 +606,11 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
     # candidate_rule target binding (V2.2.0, R1 strengthened)
     ctx_candidate = (case.get("context") or {}).get("candidate_rule_id")
     res_target = result.get("applicability_target")
-    if res_target and res_target.startswith("candidate_rule:"):
+    if res_target and res_target.startswith("candidate_rule:") and not ctx_candidate:
+        failures.append(
+            "applicability_target: candidate_rule:* target requires context.candidate_rule_id to be declared"
+        )
+    elif ctx_candidate and res_target:
         if not ctx_candidate:
             failures.append(
                 "applicability_target: candidate_rule:* target requires context.candidate_rule_id to be declared"

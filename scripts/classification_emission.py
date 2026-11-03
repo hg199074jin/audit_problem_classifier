@@ -76,6 +76,14 @@ def invoice_split_gate(
                 "emit_invoice_information_irregularity": False,
                 "rationale": "false-invoicing dispute raised without observable invoice defect facts; fail closed",
             }
+        unknown_kinds = blemish - INCIDENTAL_INVOICE_BLEMISH_KINDS - {"noncompliant_invoice_obtained"}
+        if unknown_kinds and not independent_invoice_object:
+            return {
+                "decision": "needs_review",
+                "primary_class": None,
+                "emit_invoice_information_irregularity": False,
+                "rationale": f"unknown invoice blemish kind(s) {sorted(unknown_kinds)}; cannot classify",
+            }
         return {
             "decision": "sw_independent",
             "primary_class": "SW",
