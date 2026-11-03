@@ -318,7 +318,7 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
 
     # V2.2.0: known substantive conclusion codes not in expected must FAIL
     expected_codes = set((case.get("expected") or {}).get("conclusion_codes") or [])
-    _DIAG = ("decision_required_", "unverified_law_")
+    _DIAG = ("decision_required_", "unverified_law_", "reimbursement_review_insufficient")
     dangerous = sorted(
         c for c in conclusions - expected_codes
         if c in KNOWN_CONCLUSION_CODES and not c.startswith(_DIAG)
