@@ -1,0 +1,8 @@
+date_format: YYYY/MM
+amount_format: "#,##0.00元"
+quote_style: chinese_curly
+voucher_reference: "{number}号凭证"
+ordinary_expense_grouping: by_issue_nature
+report_modes:
+  - classification_report
+  - special_audit_report

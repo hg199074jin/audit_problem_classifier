@@ -1,0 +1,15 @@
+jurisdiction:
+  country: CN
+  province: Henan
+  city: Kaifeng
+organization:
+  level: municipal
+  type: public_institution
+audit_period:
+  start: '2025-01-01'
+  end: '2025-12-31'
+funding:
+  - fiscal_funds
+  - own_funds
+report_mode: special_audit_report
+profile: firm-default

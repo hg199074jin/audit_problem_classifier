@@ -1,0 +1,39 @@
+{
+  "id": "CN-GOV-PURCHASE-SERVICES-2020-ART10",
+  "title": "政府购买服务管理办法",
+  "document_no": "财政部令第102号",
+  "article": "第十条",
+  "issuer": "财政部",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "2020-03-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [
+      "administrative_unit"
+    ],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "government_purchase_services"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十条第（五）项规定，购买主体的人员招、聘用，以劳务派遣方式用工，以及设置公益性岗位等事项不得纳入政府购买服务范围。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": "https://www.mof.gov.cn/gp/xxgkml/tfs/202002/t20200217_3470373.htm",
+    "identifier": "财政部令第102号",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": null
+}

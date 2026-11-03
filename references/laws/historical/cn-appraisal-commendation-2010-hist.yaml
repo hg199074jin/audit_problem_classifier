@@ -1,0 +1,37 @@
+{
+  "id": "CN-APPRAISAL-COMMENDATION-2010-HIST",
+  "title": "评比达标表彰活动管理办法（试行）",
+  "document_no": null,
+  "article": null,
+  "issuer": "中共中央办公厅、国务院办公厅",
+  "legal_level": "normative_document",
+  "status": "repealed",
+  "effective_from": "2010-10-27",
+  "effective_to": "2018-12-20",
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "appraisal_commendation"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "2010年10月27日印发的试行办法已于2018年12月21日新办法施行时同时废止。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official_archive",
+    "authority": "西藏自治区人力资源和社会保障厅（中央文件官方转载）",
+    "url": "https://hrss.xizang.gov.cn/zcfg/jycy/202006/t20200619_245380.html",
+    "identifier": "新办法第三十四条确认废止",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": "CN-APPRAISAL-COMMENDATION-2018"
+}

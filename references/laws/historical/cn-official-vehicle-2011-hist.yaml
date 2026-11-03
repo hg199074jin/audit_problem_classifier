@@ -1,0 +1,37 @@
+{
+  "id": "CN-OFFICIAL-VEHICLE-2011-HIST",
+  "title": "党政机关公务用车配备使用管理办法",
+  "document_no": null,
+  "article": null,
+  "issuer": "中共中央办公厅、国务院办公厅",
+  "legal_level": "normative_document",
+  "status": "repealed",
+  "effective_from": "2011-01-06",
+  "effective_to": "2017-12-04",
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "official_vehicle"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "2011年1月6日印发的旧公务用车办法已被2017年《党政机关公务用车管理办法》明确同时废止。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official_archive",
+    "authority": "国家国防科技工业局（中央文件官方转载）",
+    "url": "https://www.sastind.gov.cn/n10086200/n10086319/c10240549/content.html",
+    "identifier": "2017年新办法第三十一条确认废止",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": "CN-OFFICIAL-VEHICLE-2017"
+}

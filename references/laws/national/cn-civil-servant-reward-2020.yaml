@@ -1,0 +1,41 @@
+{
+  "id": "CN-CIVIL-SERVANT-REWARD-2020",
+  "title": "公务员奖励规定",
+  "document_no": null,
+  "article": null,
+  "issuer": "中共中央组织部",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2020-12-28",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [
+      "administrative_unit"
+    ],
+    "organization_levels": [],
+    "person_types": [
+      "civil_servant"
+    ]
+  },
+  "business_scope": [
+    "civil_servant_reward"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "现行《公务员奖励规定》于2020年12月8日修订、2020年12月28日发布，用于规范公务员和公务员集体奖励。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "共产党员网",
+    "url": "https://www.12371.cn/2021/01/11/ARTI1610350526863964.shtml",
+    "identifier": "2020-12-28发布",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": null
+}

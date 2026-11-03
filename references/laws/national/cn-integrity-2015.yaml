@@ -1,0 +1,42 @@
+{
+  "id": "CN-INTEGRITY-2015",
+  "title": "中国共产党廉洁自律准则",
+  "document_no": null,
+  "article": null,
+  "issuer": "中共中央",
+  "legal_level": "party_rule",
+  "status": "effective",
+  "effective_from": "2016-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": [
+      "ccp_member",
+      "ccp_leading_cadre"
+    ]
+  },
+  "business_scope": [
+    "integrity_discipline"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "准则自2016年1月1日起施行，适用于中国共产党全体党员，并对党员领导干部规定更高的廉洁自律要求。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "共产党员网",
+    "url": "https://news.12371.cn/2015/10/21/VIDE1445436000954862.shtml",
+    "identifier": "2016-01-01施行",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [
+    "CN-INTEGRITY-2010-HIST"
+  ],
+  "superseded_by": null
+}

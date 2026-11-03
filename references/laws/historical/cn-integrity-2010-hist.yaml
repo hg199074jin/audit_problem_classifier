@@ -1,0 +1,39 @@
+{
+  "id": "CN-INTEGRITY-2010-HIST",
+  "title": "中国共产党党员领导干部廉洁从政若干准则",
+  "document_no": null,
+  "article": null,
+  "issuer": "中共中央",
+  "legal_level": "party_rule",
+  "status": "repealed",
+  "effective_from": "2010-01-18",
+  "effective_to": "2015-12-31",
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": [
+      "ccp_leading_cadre"
+    ]
+  },
+  "business_scope": [
+    "integrity_discipline"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "旧《廉洁从政若干准则》已在《中国共产党廉洁自律准则》自2016年1月1日起施行时同时废止。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official_archive",
+    "authority": "共产党员网",
+    "url": "https://news.12371.cn/2015/10/21/VIDE1445436000954862.shtml",
+    "identifier": "2016-01-01新准则施行时废止",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": "CN-INTEGRITY-2015"
+}

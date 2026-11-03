@@ -1,0 +1,39 @@
+{
+  "id": "CN-ADMIN-ACCOUNTING-2013-HIST",
+  "title": "行政单位会计制度",
+  "document_no": "财库〔2013〕218号",
+  "article": null,
+  "issuer": "财政部",
+  "legal_level": "accounting_standard",
+  "status": "superseded",
+  "effective_from": "2014-01-01",
+  "effective_to": "2018-12-31",
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [
+      "administrative_unit"
+    ],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "government_accounting"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "财库〔2013〕218号《行政单位会计制度》在政府会计准则制度于2019年1月1日全面施行后，不再由执行政府会计准则制度的单位执行。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official_archive",
+    "authority": "财政部",
+    "url": "https://www.mof.gov.cn/gkml/caizhengwengao/wg2018/wg09/201901/t20190102_3112192.htm",
+    "identifier": "财库〔2013〕218号停止执行说明",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": "CN-GOV-ACCOUNTING-2017"
+}

@@ -1,0 +1,39 @@
+{
+  "id": "CN-BASIC-CONSTRUCTION-FINANCE-2002-HIST",
+  "title": "基本建设财务管理规定",
+  "document_no": "财建〔2002〕394号",
+  "article": null,
+  "issuer": "财政部",
+  "legal_level": "normative_document",
+  "status": "repealed",
+  "effective_from": "2002-09-27",
+  "effective_to": "2016-08-31",
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "basic_construction_finance"
+  ],
+  "funding_scope": [
+    "fiscal_funds"
+  ],
+  "rule_role": "direct_basis",
+  "text": "财建〔2002〕394号及其解释已由财政部令第81号第六十三条明确自2016年9月1日起同时废止。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official_archive",
+    "authority": "财政部条法司",
+    "url": "https://tfs.mof.gov.cn/caizhengbuling/201605/t20160506_1979589.htm",
+    "identifier": "财政部令第81号第六十三条确认废止",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [],
+  "superseded_by": "CN-BASIC-CONSTRUCTION-FINANCE-2016"
+}

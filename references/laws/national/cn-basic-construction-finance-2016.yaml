@@ -1,0 +1,41 @@
+{
+  "id": "CN-BASIC-CONSTRUCTION-FINANCE-2016",
+  "title": "基本建设财务规则",
+  "document_no": "财政部令第81号",
+  "article": "第六十三条",
+  "issuer": "财政部",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "2016-09-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "basic_construction_finance"
+  ],
+  "funding_scope": [
+    "fiscal_funds"
+  ],
+  "rule_role": "direct_basis",
+  "text": "财政部令第81号，自2016年9月1日起施行；第六十三条明确财建〔2002〕394号及其解释同时废止。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部条法司",
+    "url": "https://tfs.mof.gov.cn/caizhengbuling/201605/t20160506_1979589.htm",
+    "identifier": "财政部令第81号",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [
+    "CN-BASIC-CONSTRUCTION-FINANCE-2002-HIST"
+  ],
+  "superseded_by": null
+}

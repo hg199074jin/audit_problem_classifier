@@ -1,0 +1,39 @@
+{
+  "id": "CN-APPRAISAL-COMMENDATION-2018",
+  "title": "评比达标表彰活动管理办法",
+  "document_no": "中办发〔2018〕69号",
+  "article": null,
+  "issuer": "中共中央办公厅、国务院办公厅",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2018-12-21",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "appraisal_commendation"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第三十四条规定本办法自2018年12月21日起施行，并同时废止2010年试行办法。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "西藏自治区人力资源和社会保障厅（中央文件官方转载）",
+    "url": "https://hrss.xizang.gov.cn/zcfg/jycy/202006/t20200619_245380.html",
+    "identifier": "中办发〔2018〕69号",
+    "verified": true
+  },
+  "verified_at": "2026-09-30",
+  "supersedes": [
+    "CN-APPRAISAL-COMMENDATION-2010-HIST"
+  ],
+  "superseded_by": null
+}
