@@ -55,7 +55,7 @@ def test_runtime_contract_fields_are_scored_structurally():
         "id": "semantic",
         "domain": "law-applicability",
         "prompt": "x",
-        "context": {},
+        "context": {"candidate_rule_id": "candidate_rule:policy-effective-2026-01-01"},
         "expected": {
             "gate_status": "proceed",
             "applicability_status": "not_applicable",

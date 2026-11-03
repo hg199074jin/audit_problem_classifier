@@ -227,6 +227,12 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.gate == "review-insufficient":
             facts = _read_input(args.input)
+            for name in ("review_procedure_defect", "required_attachments_missing",
+                         "approval_responsibility_facts", "finding_is_review_control"):
+                val = facts.get(name)
+                if val is not None and not isinstance(val, bool):
+                    print(f"ERROR: {name} must be a JSON boolean, got {type(val).__name__}: {val!r}", file=sys.stderr)
+                    return 2
             allowed = reimbursement_review_insufficient_gate(
                 review_procedure_defect=bool(facts.get("review_procedure_defect")),
                 required_attachments_missing=bool(facts.get("required_attachments_missing")),
@@ -237,6 +243,11 @@ def main(argv: list[str] | None = None) -> int:
             return 0
         if args.gate == "decision-required":
             facts = _read_input(args.input)
+            for name in ("blank_record", "inclusion_decision_needed", "pending_or_unconfirmed_facts"):
+                val = facts.get(name)
+                if val is not None and not isinstance(val, bool):
+                    print(f"ERROR: {name} must be a JSON boolean, got {type(val).__name__}: {val!r}", file=sys.stderr)
+                    return 2
             allowed = decision_required_pending_items_gate(
                 blank_record=bool(facts.get("blank_record")),
                 inclusion_decision_needed=bool(facts.get("inclusion_decision_needed")),

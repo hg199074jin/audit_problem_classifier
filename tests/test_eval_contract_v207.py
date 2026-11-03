@@ -48,6 +48,7 @@ def test_known_machine_fields_remain_valid():
         "expected":{
             "law_ids":[law_id],
             "law_roles":{law_id:"supporting_basis"},
+            "conclusion_codes":["official_vehicle_public_institution_principle_applies"],
         },
     }
     result={

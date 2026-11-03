@@ -318,14 +318,13 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
 
     # V2.2.0: known substantive conclusion codes not in expected must FAIL
     expected_codes = set((case.get("expected") or {}).get("conclusion_codes") or [])
-    if expected_codes:
-        _DIAG = ("decision_required_", "unverified_law_")
-        dangerous = sorted(
-            c for c in conclusions - expected_codes
-            if c in KNOWN_CONCLUSION_CODES and not c.startswith(_DIAG)
-        )
-        if dangerous:
-            failures.append(f"conclusion_codes: dangerous substantive code(s) not in expected {dangerous!r}")
+    _DIAG = ("decision_required_", "unverified_law_")
+    dangerous = sorted(
+        c for c in conclusions - expected_codes
+        if c in KNOWN_CONCLUSION_CODES and not c.startswith(_DIAG)
+    )
+    if dangerous:
+        failures.append(f"conclusion_codes: substantive code(s) not declared in expected {dangerous!r}")
 
     law_catalog = _load_law_catalog()
     known_laws = set(law_catalog)
@@ -565,14 +564,19 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
         if field in expected and result.get(field) != expected[field]:
             failures.append(f"{field}: expected {expected[field]!r}, got {result.get(field)!r}")
 
-    # candidate_rule target binding (V2.2.0)
+    # candidate_rule target binding (V2.2.0, R1 strengthened)
     ctx_candidate = (case.get("context") or {}).get("candidate_rule_id")
     res_target = result.get("applicability_target")
-    if ctx_candidate and res_target and res_target.startswith("candidate_rule:") and res_target != ctx_candidate:
-        failures.append(
-            f"applicability_target: candidate_rule target {res_target!r} does not match "
-            f"context.candidate_rule_id {ctx_candidate!r}"
-        )
+    if res_target and res_target.startswith("candidate_rule:"):
+        if not ctx_candidate:
+            failures.append(
+                "applicability_target: candidate_rule:* target requires context.candidate_rule_id to be declared"
+            )
+        elif res_target != ctx_candidate:
+            failures.append(
+                f"applicability_target: candidate_rule target {res_target!r} does not match "
+                f"context.candidate_rule_id {ctx_candidate!r}"
+            )
 
     if "applicability_target" in expected:
         expected_target = expected.get("applicability_target")

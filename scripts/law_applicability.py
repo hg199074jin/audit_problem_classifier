@@ -124,8 +124,10 @@ def _condition_value(context: dict, condition: dict) -> bool | None:
     if not present:
         return None
     if operator in ("eq", "neq"):
+        actual_is_num = isinstance(actual, (int, float)) and not isinstance(actual, bool)
+        expected_is_num = isinstance(expected, (int, float)) and not isinstance(expected, bool)
         if type(actual) is not type(expected) and not (
-            isinstance(actual, (int, float)) and isinstance(expected, (int, float))
+            actual_is_num and expected_is_num
         ):
             raise ConditionFactTypeError(field)
         return actual == expected if operator == "eq" else actual != expected
@@ -288,6 +290,9 @@ def evaluate_applicability(
             return ApplicabilityResult("not_applicable", [f"命中排除条件：{condition['field']}"])
         if matched is None:
             needs_review.append(f"缺少排除条件事实：{condition['field']}")
+
+    if unverified:
+        needs_review.append("法规来源尚未核验，不能作为已确认依据（V2.2.0: 所有路径 fail-closed）")
 
     if needs_review:
         return ApplicabilityResult("needs_review", needs_review)

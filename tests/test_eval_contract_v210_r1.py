@@ -181,7 +181,7 @@ def test_scorer_accepts_paired_status_target_structured_binding():
     assert outcome.passed, outcome.failures
 
 
-def test_scorer_accepts_paired_user_claim_target_without_membership():
+def test_scorer_rejects_user_claim_target_without_context_declaration():
     scorer = load_scorer()
     case = {
         "contract_version": "2.2.0", "id": "x", "domain": "law-applicability", "prompt": "p", "context": {},
@@ -193,7 +193,8 @@ def test_scorer_accepts_paired_user_claim_target_without_membership():
         "applicability_target": "candidate_rule:policy-effective-2026-01-01",
     }
     outcome = scorer.score_case(case, result)
-    assert outcome.passed, outcome.failures
+    assert not outcome.passed, "candidate_rule:* target requires context.candidate_rule_id"
+    assert any("candidate_rule_id" in f for f in outcome.failures)
 
 
 def test_every_status_bearing_case_has_expected_target():
