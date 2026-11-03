@@ -185,8 +185,17 @@ def _ensure_unique(rows: list[dict], label: str) -> None:
 
 def load_cases(case_dir: Path) -> list[dict]:
     rows: list[dict] = []
+    case_schema_path = ROOT / "evals" / "case.schema.json"
+    case_schema = json.loads(case_schema_path.read_text(encoding="utf-8")) if case_schema_path.exists() else None
+    case_validator = Draft202012Validator(case_schema) if case_schema else None
     for path in sorted(Path(case_dir).glob("*.jsonl")):
-        rows.extend(_read_jsonl(path))
+        for row in _read_jsonl(path):
+            if case_validator:
+                errs = sorted(case_validator.iter_errors(row), key=lambda e: list(e.path))
+                if errs:
+                    loc = ".".join(str(p) for p in errs[0].path) or "<root>"
+                    raise ValueError(f"case schema violation in {path.name}: {loc}: {errs[0].message}")
+            rows.append(row)
     _ensure_unique(rows, "case")
     return rows
 
@@ -333,6 +342,14 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
         unknown_laws = sorted(values - known_laws)
         if unknown_laws:
             failures.append(f"{field}: unknown law id(s) {unknown_laws!r}")
+    # V2.2.1: law_ids must reference effective Law Objects only
+    for law_id in set(result.get("law_ids") or []):
+        law_obj = law_catalog.get(law_id)
+        if law_obj and law_obj.get("status") not in (None, "effective"):
+            failures.append(
+                f"law_ids: {law_id!r} has status {law_obj.get('status')!r}, "
+                "only effective Law Objects are allowed as formal law_ids"
+            )
 
     raw_roles = result.get("law_roles")
     if law_ids and not isinstance(raw_roles, dict):

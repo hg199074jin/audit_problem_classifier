@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - feature/v2-audit-finding-engine
+      - main
   pull_request:
     branches:
       - main

@@ -208,6 +208,10 @@ def main(argv: list[str] | None = None) -> int:
                 if not isinstance(ib, list) or not all(isinstance(x, str) for x in ib):
                     print(f"ERROR: invoice_blemish must be a JSON array of strings, got {ib!r}", file=sys.stderr)
                     return 2
+            unknown_kinds = set(ib or ()) - INCIDENTAL_INVOICE_BLEMISH_KINDS - {"noncompliant_invoice_obtained"}
+            if unknown_kinds:
+                    print(f"ERROR: unknown invoice blemish kind(s): {sorted(unknown_kinds)}", file=sys.stderr)
+                    return 2
             decision = invoice_split_gate(
                 expense_context=bool(ec),
                 invoice_blemish=set(ib or ()),
