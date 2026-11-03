@@ -27,7 +27,7 @@
 
 ### FY 与 SW：附带发票瑕疵拆分决策门
 
-报销/费用凭证/支付审核场景中出现发票瑕疵时，按以下决策门判定（确定性决策表见 `scripts/classification_emission.py::invoice_split_gate`，runtime 推导事实后必须过门）：
+报销/费用凭证/支付审核场景中出现发票瑕疵时，按以下决策门判定。runtime 必须实际调用决策表引擎：将推导出的事实写入 JSON（字段 `expense_context` / `invoice_blemish` / `independent_invoice_object` / `false_invoicing_dispute`），运行 `python3 scripts/classification_emission.py invoice-split --input <facts.json>`，按输出的 `decision`（`no_invoice_finding` / `fy_incidental` / `sw_independent` / `needs_review`）执行；决策状态语义：无发票问题→门 abstain；费用场景偶然瑕疵→FY 不拆；门 B 命中→SW 拆分；事实不足→needs_review 不发射。决策门条文：
 
 - **门 A（费用场景默认 → FY）**：同时满足 ①场景是报销、费用凭证、支付审核或费用附件；②发票瑕疵仅表现为抬头不一致、开票主体与收款主体不一致、一般发票信息不规范；③输入未把发票法定效力/税务违法作为独立审计认定对象 —— 则主类 = FY，归入 `expense_supporting_documents_nonstandard`（必要时与 `expense_supporting_documents_incomplete` 并列），**不得额外拆出 `invoice_information_irregularity`**。
 - **门 B（独立发票/税务对象 → SW）**：至少命中一种才进入 SW 并发射 `invoice_information_irregularity`：prompt/context 明确要求判断发票是否合法/是否违反发票管理规定；事实明确表述"取得不符合规定的发票"且该违规本身是认定对象；明确询问/讨论虚开发票、无真实交易、发票法定效力；直接审计对象是纳税扣缴、税种税率、税务义务。

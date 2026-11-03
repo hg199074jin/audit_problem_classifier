@@ -1,14 +1,18 @@
 #!/usr/bin/env python3
-"""Deterministic classification / emission decision tables (V2.1.1).
+"""Deterministic classification / emission decision tables (V2.1.2).
 
-The runtime derives the factual inputs from the case; this engine applies the
-FY-vs-SW split gate and the conclusion emission trigger gates mechanically so
-that the boundaries in rules/classification.md and rules/result-contract.md
-are machine-checkable and regression-testable.
+The runtime derives factual inputs from the case, then invokes the gate
+functions directly or through the CLI (subcommands) so that the boundaries in
+rules/classification.md and rules/result-contract.md are machine-checkable,
+regression-testable, and actually executable inside the Skill runtime.
 
 Inputs are runtime-derived facts (booleans / blemish sets), not case IDs.
 """
 from __future__ import annotations
+
+import argparse
+import json
+import sys
 
 # Invoice blemish kinds that remain incidental to an expense/reimbursement
 # context. Any kind outside this set (e.g. noncompliant_invoice_obtained)
@@ -20,11 +24,11 @@ INCIDENTAL_INVOICE_BLEMISH_KINDS = {
 }
 
 SAFE_NEGATIVE_CONCLUSION_CODES = {
-    "invoice_irregularity_not_false_invoicing_established",
-    "collusive_bidding_not_established",
-    "misappropriation_not_established",
-    "post_execution_signing_not_backdating_established",
-    "recoverable_undercollection_not_loss_established",
+    "invoice_irregularity_not_false_invoicing_established": "false_invoicing",
+    "collusive_bidding_not_established": "collusive_bidding",
+    "misappropriation_not_established": "misappropriation",
+    "post_execution_signing_not_backdating_established": "backdating",
+    "recoverable_undercollection_not_loss_established": "established_loss",
 }
 
 
@@ -35,72 +39,89 @@ def invoice_split_gate(
     independent_invoice_object: bool,
     false_invoicing_dispute: bool,
 ) -> dict:
-    """Decide FY-vs-SW when invoice blemishes appear in an expense context.
+    """Decide the invoice dimension of classification. Gate B precedes Gate A.
 
     expense_context: the scenario is reimbursement / expense vouchers / payment
         review / expense supporting documents.
-    invoice_blemish: observed invoice defect kinds.
+    invoice_blemish: observed invoice defect kinds (runtime-derived).
     independent_invoice_object: the input explicitly makes invoice legality /
-        tax-violation itself the independent audit object (Gate B hit).
+        tax violation itself the independent audit object (Gate B).
     false_invoicing_dispute: the input actually raises 虚开 / transaction
-        authenticity / invoice legal validity as a disputed question.
+        authenticity / invoice legal validity as a disputed question (Gate B).
 
-    Precedence: Gate A (expense-context default → FY) wins over incidental
-    invoice blemishes unless Gate B (independent invoice/tax object) is met.
+    Decisions:
+      no_invoice_finding — no invoice issue observed; the gate abstains.
+      fy_incidental      — expense context with incidental blemishes: FY,
+                           never split an invoice_information_irregularity.
+      sw_independent     — Gate B met: SW with an explicit invoice finding.
+      needs_review       — a dispute or blemish exists without sufficient facts
+                           to classify; fail closed, never fabricate SW.
     """
-    if independent_invoice_object:
+    blemish = set(invoice_blemish or ())
+    non_incidental = blemish - INCIDENTAL_INVOICE_BLEMISH_KINDS
+    gate_b = bool(independent_invoice_object) or bool(non_incidental) or bool(false_invoicing_dispute)
+
+    if not blemish and not independent_invoice_object and not false_invoicing_dispute:
         return {
+            "decision": "no_invoice_finding",
+            "primary_class": None,
+            "emit_invoice_information_irregularity": False,
+            "rationale": "no invoice defect observed; the invoice gate abstains",
+        }
+    if gate_b:
+        if not blemish and not independent_invoice_object:
+            return {
+                "decision": "needs_review",
+                "primary_class": None,
+                "emit_invoice_information_irregularity": False,
+                "rationale": "false-invoicing dispute raised without observable invoice defect facts; fail closed",
+            }
+        return {
+            "decision": "sw_independent",
             "primary_class": "SW",
-            "split_invoice_finding": True,
             "emit_invoice_information_irregularity": True,
             "rationale": "gate B: invoice legality/tax violation is an explicit independent audit object",
         }
-    if invoice_blemish and not set(invoice_blemish) <= INCIDENTAL_INVOICE_BLEMISH_KINDS:
-        return {
-            "primary_class": "SW",
-            "split_invoice_finding": True,
-            "emit_invoice_information_irregularity": True,
-            "rationale": "gate B: non-incidental invoice defect (e.g. noncompliant invoice obtained) is the audit object",
-        }
     if expense_context:
         return {
+            "decision": "fy_incidental",
             "primary_class": "FY",
-            "split_invoice_finding": False,
             "emit_invoice_information_irregularity": False,
             "rationale": "gate A/C: expense-context default wins; incidental invoice blemishes do not split SW",
         }
-    if false_invoicing_dispute:
-        return {
-            "primary_class": "SW",
-            "split_invoice_finding": True,
-            "emit_invoice_information_irregularity": True,
-            "rationale": "gate B: false-invoicing dispute makes the invoice the audit object",
-        }
     return {
-        "primary_class": "SW",
-        "split_invoice_finding": True,
-        "emit_invoice_information_irregularity": True,
-        "rationale": "no expense context and invoice legality is the direct object",
+        "decision": "needs_review",
+        "primary_class": None,
+        "emit_invoice_information_irregularity": False,
+        "rationale": "incidental invoice blemish outside an expense context; classification ownership undetermined",
     }
 
 
 def safe_negative_conclusion_gate(
     code: str,
     *,
-    controversy_triggered: bool,
+    controversy: str,
+    raised: bool,
     fact_preconditions_met: bool,
 ) -> bool:
     """Gate for 'not escalated to the more severe characterization' codes.
 
-    controversy_triggered: the input facts or the user request actually raise
-        the corresponding more-severe characterization as a disputed question.
+    controversy: which severe characterization is allegedly disputed. It must
+        belong to the conclusion code's own family; a cross-family controversy
+        (e.g. raising false_invoicing for a misappropriation code) is rejected.
+    raised: the input facts or the user request actually raise that controversy.
     fact_preconditions_met: the specific preconditions recorded for that code
         (e.g. for invoice: irregular information + genuine transaction + no
         false-invoicing evidence) are present.
     """
     if code not in SAFE_NEGATIVE_CONCLUSION_CODES:
         raise ValueError(f"unknown safe negative conclusion code: {code!r}")
-    return bool(controversy_triggered and fact_preconditions_met)
+    if controversy != SAFE_NEGATIVE_CONCLUSION_CODES[code]:
+        raise ValueError(
+            f"controversy {controversy!r} does not match conclusion code family "
+            f"{SAFE_NEGATIVE_CONCLUSION_CODES[code]!r} for {code!r}"
+        )
+    return bool(raised and fact_preconditions_met)
 
 
 def reimbursement_review_insufficient_gate(
@@ -135,5 +156,87 @@ def decision_required_pending_items_gate(
     return bool(blank_record or inclusion_decision_needed or pending_or_unconfirmed_facts)
 
 
+# --------------------------- CLI (runtime invokable) ---------------------------
+
+def _read_input(path: str) -> dict:
+    raw = sys.stdin.read() if path == "-" else pathlib_Path(path).read_text(encoding="utf-8")
+    data = json.loads(raw)
+    if not isinstance(data, dict):
+        raise ValueError("input JSON must be an object")
+    return data
+
+
+def pathlib_Path(path: str):
+    from pathlib import Path
+
+    return Path(path)
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Deterministic classification / emission decision gates")
+    sub = parser.add_subparsers(dest="gate", required=True)
+
+    p_split = sub.add_parser("invoice-split", help="FY-vs-SW invoice split decision")
+    p_split.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
+
+    p_safe = sub.add_parser("safe-conclusion", help="safe negative conclusion trigger gate")
+    p_safe.add_argument("--code", required=True)
+    p_safe.add_argument("--controversy", required=True)
+    p_safe.add_argument("--raised", action="store_true")
+    p_safe.add_argument("--preconditions-met", action="store_true")
+
+    p_review = sub.add_parser("review-insufficient", help="reimbursement_review_insufficient gate")
+    p_review.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
+
+    p_pending = sub.add_parser("decision-required", help="decision_required_pending_items gate")
+    p_pending.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
+
+    args = parser.parse_args(argv)
+
+    try:
+        if args.gate == "invoice-split":
+            facts = _read_input(args.input)
+            decision = invoice_split_gate(
+                expense_context=bool(facts.get("expense_context")),
+                invoice_blemish=set(facts.get("invoice_blemish") or ()),
+                independent_invoice_object=bool(facts.get("independent_invoice_object")),
+                false_invoicing_dispute=bool(facts.get("false_invoicing_dispute")),
+            )
+            print(json.dumps(decision, ensure_ascii=False, indent=2))
+            return 0
+        if args.gate == "safe-conclusion":
+            allowed = safe_negative_conclusion_gate(
+                args.code,
+                controversy=args.controversy,
+                raised=args.raised,
+                fact_preconditions_met=args.preconditions_met,
+            )
+            print(json.dumps({"code": args.code, "allowed": allowed}, ensure_ascii=False, indent=2))
+            return 0
+        if args.gate == "review-insufficient":
+            facts = _read_input(args.input)
+            allowed = reimbursement_review_insufficient_gate(
+                review_procedure_defect=bool(facts.get("review_procedure_defect")),
+                required_attachments_missing=bool(facts.get("required_attachments_missing")),
+                approval_responsibility_facts=bool(facts.get("approval_responsibility_facts")),
+                finding_is_review_control=bool(facts.get("finding_is_review_control")),
+            )
+            print(json.dumps({"allowed": allowed}, ensure_ascii=False, indent=2))
+            return 0
+        if args.gate == "decision-required":
+            facts = _read_input(args.input)
+            allowed = decision_required_pending_items_gate(
+                blank_record=bool(facts.get("blank_record")),
+                inclusion_decision_needed=bool(facts.get("inclusion_decision_needed")),
+                pending_or_unconfirmed_facts=bool(facts.get("pending_or_unconfirmed_facts")),
+            )
+            print(json.dumps({"allowed": allowed}, ensure_ascii=False, indent=2))
+            return 0
+    except (ValueError, TypeError, json.JSONDecodeError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+    return 1
+
+
 if __name__ == "__main__":
-    raise SystemExit("decision table module — import and call the gate functions; no CLI")
+    raise SystemExit(main())

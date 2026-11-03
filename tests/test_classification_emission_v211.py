@@ -30,7 +30,7 @@ def test_expense_context_header_mismatch_stays_fy_no_split():
         false_invoicing_dispute=False,
     )
     assert d["primary_class"] == "FY"
-    assert d["split_invoice_finding"] is False
+    assert d["decision"] == "fy_incidental"
     assert d["emit_invoice_information_irregularity"] is False
 
 
@@ -43,14 +43,15 @@ def test_expense_context_issuer_payee_mismatch_stays_fy_no_split():
         false_invoicing_dispute=False,
     )
     assert d["primary_class"] == "FY"
-    assert d["split_invoice_finding"] is False
+    assert d["decision"] == "fy_incidental"
 
 
 def test_incidental_mismatch_does_not_emit_invoice_safe_conclusion():
     eng = load_engine()
     allowed = eng.safe_negative_conclusion_gate(
         "invoice_irregularity_not_false_invoicing_established",
-        controversy_triggered=False,
+        controversy="false_invoicing",
+        raised=False,
         fact_preconditions_met=True,
     )
     assert allowed is False
@@ -88,7 +89,7 @@ def test_noncompliant_invoice_as_independent_object_splits_sw():
         false_invoicing_dispute=False,
     )
     assert d["primary_class"] == "SW"
-    assert d["split_invoice_finding"] is True
+    assert d["decision"] == "sw_independent"
     assert d["emit_invoice_information_irregularity"] is True
 
 
@@ -96,7 +97,8 @@ def test_false_invoicing_dispute_with_insufficient_evidence_allows_safe_conclusi
     eng = load_engine()
     allowed = eng.safe_negative_conclusion_gate(
         "invoice_irregularity_not_false_invoicing_established",
-        controversy_triggered=True,
+        controversy="false_invoicing",
+        raised=True,
         fact_preconditions_met=True,
     )
     assert allowed is True
@@ -107,7 +109,8 @@ def test_collusive_bidding_safe_conclusion_triggered_by_quote_anomaly_dispute():
     assert (
         eng.safe_negative_conclusion_gate(
             "collusive_bidding_not_established",
-            controversy_triggered=True,
+            controversy="collusive_bidding",
+            raised=True,
             fact_preconditions_met=True,
         )
         is True
@@ -115,7 +118,8 @@ def test_collusive_bidding_safe_conclusion_triggered_by_quote_anomaly_dispute():
     assert (
         eng.safe_negative_conclusion_gate(
             "collusive_bidding_not_established",
-            controversy_triggered=False,
+            controversy="collusive_bidding",
+            raised=False,
             fact_preconditions_met=True,
         )
         is False
@@ -156,13 +160,13 @@ def test_precedence_expense_context_beats_incidental_sw_even_with_other_blemishe
         false_invoicing_dispute=False,
     )
     assert d["primary_class"] == "FY"
-    assert d["split_invoice_finding"] is False
+    assert d["decision"] == "fy_incidental"
 
 
 def test_unknown_safe_conclusion_code_rejected():
     eng = load_engine()
     try:
-        eng.safe_negative_conclusion_gate("made_up_code", controversy_triggered=True, fact_preconditions_met=True)
+        eng.safe_negative_conclusion_gate("made_up_code", controversy="false_invoicing", raised=True, fact_preconditions_met=True)
         raised = False
     except ValueError:
         raised = True
