@@ -12,7 +12,7 @@ from typing import NamedTuple
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.1.3"
+CONTRACT_VERSION = "2.2.0"
 RESULT_SCHEMA_PATH = ROOT / "evals" / "result.schema.json"
 
 STRUCTURED_LIST_FIELDS = (
@@ -316,6 +316,17 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
         if pair <= conclusions:
             failures.append(f"conclusion_codes: mutually exclusive codes present {sorted(pair)!r}")
 
+    # V2.2.0: known substantive conclusion codes not in expected must FAIL
+    expected_codes = set((case.get("expected") or {}).get("conclusion_codes") or [])
+    if expected_codes:
+        _DIAG = ("decision_required_", "unverified_law_")
+        dangerous = sorted(
+            c for c in conclusions - expected_codes
+            if c in KNOWN_CONCLUSION_CODES and not c.startswith(_DIAG)
+        )
+        if dangerous:
+            failures.append(f"conclusion_codes: dangerous substantive code(s) not in expected {dangerous!r}")
+
     law_catalog = _load_law_catalog()
     known_laws = set(law_catalog)
     for field in ("law_ids", "excluded_law_ids"):
@@ -507,7 +518,10 @@ def _derived_coverage(case: dict) -> tuple[int, Decimal, int | None] | None:
     for record in unique.values():
         amount = record.get("voucher_amount")
         if amount is not None:
-            total += Decimal(str(amount))
+            try:
+                total += Decimal(str(amount))
+            except (InvalidOperation, ValueError, TypeError):
+                pass
     findings = (case.get("context") or {}).get("findings")
     derived_findings = len(findings) if isinstance(findings, list) else None
     if derived_findings is None:
@@ -550,6 +564,15 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
     for field in STRUCTURED_SCALAR_FIELDS:
         if field in expected and result.get(field) != expected[field]:
             failures.append(f"{field}: expected {expected[field]!r}, got {result.get(field)!r}")
+
+    # candidate_rule target binding (V2.2.0)
+    ctx_candidate = (case.get("context") or {}).get("candidate_rule_id")
+    res_target = result.get("applicability_target")
+    if ctx_candidate and res_target and res_target.startswith("candidate_rule:") and res_target != ctx_candidate:
+        failures.append(
+            f"applicability_target: candidate_rule target {res_target!r} does not match "
+            f"context.candidate_rule_id {ctx_candidate!r}"
+        )
 
     if "applicability_target" in expected:
         expected_target = expected.get("applicability_target")

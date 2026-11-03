@@ -17,11 +17,11 @@ def load_scorer():
 def test_r2_review_insufficient_requires_context_facts():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.3", "id": "x", "domain": "classification", "prompt": "p", "context": {},
+        "contract_version": "2.2.0", "id": "x", "domain": "classification", "prompt": "p", "context": {},
         "expected": {"conclusion_codes": ["collusive_bidding_not_established"]},
     }
     result = {
-        "contract_version": "2.1.3", "id": "x", "text": "",
+        "contract_version": "2.2.0", "id": "x", "text": "",
         "conclusion_codes": ["collusive_bidding_not_established", "reimbursement_review_insufficient"],
     }
     outcome = scorer.score_case(case, result)
@@ -32,12 +32,12 @@ def test_r2_review_insufficient_requires_context_facts():
 def test_r2_review_insufficient_allowed_with_context_facts():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.3", "id": "x", "domain": "evidence-wording", "prompt": "p",
+        "contract_version": "2.2.0", "id": "x", "domain": "evidence-wording", "prompt": "p",
         "context": {"review_control_facts_present": True, "review_procedure_defect": True},
         "expected": {"conclusion_codes": ["reimbursement_review_insufficient"]},
     }
     result = {
-        "contract_version": "2.1.3", "id": "x", "text": "",
+        "contract_version": "2.2.0", "id": "x", "text": "",
         "conclusion_codes": ["reimbursement_review_insufficient"],
     }
     outcome = scorer.score_case(case, result)
@@ -47,12 +47,12 @@ def test_r2_review_insufficient_allowed_with_context_facts():
 def test_r2_candidate_rule_id_binds_target():
     scorer = load_scorer()
     case = {
-        "contract_version": "2.1.3", "id": "x", "domain": "law-applicability", "prompt": "p",
+        "contract_version": "2.2.0", "id": "x", "domain": "law-applicability", "prompt": "p",
         "context": {"candidate_rule_id": "CN-OFFICIAL-VEHICLE-2011-HIST"},
         "expected": {"applicability_status": "not_applicable", "applicability_target": "CN-OFFICIAL-VEHICLE-2011-HIST"},
     }
     wrong_target = {
-        "contract_version": "2.1.3", "id": "x", "text": "",
+        "contract_version": "2.2.0", "id": "x", "text": "",
         "applicability_status": "applicable", "applicability_target": "CN-OFFICIAL-VEHICLE-2017",
         "law_ids": ["CN-OFFICIAL-VEHICLE-2017"],
     }
@@ -60,7 +60,7 @@ def test_r2_candidate_rule_id_binds_target():
     assert not outcome.passed
     assert any("candidate_rule_id" in f or "applicability_target" in f for f in outcome.failures)
     right_target = {
-        "contract_version": "2.1.3", "id": "x", "text": "",
+        "contract_version": "2.2.0", "id": "x", "text": "",
         "applicability_status": "not_applicable", "applicability_target": "CN-OFFICIAL-VEHICLE-2011-HIST",
         "excluded_law_ids": ["CN-OFFICIAL-VEHICLE-2011-HIST"],
     }

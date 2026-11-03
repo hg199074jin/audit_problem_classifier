@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic classification / emission decision tables (V2.1.2).
+"""Deterministic classification / emission decision tables (V2.2.0).
 
 The runtime derives factual inputs from the case, then invokes the gate
 functions directly or through the CLI (subcommands) so that the boundaries in
@@ -196,11 +196,23 @@ def main(argv: list[str] | None = None) -> int:
     try:
         if args.gate == "invoice-split":
             facts = _read_input(args.input)
+            ec = facts.get("expense_context")
+            io = facts.get("independent_invoice_object")
+            fd = facts.get("false_invoicing_dispute")
+            for name, val in (("expense_context", ec), ("independent_invoice_object", io), ("false_invoicing_dispute", fd)):
+                if val is not None and not isinstance(val, bool):
+                    print(f"ERROR: {name} must be a JSON boolean, got {type(val).__name__}: {val!r}", file=sys.stderr)
+                    return 2
+            ib = facts.get("invoice_blemish")
+            if ib is not None:
+                if not isinstance(ib, list) or not all(isinstance(x, str) for x in ib):
+                    print(f"ERROR: invoice_blemish must be a JSON array of strings, got {ib!r}", file=sys.stderr)
+                    return 2
             decision = invoice_split_gate(
-                expense_context=bool(facts.get("expense_context")),
-                invoice_blemish=set(facts.get("invoice_blemish") or ()),
-                independent_invoice_object=bool(facts.get("independent_invoice_object")),
-                false_invoicing_dispute=bool(facts.get("false_invoicing_dispute")),
+                expense_context=bool(ec),
+                invoice_blemish=set(ib or ()),
+                independent_invoice_object=bool(io),
+                false_invoicing_dispute=bool(fd),
             )
             print(json.dumps(decision, ensure_ascii=False, indent=2))
             return 0

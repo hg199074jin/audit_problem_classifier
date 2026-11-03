@@ -44,6 +44,18 @@ def build_evaluation_context(
 
     if source_record and source_record.get("event_date") is not None:
         context["event_date"] = source_record["event_date"]
+
+    if source_record and source_record.get("funding") is not None:
+        sr_funding = source_record["funding"]
+        sr_set = set(sr_funding if isinstance(sr_funding, list) else [sr_funding])
+        proj_funding = context.get("funding")
+        if proj_funding is not None:
+            proj_set = set(proj_funding if isinstance(proj_funding, list) else [proj_funding])
+            if not sr_set <= proj_set:
+                raise ValueError(
+                    "source_record.funding contains funding types not present in "
+                    f"project context funding: {sorted(sr_set - proj_set)}"
+                )
     if source_record and source_record.get("funding") is not None:
         source_funding = source_record.get("funding")
         context["funding"] = list(source_funding) if isinstance(source_funding, list) else source_funding
@@ -111,10 +123,12 @@ def _condition_value(context: dict, condition: dict) -> bool | None:
         return present is bool(expected)
     if not present:
         return None
-    if operator == "eq":
-        return actual == expected
-    if operator == "neq":
-        return actual != expected
+    if operator in ("eq", "neq"):
+        if type(actual) is not type(expected) and not (
+            isinstance(actual, (int, float)) and isinstance(expected, (int, float))
+        ):
+            raise ConditionFactTypeError(field)
+        return actual == expected if operator == "eq" else actual != expected
     if operator == "in":
         try:
             return actual in expected
@@ -175,6 +189,8 @@ def evaluate_applicability(
 
     if status == "unknown":
         needs_review.append("法规效力状态未知")
+    unverified = source.get("verified") is not True
+
     if status == "effective" and start is None:
         needs_review.append("现行法规缺少生效日期，无法确认时效")
     if status in {"repealed", "superseded"} and start is None:
@@ -187,8 +203,12 @@ def evaluate_applicability(
             needs_review.append("缺少业务发生日期，无法判断法规时效")
         else:
             if start is not None and event < start:
+                if unverified:
+                    return ApplicabilityResult("needs_review", ["业务发生日在法规生效日期之前"] + needs_review)
                 return ApplicabilityResult("not_applicable", ["业务发生日在法规生效日期之前"])
             if end is not None and event > end:
+                if unverified:
+                    return ApplicabilityResult("needs_review", ["业务发生日在法规失效日期之后"] + needs_review)
                 return ApplicabilityResult("not_applicable", ["业务发生日在法规失效日期之后"])
 
     if status == "pending" and (event is None or start is None or event >= start):

@@ -1420,3 +1420,50 @@ V2.1.3 Gate D 开始后，上述 frozen files 不得根据 runtime 输出修改�
 - `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
 
 Gate E 开始后，上述 frozen files 不得修改。
+
+
+## 24. V2.2.0 Gate E Remediation and Freeze Manifest
+
+### 24.1 Gate E Findings 裁定与修复
+
+Gate E (gpt-5.6-luna, sanitized bundle) FAIL 3C+4I+1M。全部 8 项修复：
+
+- F-001(C): scorer 新增 dangerous-substantive-code check（非诊断已知码不在 expected 中 → FAIL）
+- F-002(C): CLI invoice-split 输入类型校验（bool/字符串数组，类型错误 exit 2）
+- F-003(C): eq/neq 类型不匹配 → ConditionFactTypeError → needs_review
+- F-004(I): source_record.funding 非 project funding 子集 → ValueError
+- F-005(I): candidate_rule:* target 与 context.candidate_rule_id 绑定校验
+- F-006(I): unverified source 的 not_applicable 早返回 → needs_review
+- F-007(I): _derived_coverage voucher_amount Decimal 异常捕获
+- F-008(M): classification_emission.py 版本标记 V2.1.3
+
+### 24.2 V2.2.0 Freeze Manifest
+
+- `evals/case.schema.json` — `f3719e6902d83ca1c1e5791d9aabc77fe7f92d5a`
+- `evals/result.schema.json` — `96c97f070d703011a3fe45872a4eed6598584117`
+- `evals/cases/amount-coverage.jsonl` — `f8a575ac342c9b38d047422d5eef0acdc7ad2b88`
+- `evals/cases/classification.jsonl` — `0b224ac2d43f3f84b6a252a673be4df4bb00be7d`
+- `evals/cases/evidence-wording.jsonl` — `9bc45c146b8851fff49ab96f5dd14f60a3edb813`
+- `evals/cases/law-applicability.jsonl` — `0563287367188548c691b1f1d3465379961a57e0`
+- `evals/cases/report-format.jsonl` — `7417321a554b163d31ff861e847441f0ccaca291`
+- `evals/cases/report-modes.jsonl` — `edbbd39d9c766dee6489eed2a7640e2a25afdd46`
+- `evals/score.py` — `ad44e5cd05e6221b38ba4d742106865a485d508f`
+- `evals/README.md` — `c7a061cf5f547a54f0a7664fc17a372d68eeb9d5`
+- `rules/result-contract.md` — `f4684de8167dd39bbf5f2ce021cc2e17a8cd9d41`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/classification.md` — `7a3f9bf5dafd241a6bdb6be44c48bff718c53597`
+- `rules/law-applicability.md` — `0a2f24488142aac7f65b57b4336f21f98d741b80`
+- `rules/coverage-and-amount.md` — `762a0600cc37b7e832eaa4326e94a31a3c30fc3d`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `91500fc720937c307bd4df9d668b382989a12d7d`
+- `scripts/classification_emission.py` — `a9f6d9bc43157086cdd5521079fa2063c2c05625`
+- `scripts/validate_v2_data.py` — `b404ef05d8036946449ec565b74b1844f9a557e8`
+- `schemas/project-context.schema.json` — `cb54ad8d8d919ad6148585f345f9685db3d00cf5`
+- `schemas/source-record.schema.json` — `ac6f5a72673aad4d7715391d62368e03f3dacebe`
+- `schemas/finding.schema.json` — `a9a5541d2d34eaf309a28e953734388bcc8aad9b`
+- `schemas/law.schema.json` — `c5831edb299b22cdde69c799d2e463745a5522e8`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+V2.2.0 Gate E re-review 开始后，上述 frozen files 不得修改。
