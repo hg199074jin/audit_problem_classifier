@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.1.2）
+# Machine Result Contract（V2.1.3）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.1.2"`
+`contract_version = "2.1.3"`
 
 ## 字段
 
@@ -14,7 +14,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `category`: 单一主分类代码，如 `FY`、`CG`
 - `finding_types`: 稳定问题类型代码数组
 - `conclusion_codes`: 稳定专业结论代码数组
-- `applicability_target`: **本次 `applicability_status` 明确指向的唯一目标标识**。这是全局不变量（result.schema `dependentRequired` + scorer 全局校验强制，不依赖 expected 是否钉定）：输出 `applicability_status` 必须同时输出本字段，反之亦然；status 的语义 = 该目标的状态。目标标识取值二选一：
+- `applicability_target`: **本次 `applicability_status` 明确指向的唯一目标标识**。**referent 裁定**：当用户在问"某法规能否适用"或"某法规是否可作为依据"时，`applicability_target` = **被问法规/候选规则的 ID**（不是替代法规或现行法规的 ID），`applicability_status` = 该被问法规的适用状态。正向替代法规进入 `law_ids`（如果适用）。当 `context.candidate_rule_id` 存在时，`applicability_target` 必须等于它。。这是全局不变量（result.schema `dependentRequired` + scorer 全局校验强制，不依赖 expected 是否钉定）：输出 `applicability_status` 必须同时输出本字段，反之亦然；status 的语义 = 该目标的状态。目标标识取值二选一：
   1. **结构化 Law ID**：此时受成员绑定约束——`applicable` ⇒ 目标必须已被选入 `law_ids`；`not_applicable` ⇒ 目标必须列入 `excluded_law_ids`；`needs_review` ⇒ 目标不得作为正式 `law_ids` 输出；
   2. **用户候选口径的稳定标识**（`candidate_rule:<slug>`）：候选对象不是结构化法规时使用，且该标识必须已在 input context 中声明（`candidate_rule_id` 字段，仅表示被判断对象身份，不属于答案泄漏）；不得要求 runtime 猜测只存在于 expected 的私有标签。
   被否定的错误口径与正向适用法规必须分别表达：结构化被排除对象进入 `excluded_law_ids`，正向适用法规进入 `law_ids` 并作为 `applicability_target`；非结构化口径的否定结论体现在正文与结论码中。
@@ -79,7 +79,8 @@ Gate D / 自动化测试中，编排器**只允许机械新增 `id` 和 `contrac
 - `unverified_law_requires_review` 是保守型 review 提示：当 runtime 在本案分析路径中**实际遇到并考虑了** secondary/unverified 候选时可以发射，不要求该候选必须预先写入 input context；但不能仅因为仓库中存在未核验资料就全局追加。
 - `excluded_law_ids` 只列本案**实际候选集合**（先显式形成候选集）中确实被 Gate 排除的结构化 Law ID，不做全库扫描式罗列；作为替代现行依据被选中的对象进入 `law_ids`，不得塞进 `excluded_law_ids`。
 - `law_roles` 仅描述本次实际输出的 `law_ids`；所有 key 必须属于 `law_ids`，且 `law_ids` 的每个元素都必须有对应 role；role 必须与 Law Object 的 `rule_role` 一致。
-- `liability_basis` 只有在 `context.user_requested_liability_analysis=true` 时才允许发射；普通分类/法规依据任务不得默认泄漏责任依据。
+- `misappropriation_not_established` 的争议触发（`raised`）：当案件事实涉及**资金被占用、应缴未缴、银行存款不足以覆盖应缴余额**时，`misappropriation` 争议**自动视为已触发**（`raised=True`）——这是"占用不写挪用"边界的核心适用场景，runtime 无需额外确认争议是否被"明确提起"。
+`liability_basis` 只有在 `context.user_requested_liability_analysis=true` 时才允许发射；普通分类/法规依据任务不得默认泄漏责任依据。
 - `gate_status=blocked` 时不要输出 `applicability_status`。
 - `gate_status=needs_review` 只限制尚未确认的正式法规依据和最终化判断；**needs_review 不得吞掉已经独立成立的证据层结论**。例如正文已经形成“现有证据不能认定构成串通投标”的判断时，仍应同步输出 `collusive_bidding_not_established`。
 

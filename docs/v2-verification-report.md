@@ -1342,3 +1342,43 @@ V2.1.2 Gate D Round 1（head d63d56a）24/26 PASS。2 例失败裁定：
 - `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
 
 Round 2 Gate D 开始后，上述 frozen files 不得根据 runtime 输出修改来追 PASS。
+
+
+## 22. V2.1.3 Goal-Mode Self-Adjudication and Freeze Manifest
+
+### 22.1 三项自主裁定（ZCode Goal Mode）
+
+1. `reimbursement_review_insufficient` 需要 case context 中存在审核控制事实（scorer 强制检查），无事实前提不得发射；
+2. `misappropriation_not_established` 的争议触发：案件事实涉及资金占用/应缴未缴/银行存款不足时自动触发（`raised=True`），runtime 无需额外确认；
+3. `applicability_target` referent：用户在问"某法规能否适用"时，target = 被问法规 ID，status = 该被问法规的适用状态；替代法规进 law_ids。
+
+### 22.2 V2.1.3 Freeze Manifest
+
+- `evals/case.schema.json` — `222dc61a3b3eb565ecc54b822b22d0b63a6e7fe3`
+- `evals/result.schema.json` — `297fe1b47e1bda6f506c2c4f75122c4349b150fc`
+- `evals/cases/amount-coverage.jsonl` — `a37ab76bc293848b21ead0445a92297be169626a`
+- `evals/cases/classification.jsonl` — `30188000ca16d5bfacdc88a127d9704d32787432`
+- `evals/cases/evidence-wording.jsonl` — `504baf02060fce19a4e8fb0ef5c0a4b9af7f4aae`
+- `evals/cases/law-applicability.jsonl` — `f83a601c6753e02b8e1b2f34e3cc8dea1d4d8f5e`
+- `evals/cases/report-format.jsonl` — `914bc19e1f66f6e543b75998dc112115efba07b7`
+- `evals/cases/report-modes.jsonl` — `09d37a5c4969929b7c1cae4e4ecd80c02624aaa1`
+- `evals/score.py` — `764fff1e82e8702606d86ac7132d45579ec1bd56`
+- `evals/README.md` — `137c53413629e7fe5bffb52f6f450f1e9bb987cc`
+- `rules/result-contract.md` — `9cf8100b0618ee026af6012312d10ed41a531ed5`
+- `rules/report-format.md` — `f094a877f4702f8c0de1d917b51a037e70e3d809`
+- `rules/classification.md` — `7a3f9bf5dafd241a6bdb6be44c48bff718c53597`
+- `rules/law-applicability.md` — `0a2f24488142aac7f65b57b4336f21f98d741b80`
+- `rules/coverage-and-amount.md` — `762a0600cc37b7e832eaa4326e94a31a3c30fc3d`
+- `scripts/report_format_lint.py` — `d22eacc397e0f2d60d0a493ebc063ff8bb0360a3`
+- `scripts/law_applicability.py` — `a184540492fe034cc3edf2d88980bf799da694cd`
+- `scripts/classification_emission.py` — `c6269c4a399f48d18bd356c0dec739e5d131dc57`
+- `scripts/validate_v2_data.py` — `b404ef05d8036946449ec565b74b1844f9a557e8`
+- `schemas/project-context.schema.json` — `cb54ad8d8d919ad6148585f345f9685db3d00cf5`
+- `schemas/source-record.schema.json` — `ac6f5a72673aad4d7715391d62368e03f3dacebe`
+- `schemas/finding.schema.json` — `a9a5541d2d34eaf309a28e953734388bcc8aad9b`
+- `schemas/law.schema.json` — `c5831edb299b22cdde69c799d2e463745a5522e8`
+- `references/report-templates/classification-report.md` — `a6882f3737e1e7dcb02a47454f1cd0571dd192a2`
+- `references/report-templates/special-audit-report.md` — `c762cbb1ba4ce6279b5178d951229a180fd71c4a`
+- `SKILL.md` — `61beebaebebbb1a7300664610788842130809c34`
+
+V2.1.3 Gate D 开始后，上述 frozen files 不得根据 runtime 输出修改来追 PASS。
