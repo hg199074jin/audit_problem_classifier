@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.2.1）
+# Machine Result Contract（V2.2.2）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.2.1"`
+`contract_version = "2.2.2"`
 
 ## 字段
 
@@ -31,6 +31,22 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
   - Mode B：`mode_b_engagement_purpose`、`mode_b_entity_overview`、`mode_b_major_findings`、`mode_b_opinions_recommendations`、`mode_b_report_use_scope`
 
 字段按任务需要输出；未发生的语义不要为了“填满字段”而编造。
+
+## 结论事实 grounding（V2.2.2）
+
+受保护结论码（`decision_required_pending_items`、`reimbursement_review_insufficient`）必须附 `fact_grounding` 数组，每个授权事实一条记录：
+
+```json
+{"field": "<事实字段名>", "value": true, "citation": "<源输入中逐字存在的引文>"}
+```
+
+规则：
+
+- `citation` 必须能在源输入（prompt + context 原文）中逐字找到；找不到依据的结论码不得发射；
+- `decision_required_pending_items` 的授权事实：`blank_record` / `inclusion_decision_needed` / `pending_or_unconfirmed_facts`（有原文依据的真实未决事项，如空白记录、纳入取舍、"待落实/是否有文件"标注）；
+- `reimbursement_review_insufficient` 的授权事实：`review_procedure_defect` 或 `approval_responsibility_facts`（至少其一）**且** `finding_is_review_control`；必要附件缺失（`required_attachments_missing`）**不是**授权事实——附件缺失支持 `distribution_list_missing`，不构成独立的审核控制失效认定；
+- 证据链未闭合、需要补证属于"待补证/待核实"（列入后续核查资料清单），**不构成**需委托人决策的 `decision_required_*` 事项；
+- 交付前必须运行 `python3 scripts/conclusion_grounding.py --result <result.json> --source <source.txt> --enforce` 并按清理后的结果交付。
 
 ## 编排器保真规则
 

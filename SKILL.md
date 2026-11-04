@@ -40,6 +40,7 @@ description: 中小会计师事务所收支审计、合规审计问题报告化�
 10. **定性措辞**：按 `rules/evidence-and-wording.md` 控制定性梯度，嫌疑不写认定、占用不写挪用、少收不写损失、补签不写倒签。
 11. **报告化输出**：根据用户确认的模式选择分类整理报告或专项审核报告模板；同一小项集中列示直接依据，必要时再列支持性依据。
 12. **覆盖/金额/法规/格式自检**：核对 Source Record 覆盖、Finding 数、金额去重、法规效力/适用性，并按 `rules/report-format.md` 做独立最终格式 lint 后再交付。调用方要求机器结果时，同时按 `rules/result-contract.md` 输出结构化字段。
+13. **结论事实 grounding 边界（V2.2.2 强制，不得跳步）**：机器结果中的受保护结论码（`decision_required_pending_items`、`reimbursement_review_insufficient`）必须附 `fact_grounding` 记录，且每条记录的 `citation` 必须能在源输入（prompt + context 原文）中逐字找到。将机器结果与源输入交给 `python3 scripts/conclusion_grounding.py --result <result.json> --source <source.txt> --enforce` 执行：有 VIOLATION 时按输出中的已清理结果采用（未 grounded 的结论码被移除），不得把被移除的码写回报告正文；无法找到真实依据的结论一律 fail-closed。
 
 ## 法规使用原则
 
