@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic classification / emission decision tables (V2.2.0).
+"""Deterministic classification / emission decision tables (V2.2.1).
 
 The runtime derives factual inputs from the case, then invokes the gate
 functions directly or through the CLI (subcommands) so that the boundaries in

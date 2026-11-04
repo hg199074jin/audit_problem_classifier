@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.2.0）
+# Machine Result Contract（V2.2.1）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.2.0"`
+`contract_version = "2.2.1"`
 
 ## 字段
 
