@@ -305,6 +305,22 @@ def test_evidence_chain_open_citation_does_not_support_pending_facts():
     assert mod.verify_grounding(result, source), "evidence-chain wording must not ground pending facts"
 
 
+def test_blank_record_citation_does_not_license_pending_items_code():
+    """M7 mutation guard: decision_required_pending_items is licensed ONLY by
+    pending_or_unconfirmed_facts — a blank-record citation must not license it
+    (brother facts do not cross-license, V2.2.3 1:1 mapping)."""
+    mod = load("conclusion_grounding")
+    source = "一条问题描述空白的奖励提成记录。"
+    result = {
+        "conclusion_codes": ["decision_required_pending_items"],
+        "fact_grounding": [
+            {"field": "blank_record", "value": True, "citation": "一条问题描述空白的奖励提成记录"}
+        ],
+    }
+    violations = mod.verify_grounding(result, source)
+    assert violations, "blank-record citation must not license decision_required_pending_items"
+
+
 # ============ D. enforce: fail-closed, no cross-field mutation ============
 
 
