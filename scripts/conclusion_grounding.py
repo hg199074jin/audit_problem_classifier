@@ -78,12 +78,15 @@ GUARDED_CODES = frozenset(CONCLUSION_FACT_REQUIREMENTS)
 # phrases. Anchors are a small whitelist tied to the professional meaning of
 # each field — not a keyword blacklist and not case-specific.
 FIELD_SUPPORT_ANCHORS: dict[str, tuple[str, ...]] = {
-    "blank_record": ("问题描述空白", "空白记录", "无问题描述"),
-    "inclusion_decision_needed": ("只有摘要和金额", "汇总行", "无问题描述"),
+    "blank_record": ("问题描述空白", "空白记录", "无问题描述", "描述空白", "为空", "留空"),
+    "inclusion_decision_needed": (
+        "只有摘要和金额", "只有金额", "汇总行", "只有摘要",
+        "无事项", "没有事项", "无问题描述",
+    ),
     "pending_or_unconfirmed_facts": ("待落实", "是否有文件", "待确认", "待核实", "待定"),
-    "review_procedure_defect": ("未履行审核", "审核程序", "未经审核", "未审核"),
+    "review_procedure_defect": ("未履行审核", "审核程序", "未经审核", "未审核", "审核记录缺失"),
     "approval_responsibility_facts": ("签批", "审批", "批准"),
-    "finding_is_review_control": ("审核岗位", "审核程序", "复核", "审批", "签批"),
+    "finding_is_review_control": ("审核岗位", "审核程序", "复核", "审批", "签批", "审核记录"),
 }
 
 

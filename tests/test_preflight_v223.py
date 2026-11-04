@@ -305,6 +305,23 @@ def test_evidence_chain_open_citation_does_not_support_pending_facts():
     assert mod.verify_grounding(result, source), "evidence-chain wording must not ground pending facts"
 
 
+def test_anchor_families_cover_legitimate_paraphrases():
+    """The anchor lexicon covers professional paraphrase families, not just
+    the formal case wording (only-amount rows, blank description columns,
+    missing review records)."""
+    mod = load("conclusion_grounding")
+    source = "第一行只有金额合计没有事项说明；第二条记录事项描述空白；另有几条标注“待核实”。财务人员未履行审核程序即支付，审核记录缺失。"
+    cases = [
+        ("inclusion_decision_needed", "第一行只有金额合计没有事项说明"),
+        ("blank_record", "第二条记录事项描述空白"),
+        ("pending_or_unconfirmed_facts", "另有几条标注“待核实”"),
+        ("review_procedure_defect", "财务人员未履行审核程序即支付，审核记录缺失"),
+        ("finding_is_review_control", "财务人员未履行审核程序即支付，审核记录缺失"),
+    ]
+    for field, citation in cases:
+        assert mod._citation_supports_field(citation, field), (field, citation)
+
+
 def test_blank_record_citation_does_not_license_pending_items_code():
     """M7 mutation guard: decision_required_pending_items is licensed ONLY by
     pending_or_unconfirmed_facts — a blank-record citation must not license it
