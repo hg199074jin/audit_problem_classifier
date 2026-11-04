@@ -322,6 +322,69 @@ def test_anchor_families_cover_legitimate_paraphrases():
         assert mod._citation_supports_field(citation, field), (field, citation)
 
 
+def test_completion_state_citation_does_not_license_defect_fields():
+    """F-001 polarity guard: a citation stating the review procedure was
+    COMPLETED must not license defect-class fields, even though it contains
+    a topic anchor."""
+    mod = load("conclusion_grounding")
+    source = "经查，报销单已由财务负责人审核，审核程序完整，审批手续齐全。"
+    result = {
+        "conclusion_codes": ["reimbursement_review_insufficient"],
+        "fact_grounding": [
+            {"field": "review_procedure_defect", "value": True, "citation": "审核程序完整"},
+            {"field": "finding_is_review_control", "value": True, "citation": "审批手续齐全"},
+        ],
+    }
+    violations = mod.verify_grounding(result, source)
+    assert len(violations) >= 2, "completion-state citations must not license defect fields"
+
+
+def test_defect_citation_with_negation_still_licenses():
+    """Polarity guard must not swallow genuine defect citations that merely
+    contain a completion-family character sequence across a negation
+    (e.g. 不完整 is not 完整-state)."""
+    mod = load("conclusion_grounding")
+    source = "该笔报销审核程序不完整，未经财务负责人审批即入账。"
+    result = {
+        "conclusion_codes": ["reimbursement_review_insufficient"],
+        "fact_grounding": [
+            {"field": "review_procedure_defect", "value": True, "citation": "审核程序不完整"},
+            {"field": "finding_is_review_control", "value": True, "citation": "未经财务负责人审批即入账"},
+        ],
+    }
+    assert mod.verify_grounding(result, source) == []
+
+
+def test_applicability_pair_dedupes_direct_basis_ids():
+    """F-002: duplicate direct-basis ids are one determined target, not
+    ambiguity."""
+    law = load("law_applicability")
+    decision = law.applicability_pair_requirement(
+        asked_candidate_target=None,
+        direct_basis_law_ids=["CN-INVOICE-2023-ART20", "CN-INVOICE-2023-ART20"],
+    )
+    assert decision["decision"] == "emit_pair"
+    assert decision["applicability_target"] == "CN-INVOICE-2023-ART20"
+
+
+def test_cli_applicability_pair_subcommand(tmp_path):
+    """F-002: the pairing decision must be runtime-invokable via CLI like the
+    other deterministic gates."""
+    facts = {"asked_candidate_target": None,
+             "direct_basis_law_ids": ["CN-INVOICE-2023-ART20"]}
+    facts_file = tmp_path / "facts.json"
+    facts_file.write_text(json.dumps(facts), encoding="utf-8")
+    proc = subprocess.run(
+        [sys.executable, str(ROOT / "scripts" / "law_applicability.py"),
+         "applicability-pair", "--input", str(facts_file)],
+        capture_output=True, text=True,
+    )
+    assert proc.returncode == 0, proc.stderr
+    out = json.loads(proc.stdout)
+    assert out["decision"] == "emit_pair"
+    assert out["applicability_target"] == "CN-INVOICE-2023-ART20"
+
+
 def test_blank_record_citation_does_not_license_pending_items_code():
     """M7 mutation guard: decision_required_pending_items is licensed ONLY by
     pending_or_unconfirmed_facts — a blank-record citation must not license it

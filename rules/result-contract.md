@@ -51,7 +51,9 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 规则：
 
-- `citation` 必须能在源输入（prompt + context 原文）中逐字找到，**且**必须实际支持所声明的事实字段：引文须包含 `scripts/conclusion_grounding.py` 中 `FIELD_SUPPORT_ANCHORS` 为该字段定义的专业锚点词（如空白记录类引文须含"问题描述空白/空白记录/无问题描述"）。引文存在但不支持该字段的，一律 fail-closed；
+- `citation` 必须能在源输入（prompt + context 原文）中逐字找到，**且**必须实际支持所声明的事实字段：引文须包含 `scripts/conclusion_grounding.py` 中 `FIELD_SUPPORT_ANCHORS` 为该字段定义的专业锚点词（如空白记录类引文须含"问题描述空白/空白记录/无问题描述"）。引文存在但不支持该字段的，一律 fail-closed；缺陷类字段（`review_procedure_defect`、`finding_is_review_control`）的引文若表述的是已完成/合格的控制状态（如"审核程序完整""审批手续齐全"，见 `COMPLETION_STATE_ANCHORS`），同样 fail-closed；
+- 词表为**主题级 + 极性级**判定：它拦截"主题不符"与"完成态反证"两类不支持引文；引文与事实的最终语义对应仍由事实推导层（decision gate 输入）负责，词表是该层的 fail-closed 边界而非语义分析器；
+- "待核实"两义性裁定：HARD-GATE 的"用户未答复的事项保持待核实"（不阻断成文的后续核查事项）与 `pending_or_unconfirmed_facts` 授权锚点"待核实"并存；仅当未核实事实**会改变分类、定性、金额或法规适用**且需委托人取舍时才发射 `decision_required_pending_items`，仅列入后续核查资料清单的事项不发射；
 - 兄弟码按各自事实分别发射，缺一个事实就少一个码，不得用 `decision_required_pending_items` 替代 `decision_required_blank_record` 或 `decision_required_record_inclusion`；
 - `required_attachments_missing` **不是** `reimbursement_review_insufficient` 的授权事实——附件缺失只支持附件维度 finding 类型，不构成独立的审核控制失效认定；
 - 证据链未闭合、需要补证属于"待补证/待核实"（列入后续核查资料清单），**不构成**需委托人决策的 `decision_required_*` 事项；

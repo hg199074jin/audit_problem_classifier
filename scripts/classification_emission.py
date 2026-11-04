@@ -310,8 +310,8 @@ def main(argv: list[str] | None = None) -> int:
                     return 2
             unknown_kinds = set(ib or ()) - INCIDENTAL_INVOICE_BLEMISH_KINDS - {"noncompliant_invoice_obtained"}
             if unknown_kinds:
-                    print(f"ERROR: unknown invoice blemish kind(s): {sorted(unknown_kinds)}", file=sys.stderr)
-                    return 2
+                print(f"ERROR: unknown invoice blemish kind(s): {sorted(unknown_kinds)}", file=sys.stderr)
+                return 2
             decision = invoice_split_gate(
                 expense_context=bool(ec),
                 invoice_blemish=set(ib or ()),

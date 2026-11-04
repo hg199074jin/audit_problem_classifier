@@ -41,3 +41,12 @@ jobs:
 
       - name: Score deterministic regression fixture
         run: python evals/score.py --cases evals/cases --results evals/fixtures/passing-results.jsonl
+
+      - name: Negative control fixture must fail
+        shell: bash
+        run: |
+          set -euo pipefail
+          if python evals/score.py --cases evals/cases --results evals/fixtures/failing-results.jsonl > /dev/null 2>&1; then
+            echo "::error::negative-control fixture unexpectedly passed; the scorer lost its failure detection"
+            exit 1
+          fi

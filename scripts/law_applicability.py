@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
+import json
+import sys
 from datetime import date
+from pathlib import Path
 from typing import Any, NamedTuple
 
 RESERVED_PROJECT_FACT_KEYS = {
@@ -43,7 +47,9 @@ def applicability_pair_requirement(
             "decision": "emit_pair",
             "applicability_target": asked_candidate_target,
         }
-    ids = [law_id for law_id in (direct_basis_law_ids or ()) if law_id]
+    ids = list(dict.fromkeys(
+        law_id for law_id in (direct_basis_law_ids or ()) if law_id
+    ))
     if len(ids) == 1:
         return {
             "decision": "emit_pair",
@@ -339,3 +345,51 @@ def evaluate_applicability(
     if needs_review:
         return ApplicabilityResult("needs_review", needs_review)
     return ApplicabilityResult("applicable", ["时效、地域、主体、事项、资金及事实/证据条件均满足"])
+
+
+# --------------------------- CLI (runtime invokable) ---------------------------
+
+def _read_input(path: str) -> dict:
+    raw = sys.stdin.read() if path == "-" else Path(path).read_text(encoding="utf-8")
+    data = json.loads(raw)
+    if not isinstance(data, dict):
+        raise ValueError("input JSON must be an object")
+    return data
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Law applicability decision helpers")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_pair = sub.add_parser(
+        "applicability-pair",
+        help="decide the applicability_status/applicability_target pair (V2.2.3)",
+    )
+    p_pair.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
+
+    args = parser.parse_args(argv)
+    try:
+        if args.command == "applicability-pair":
+            facts = _read_input(args.input)
+            target = facts.get("asked_candidate_target")
+            if target is not None and not isinstance(target, str):
+                print("ERROR: asked_candidate_target must be a JSON string", file=sys.stderr)
+                return 2
+            ids = facts.get("direct_basis_law_ids")
+            if ids is not None and (not isinstance(ids, list) or not all(isinstance(x, str) for x in ids)):
+                print("ERROR: direct_basis_law_ids must be a JSON array of strings", file=sys.stderr)
+                return 2
+            decision = applicability_pair_requirement(
+                asked_candidate_target=target,
+                direct_basis_law_ids=ids or [],
+            )
+            print(json.dumps(decision, ensure_ascii=False, indent=2))
+            return 0
+    except (ValueError, TypeError, json.JSONDecodeError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

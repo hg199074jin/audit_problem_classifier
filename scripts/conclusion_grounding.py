@@ -89,6 +89,16 @@ FIELD_SUPPORT_ANCHORS: dict[str, tuple[str, ...]] = {
     "finding_is_review_control": ("审核岗位", "审核程序", "复核", "审批", "签批", "审核记录"),
 }
 
+# Defect-class fields whose licensing citation must not state a COMPLETED /
+# satisfactory control state (V2.2.3 polarity guard, preflight F-001): a
+# citation like "审核程序完整" or "审批手续齐全" names the topic but asserts
+# its opposite, so it must not license the defect.
+DEFECT_TYPE_FIELDS = frozenset({"review_procedure_defect", "finding_is_review_control"})
+COMPLETION_STATE_ANCHORS = (
+    "已履行审核", "已审核", "审核程序完整", "程序完备", "手续齐全",
+    "审批手续完备", "审核合格", "审核到位", "依规审核", "审核程序合规",
+)
+
 
 def _citation_in_source(citation: str, source_text: str) -> bool:
     """A citation grounds a fact only when it appears verbatim in the source."""
@@ -102,13 +112,19 @@ def _citation_in_source(citation: str, source_text: str) -> bool:
 
 def _citation_supports_field(citation: str, field: str) -> bool:
     """A verbatim citation supports a field only when it carries one of the
-    field's professional anchors (V2.2.3)."""
+    field's professional anchors (V2.2.3) — and, for defect-class fields, when
+    it does not assert a completed/satisfactory control state (polarity
+    guard, V2.2.3 preflight F-001)."""
+    if not isinstance(citation, str):
+        return False
+    if field in DEFECT_TYPE_FIELDS:
+        for done in COMPLETION_STATE_ANCHORS:
+            if done in citation:
+                return False
     anchors = FIELD_SUPPORT_ANCHORS.get(field)
     if not anchors:
         # No lexicon entry: fall back to verbatim presence only.
         return True
-    if not isinstance(citation, str):
-        return False
     return any(anchor in citation for anchor in anchors)
 
 

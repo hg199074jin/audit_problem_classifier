@@ -36,7 +36,7 @@ description: 中小会计师事务所收支审计、合规审计问题报告化�
 6. **拆分 Findings**：一个 Source Record 可拆多个独立 Finding；每个 Finding 只回答一个核心问题，原始记录数和 `voucher_amount` 仍只统计一次。
 7. **分类**：按 `rules/classification.md` 选择唯一主类和最具体二级类型，不让附件、发票或会计瑕疵覆盖主要审计认定对象。附件维度类型发射前调用 `python3 scripts/classification_emission.py expense-documents --input <facts.json>`：`distribution_list_missing` 必须有指明具体清单对象（发放清单/领用清单/分配名册）的逐字引文，"缺少明细/附件缺失"等泛化事实只授权 `expense_supporting_documents_incomplete`。
 8. **证据等级**：标记 confirmed / partially_confirmed / pending / conflicting；证据不足事项不得混入已确认结论。
-9. **法规适用过滤**：先查结构化法规库；按 `rules/law-applicability.md` 的时效→地域→主体→事项→资金→事实/证据顺序过滤。`needs_review` 不得伪装为正式直接依据。机器结果中 `applicability_status` 与 `applicability_target` 按 `applicability_pair_requirement` 成对发射（Mode A/B 同一规则）：询问了候选法规即以候选为 target；未询问但恰有一个 applicable direct_basis 法规即以该法规为 target；多个 applicable 无候选时先消歧，不得猜测。
+9. **法规适用过滤**：先查结构化法规库；按 `rules/law-applicability.md` 的时效→地域→主体→事项→资金→事实/证据顺序过滤。`needs_review` 不得伪装为正式直接依据。机器结果中 `applicability_status` 与 `applicability_target` 按 `applicability_pair_requirement` 成对发射（Mode A/B 同一规则），发射前调用 `python3 scripts/law_applicability.py applicability-pair --input <facts.json>` 判定（facts：`asked_candidate_target`、`direct_basis_law_ids`），按其输出执行：`emit_pair` 成对发射（target 按输出）、`disambiguate` 先消歧不得猜测、`no_applicable_pair` 不发 applicable 配对。
 10. **定性措辞**：按 `rules/evidence-and-wording.md` 控制定性梯度，嫌疑不写认定、占用不写挪用、少收不写损失、补签不写倒签。
 11. **报告化输出**：根据用户确认的模式选择分类整理报告或专项审核报告模板；同一小项集中列示直接依据，必要时再列支持性依据。
 12. **覆盖/金额/法规/格式自检**：核对 Source Record 覆盖、Finding 数、金额去重、法规效力/适用性，并按 `rules/report-format.md` 做独立最终格式 lint 后再交付。调用方要求机器结果时，同时按 `rules/result-contract.md` 输出结构化字段。
