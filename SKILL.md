@@ -30,17 +30,17 @@ description: 中小会计师事务所收支审计、合规审计问题报告化�
 
 1. **读取材料**：读取全部原始问题、凭证/合同/表格字段和用户已给出的报告口径；非空问题必须进入覆盖检查。
 2. **建立 Project Context**：确认地区、单位层级、单位性质、审计期间、资金性质、报告模式和 profile。已知稳定事实直接沿用。
-3. **生成待决策事项**：依据 `rules/decision-gate.md` 汇总会改变分类、定性、金额或法规适用的未决事项。
+3. **生成待决策事项**：依据 `rules/decision-gate.md` 汇总会改变分类、定性、金额或法规适用的未决事项。存在待决策事实时，调用 `python3 scripts/classification_emission.py decision-required --input <facts.json>`（facts：`blank_record`、`inclusion_decision_needed`、`pending_or_unconfirmed_facts` 三个布尔），按其输出 `codes` **完整发射**兄弟结论码——一个事实一个码，不得用 `decision_required_pending_items` 吞并 `decision_required_blank_record` 或 `decision_required_record_inclusion`。
 4. **HARD-GATE**：重大事项未解决前不得形成正式认定；用户未答复的保持“待核实”。格式习惯从 profile 读取，不重复追问。
 5. **构建 Source Records**：为每条原始记录建立唯一 `source_record_id`，保留主体、期间、凭证号、合同号、金额、审批、支付对象、证据缺失等回查信息。
 6. **拆分 Findings**：一个 Source Record 可拆多个独立 Finding；每个 Finding 只回答一个核心问题，原始记录数和 `voucher_amount` 仍只统计一次。
-7. **分类**：按 `rules/classification.md` 选择唯一主类和最具体二级类型，不让附件、发票或会计瑕疵覆盖主要审计认定对象。
+7. **分类**：按 `rules/classification.md` 选择唯一主类和最具体二级类型，不让附件、发票或会计瑕疵覆盖主要审计认定对象。附件维度类型发射前调用 `python3 scripts/classification_emission.py expense-documents --input <facts.json>`：`distribution_list_missing` 必须有指明具体清单对象（发放清单/领用清单/分配名册）的逐字引文，"缺少明细/附件缺失"等泛化事实只授权 `expense_supporting_documents_incomplete`。
 8. **证据等级**：标记 confirmed / partially_confirmed / pending / conflicting；证据不足事项不得混入已确认结论。
-9. **法规适用过滤**：先查结构化法规库；按 `rules/law-applicability.md` 的时效→地域→主体→事项→资金→事实/证据顺序过滤。`needs_review` 不得伪装为正式直接依据。
+9. **法规适用过滤**：先查结构化法规库；按 `rules/law-applicability.md` 的时效→地域→主体→事项→资金→事实/证据顺序过滤。`needs_review` 不得伪装为正式直接依据。机器结果中 `applicability_status` 与 `applicability_target` 按 `applicability_pair_requirement` 成对发射（Mode A/B 同一规则）：询问了候选法规即以候选为 target；未询问但恰有一个 applicable direct_basis 法规即以该法规为 target；多个 applicable 无候选时先消歧，不得猜测。
 10. **定性措辞**：按 `rules/evidence-and-wording.md` 控制定性梯度，嫌疑不写认定、占用不写挪用、少收不写损失、补签不写倒签。
 11. **报告化输出**：根据用户确认的模式选择分类整理报告或专项审核报告模板；同一小项集中列示直接依据，必要时再列支持性依据。
 12. **覆盖/金额/法规/格式自检**：核对 Source Record 覆盖、Finding 数、金额去重、法规效力/适用性，并按 `rules/report-format.md` 做独立最终格式 lint 后再交付。调用方要求机器结果时，同时按 `rules/result-contract.md` 输出结构化字段。
-13. **结论事实 grounding 边界（V2.2.2 强制，不得跳步）**：机器结果中的受保护结论码（`decision_required_pending_items`、`reimbursement_review_insufficient`）必须附 `fact_grounding` 记录，且每条记录的 `citation` 必须能在源输入（prompt + context 原文）中逐字找到。将机器结果与源输入交给 `python3 scripts/conclusion_grounding.py --result <result.json> --source <source.txt> --enforce` 执行：有 VIOLATION 时按输出中的已清理结果采用（未 grounded 的结论码被移除），不得把被移除的码写回报告正文；无法找到真实依据的结论一律 fail-closed。
+13. **结论事实 grounding 边界（V2.2.3 强制，不得跳步）**：机器结果中的受保护结论码（`decision_required_blank_record`、`decision_required_record_inclusion`、`decision_required_pending_items`、`reimbursement_review_insufficient`）必须附 `fact_grounding` 记录；每条记录的 `citation` 必须能在源输入（prompt + context 原文）中逐字找到，**且实际支持所声明的事实字段**（引文含 `scripts/conclusion_grounding.py` 中 `FIELD_SUPPORT_ANCHORS` 为该字段定义的专业锚点词）；引文存在但不支持该字段同样 fail-closed。将机器结果与源输入交给 `python3 scripts/conclusion_grounding.py --result <result.json> --source <source.txt> --enforce` 执行：exit 0 时按 stdout 输出交付；exit 1（VIOLATION）时**不得交付**，按 stderr 明细自行移除未 grounded 的受保护结论码后重跑至 exit 0；无法达到 exit 0 时按 HARD-GATE blocked 处理（`gate_status=blocked`，不发射正式结论字段）。boundary 不做跨字段改写，被移除的码不得写回报告正文。
 
 ## 法规使用原则
 

@@ -42,8 +42,9 @@ def test_negative_evidence_chain_open_is_not_a_decision_item():
     }
     violations = mod.verify_grounding(result, source)
     assert violations, "ungrounded pending-items flag must be rejected"
-    cleaned, _ = mod.enforce_grounding(result, source)
-    assert "decision_required_pending_items" not in cleaned["conclusion_codes"]
+    cleaned, enforce_violations = mod.enforce_grounding(result, source)
+    assert enforce_violations, "enforce must refuse delivery (fail closed)"
+    assert cleaned == result, "enforce must not mutate the result cross-field"
 
 
 def test_negative_missing_attachment_is_not_review_failure():
@@ -63,8 +64,9 @@ def test_negative_missing_attachment_is_not_review_failure():
     }
     violations = mod.verify_grounding(result, source)
     assert violations, "attachment-missing must not license review failure"
-    cleaned, _ = mod.enforce_grounding(result, source)
-    assert "reimbursement_review_insufficient" not in cleaned["conclusion_codes"]
+    cleaned, enforce_violations = mod.enforce_grounding(result, source)
+    assert enforce_violations, "enforce must refuse delivery (fail closed)"
+    assert cleaned == result, "enforce must not mutate the result cross-field"
 
 
 def test_negative_citation_must_be_verbatim_in_source():
@@ -81,7 +83,7 @@ def test_negative_citation_must_be_verbatim_in_source():
     assert any("citation" in v for v in violations)
 
 
-def test_negative_enforce_downgrades_proceed_to_needs_review():
+def test_negative_enforce_is_fail_closed_without_cross_field_rewrite():
     mod = load_module()
     source = "采购清单中同时存在三家报价异常一致、未附询价资料，请分类整理。"
     result = {
@@ -90,8 +92,7 @@ def test_negative_enforce_downgrades_proceed_to_needs_review():
     }
     cleaned, violations = mod.enforce_grounding(result, source)
     assert violations
-    assert cleaned["gate_status"] == "needs_review"
-    assert cleaned["conclusion_codes"] == []
+    assert cleaned == result, "no partial rewriting: gate_status stays as submitted"
 
 
 # ---------------- positive: grounded legitimate emissions
@@ -146,7 +147,7 @@ def test_positive_unguarded_codes_are_untouched():
 # ---------------- CLI behaviour
 
 
-def test_cli_enforce_returns_nonzero_and_cleaned_json(tmp_path):
+def test_cli_enforce_returns_nonzero_and_delivers_nothing(tmp_path):
     mod = load_module()
     source_file = tmp_path / "source.txt"
     source_file.write_text("附件缺少领用清单。", encoding="utf-8")
@@ -162,5 +163,4 @@ def test_cli_enforce_returns_nonzero_and_cleaned_json(tmp_path):
         capture_output=True, text=True,
     )
     assert proc.returncode == 1
-    cleaned = json.loads(proc.stdout)
-    assert cleaned["conclusion_codes"] == []
+    assert proc.stdout.strip() == "", "blocked enforcement must not deliver a result"

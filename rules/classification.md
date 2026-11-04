@@ -48,6 +48,7 @@
 ## Finding 粒度规范化
 
 - **最具体稳定代码优先**：同一问题点同时命中具体代码（如 `distribution_list_missing`）与其上位泛化代码（如 `expense_supporting_documents_incomplete`）时，只发射最具体代码，不得并存。
+- **附件维度 finding 类型的事实授权（V2.2.3，机器门可判）**：`distribution_list_missing` 只能在源输入存在逐字引文、且引文指明具体清单对象（发放清单 / 领用清单 / 分配名册）时发射；"缺少明细 / 附件缺失"等泛化事实只授权 `expense_supporting_documents_incomplete`。发射前调用 `python3 scripts/classification_emission.py expense-documents --input <facts.json>` 判定（facts：`source_text`、`specific_distribution_list_citation`、`generic_supporting_incomplete`、`documents_nonstandard`），按其 `finding_types` 输出发射，不得绕过。
 - **独立 Finding 三条件必须同时成立**（合取，非择一）：直接认定对象独立 **且** 输入事实独立 **且** 整改/结论对象独立。三者同时成立才拆成独立 Finding。
 - **"存在另一条可引用法规"本身不构成独立 Finding**；同一报销事项中的发票属性瑕疵若仍服务于费用凭证规范性判断，保持 FY 单 Finding。
 - **同一 source record 可以多 Finding，但不得由概念联想机械膨胀**。

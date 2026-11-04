@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic classification / emission decision tables (V2.2.2).
+"""Deterministic classification / emission decision tables (V2.2.3).
 
 The runtime derives factual inputs from the case, then invokes the gate
 functions directly or through the CLI (subcommands) so that the boundaries in
@@ -29,6 +29,20 @@ SAFE_NEGATIVE_CONCLUSION_CODES = {
     "misappropriation_not_established": "misappropriation",
     "post_execution_signing_not_backdating_established": "backdating",
     "recoverable_undercollection_not_loss_established": "established_loss",
+}
+
+# Specific distribution/issue list objects (V2.2.3). `distribution_list_missing`
+# requires a verbatim source citation naming one of these objects; generic
+# "缺少明细 / 附件缺失" facts authorize only the generic code
+# expense_supporting_documents_incomplete.
+DISTRIBUTION_LIST_OBJECT_ANCHORS = ("发放清单", "领用清单", "分配名册")
+
+# V2.2.3: the three decision_required codes map 1:1 to their own fact. One
+# generalization code must never swallow its brother codes' facts.
+DECISION_REQUIRED_BROTHER_CODES = {
+    "blank_record": "decision_required_blank_record",
+    "inclusion_decision_needed": "decision_required_record_inclusion",
+    "pending_or_unconfirmed_facts": "decision_required_pending_items",
 }
 
 
@@ -164,6 +178,78 @@ def decision_required_pending_items_gate(
     return bool(blank_record or inclusion_decision_needed or pending_or_unconfirmed_facts)
 
 
+def decision_required_codes_gate(
+    *,
+    blank_record: bool,
+    inclusion_decision_needed: bool,
+    pending_or_unconfirmed_facts: bool,
+) -> dict:
+    """Complete brother-code emission for pending decision facts (V2.2.3).
+
+    Each decision fact maps to exactly its own conclusion code
+    (DECISION_REQUIRED_BROTHER_CODES). Every fact that is true contributes its
+    own code; a generalization code never replaces a brother code, and a
+    code is never emitted without its own fact.
+    """
+    codes = [
+        DECISION_REQUIRED_BROTHER_CODES[fact]
+        for fact, flag in (
+            ("blank_record", blank_record),
+            ("inclusion_decision_needed", inclusion_decision_needed),
+            ("pending_or_unconfirmed_facts", pending_or_unconfirmed_facts),
+        )
+        if flag
+    ]
+    return {"allowed": bool(codes), "codes": codes}
+
+
+def expense_supporting_finding_gate(
+    *,
+    source_text: str,
+    specific_distribution_list_citation: str = "",
+    generic_supporting_incomplete: bool = False,
+    documents_nonstandard: bool = False,
+) -> dict:
+    """Fact→finding_type authorization at the specific-vs-generic boundary.
+
+    `distribution_list_missing` requires a verbatim source citation naming a
+    specific distribution/issue list object (发放清单 / 领用清单 / 分配名册,
+    DISTRIBUTION_LIST_OBJECT_ANCHORS). Generic "缺少明细 / 附件缺失" facts are
+    NOT specific-object facts: they authorize only
+    `expense_supporting_documents_incomplete`. When both facts exist the
+    specific code wins (最具体稳定代码优先); the nonstandard code is
+    independent of the incompleteness dimension.
+    """
+    citation = (specific_distribution_list_citation or "").strip()
+    specific_ok = (
+        bool(citation)
+        and citation in (source_text or "")
+        and any(anchor in citation for anchor in DISTRIBUTION_LIST_OBJECT_ANCHORS)
+    )
+    finding_types: list[str] = []
+    if specific_ok:
+        finding_types.append("distribution_list_missing")
+    elif generic_supporting_incomplete:
+        finding_types.append("expense_supporting_documents_incomplete")
+    if documents_nonstandard:
+        finding_types.append("expense_supporting_documents_nonstandard")
+    if not finding_types:
+        return {
+            "decision": "no_expense_document_finding",
+            "finding_types": [],
+            "rationale": "no attachment incompleteness/nonstandardness facts; the gate abstains",
+        }
+    return {
+        "decision": "authorized",
+        "finding_types": finding_types,
+        "rationale": (
+            "specific distribution/issue list object cited verbatim"
+            if specific_ok
+            else "generic supporting-document incompleteness; no specific list object cited"
+        ),
+    }
+
+
 # --------------------------- CLI (runtime invokable) ---------------------------
 
 def _read_input(path: str) -> dict:
@@ -196,8 +282,14 @@ def main(argv: list[str] | None = None) -> int:
     p_review = sub.add_parser("review-insufficient", help="reimbursement_review_insufficient gate")
     p_review.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
 
-    p_pending = sub.add_parser("decision-required", help="decision_required_pending_items gate")
+    p_pending = sub.add_parser("decision-required", help="decision_required_* brother-code gate")
     p_pending.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
+
+    p_expdoc = sub.add_parser(
+        "expense-documents",
+        help="specific-vs-generic attachment finding_type authorization gate",
+    )
+    p_expdoc.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
 
     args = parser.parse_args(argv)
 
@@ -260,12 +352,35 @@ def main(argv: list[str] | None = None) -> int:
                 if val is not None and not isinstance(val, bool):
                     print(f"ERROR: {name} must be a JSON boolean, got {type(val).__name__}: {val!r}", file=sys.stderr)
                     return 2
-            allowed = decision_required_pending_items_gate(
+            decision = decision_required_codes_gate(
                 blank_record=bool(facts.get("blank_record")),
                 inclusion_decision_needed=bool(facts.get("inclusion_decision_needed")),
                 pending_or_unconfirmed_facts=bool(facts.get("pending_or_unconfirmed_facts")),
             )
-            print(json.dumps({"allowed": allowed}, ensure_ascii=False, indent=2))
+            print(json.dumps(decision, ensure_ascii=False, indent=2))
+            return 0
+        if args.gate == "expense-documents":
+            facts = _read_input(args.input)
+            citation = facts.get("specific_distribution_list_citation")
+            if citation is not None and not isinstance(citation, str):
+                print("ERROR: specific_distribution_list_citation must be a JSON string", file=sys.stderr)
+                return 2
+            for name in ("generic_supporting_incomplete", "documents_nonstandard"):
+                val = facts.get(name)
+                if val is not None and not isinstance(val, bool):
+                    print(f"ERROR: {name} must be a JSON boolean, got {type(val).__name__}: {val!r}", file=sys.stderr)
+                    return 2
+            source_text = facts.get("source_text")
+            if source_text is not None and not isinstance(source_text, str):
+                print("ERROR: source_text must be a JSON string", file=sys.stderr)
+                return 2
+            decision = expense_supporting_finding_gate(
+                source_text=source_text or "",
+                specific_distribution_list_citation=citation or "",
+                generic_supporting_incomplete=bool(facts.get("generic_supporting_incomplete")),
+                documents_nonstandard=bool(facts.get("documents_nonstandard")),
+            )
+            print(json.dumps(decision, ensure_ascii=False, indent=2))
             return 0
     except (ValueError, TypeError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

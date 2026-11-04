@@ -12,7 +12,7 @@ from typing import NamedTuple
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.2.2"
+CONTRACT_VERSION = "2.2.3"
 RESULT_SCHEMA_PATH = ROOT / "evals" / "result.schema.json"
 
 STRUCTURED_LIST_FIELDS = (
@@ -248,10 +248,10 @@ def _score_conclusion_grounding(case: dict, result: dict, failures: list[str]) -
     codes = result.get("conclusion_codes")
     if not isinstance(codes, list):
         return
-    guarded = {"decision_required_pending_items", "reimbursement_review_insufficient"}
+    module = _load_grounding_module()
+    guarded = module.GUARDED_CODES
     if not guarded.intersection(codes):
         return
-    module = _load_grounding_module()
     source_text = _case_source_text(case)
     for violation in module.verify_grounding(result, source_text):
         failures.append(f"conclusion grounding: {violation}")
