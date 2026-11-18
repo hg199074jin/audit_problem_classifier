@@ -331,6 +331,13 @@ def invoice_object_gate(
         out["primary_class"] = "SW"
         out["emit_invoice_information_irregularity"] = True
         out["rationale"] = "verified audit object authorizes independent invoice finding"
+        # F-005 telemetry: rejected objects riding along with an SW decision
+        # must be visible at top level, not only in the summary.
+        for o in decided:
+            if o["decision"] == "rejected":
+                reason_codes.append(f"UNVERIFIED_OBJECT:{o['object_id']}")
+            elif o["decision"] == "needs_review":
+                reason_codes.append(f"OBJECT_NEEDS_REVIEW:{o['object_id']}")
         return out
     if blocked:
         out["decision"] = "needs_review"

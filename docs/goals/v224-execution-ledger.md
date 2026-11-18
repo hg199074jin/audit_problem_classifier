@@ -29,3 +29,9 @@
 - SHA256 封存（提交 38c1d3f..f4e5fee 之后的冻结值，见 Issue #9 checkpoint）：
   - v224-holdout.jsonl sha256=c7589931c104a5cf3ae8363f5df2e1df4f310f065b67e78ae7da5733822ce3c4
   - v224-holdout-protocol.md sha256=e6a50923afad0a9927d5ca5c8c48b83ef10c0dc5289aacd79041937c0a26e98f
+
+## [T9 续] 复核修复 — 2026-11-18
+
+- Reviewer 复核：F-001/002/003/004/006 **CLOSED**；新发现 F-009（负控 fixture 重复 id → 加载崩溃）**已修**（mode-a 行替换为剥离行，26 唯一行，负控恢复评分式 24/26 exit 1 且覆盖 SW_WITHOUT_AUTHORIZED_OBJECT）；F-005 遥测残留**已修**（SW 路径同批 rejected/needs_review 对象顶层显性 UNVERIFIED_OBJECT/OBJECT_NEEDS_REVIEW）；F-008 test-prompts.json 已在 Gate D 安装排除清单（rsync exclude）。
+- holdout **v2 SHA256 = 6d8c7025b249a0b5e8fbf67fc832d7a026df6fc83508b2678d809b81e1dd6f50**（协议 §1 悬空引用闭合）。
+- 复核结论原文："具备冻结并启动 ONE formal 26-case Gate D 的条件"。
