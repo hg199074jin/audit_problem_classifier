@@ -128,7 +128,7 @@ def test_mode_integrated_category_is_sw_per_classification_rule():
         assert rows[cid]["expected"]["finding_types"] == ["invoice_information_irregularity"]
     rule_text = (ROOT / "rules/classification.md").read_text(encoding="utf-8")
     assert "发票法定效力" in rule_text
-    assert "只有已经能够直接认定违反发票管理规定或影响纳税义务时才归 SW" in rule_text
+    assert "纳税扣缴义务/税种税率/发票法定效力 → SW" in rule_text
 
 
 def test_result_contract_documents_conclusion_emission_policy():

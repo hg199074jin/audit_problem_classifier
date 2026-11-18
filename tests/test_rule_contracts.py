@@ -20,7 +20,7 @@ def test_skill_is_orchestrator_and_workflow_order_is_fixed():
         "4. **HARD-GATE**",
         "5. **构建 Source Records**",
         "6. **拆分 Findings**",
-        "7. **分类**",
+        "7. **分类",
         "8. **证据等级**",
         "9. **法规适用过滤**",
         "10. **定性措辞**",

@@ -103,10 +103,11 @@ def test_result_schema_pairing_invariants_unchanged():
 
 def test_classification_documents_fy_sw_decision_gate_with_engine():
     text = (ROOT / "rules/classification.md").read_text(encoding="utf-8")
-    assert "FY 与 SW：附带发票瑕疵拆分决策门" in text
+    assert "FY 与 SW：审计认定对象证据授权（V2.2.4）" in text
+    assert "invoice-object" in text
     assert "scripts/classification_emission.py" in text
     assert "invoice_information_irregularity" in text
-    assert "不得额外拆出" in text or "DO NOT SPLIT" in text
+    assert "不得额外拆出" in text or "DO NOT SPLIT" in text or "不拆 SW" in text
 
 
 def test_classification_independent_finding_criteria_conjunctive():
