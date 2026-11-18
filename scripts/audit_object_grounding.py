@@ -130,12 +130,23 @@ def verify_audit_objects(objects: list[dict], sources: dict[str, str]) -> list[s
     """Verify every assertion of every object against immutable sources.
 
     Returns violation codes; an empty list means every assertion is verbatim,
-    source-bound, anchor-supported, and polarity-consistent.
+    source-bound, anchor-supported, and polarity-consistent. Duplicate
+    object_ids and malformed entries are flagged (fail closed).
     """
     violations: list[str] = []
-    for obj in objects or []:
+    seen_ids: set[str] = set()
+    for pos, obj in enumerate(objects or []):
+        if not isinstance(obj, dict):
+            violations.append(f"ENTRY#{pos}:OBJECT_MALFORMED_NOT_A_DICT")
+            continue
         obj_id = str(obj.get("object_id") or "AO-?")
+        if obj_id in seen_ids:
+            violations.append(f"{obj_id}:OBJECT_ID_DUPLICATED")
+        seen_ids.add(obj_id)
         for idx, assertion in enumerate(obj.get("assertions") or []):
+            if not isinstance(assertion, dict):
+                violations.append(f"{obj_id}#{idx}:ASSERTION_MALFORMED_NOT_A_DICT")
+                continue
             violations.extend(_verify_assertion(obj_id, idx, assertion, sources))
     return violations
 
@@ -158,6 +169,10 @@ def _decide_object(obj: dict, sources: dict[str, str]) -> dict:
     restriction: list[str] = []
     invalid = 0
     for idx, assertion in enumerate(obj.get("assertions") or []):
+        if not isinstance(assertion, dict):
+            invalid += 1
+            out["reason_codes"].append("ASSERTION_MALFORMED_NOT_A_DICT")
+            continue
         kind = assertion.get("assertion_kind")
         bad = _verify_assertion(obj_id, idx, assertion, sources)
         if bad:
@@ -214,8 +229,23 @@ def _decide_object(obj: dict, sources: dict[str, str]) -> dict:
 def authorize_audit_objects(objects: list[dict], sources: dict[str, str]) -> dict:
     """Deterministic authorization: verify all assertions, then apply the
     frozen decision table per object. Input `decision` fields are ignored —
-    only this gate assigns decisions (the runtime cannot self-authorize)."""
-    decided = [_decide_object(obj, sources) for obj in (objects or [])]
+    only this gate assigns decisions (the runtime cannot self-authorize).
+    Malformed entries become rejected objects (fail closed, never crash)."""
+    decided: list[dict] = []
+    for obj in (objects or []):
+        if not isinstance(obj, dict):
+            decided.append({
+                "object_id": "AO-MALFORMED",
+                "source_record_id": None,
+                "object_kind": None,
+                "directness": None,
+                "assertions": [],
+                "reason_codes": ["OBJECT_MALFORMED_NOT_A_DICT"],
+                "review_reason": "malformed audit object entry",
+                "decision": "rejected",
+            })
+            continue
+        decided.append(_decide_object(obj, sources))
     summary = {
         "authorized_sw": sum(1 for o in decided if o["decision"] == "authorized_sw"),
         "incidental_fy": sum(1 for o in decided if o["decision"] == "incidental_fy"),
