@@ -150,6 +150,131 @@
           }
         }
       }
+    },
+    "audit_objects": {
+      "type": "array",
+      "description": "V2.2.4 evidence-grounded audit objects (typed candidates + deterministic gate authorization). SW invoice findings require at least one authorized_sw invoice_compliance object whose assertion quotes verify verbatim against the source input (scorer enforces globally).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "object_id",
+          "object_kind",
+          "directness",
+          "decision",
+          "assertions"
+        ],
+        "properties": {
+          "object_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "source_record_id": {
+            "type": [
+              "string",
+              "null"
+            ],
+            "minLength": 1
+          },
+          "object_kind": {
+            "type": "string",
+            "enum": [
+              "expense_reimbursement",
+              "invoice_compliance",
+              "tax_obligation"
+            ]
+          },
+          "directness": {
+            "type": "string",
+            "enum": [
+              "primary",
+              "incidental"
+            ]
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "candidate",
+              "authorized_sw",
+              "incidental_fy",
+              "needs_review",
+              "no_invoice_finding",
+              "rejected"
+            ],
+            "description": "'candidate' = runtime proposal awaiting gate authorization; the other values are deterministic gate outputs."
+          },
+          "reason_codes": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "review_reason": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "assertions": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "assertion_kind",
+                "polarity",
+                "source_id",
+                "quote"
+              ],
+              "properties": {
+                "assertion_kind": {
+                  "type": "string",
+                  "enum": [
+                    "invoice_buyer_mismatch",
+                    "issuer_payee_mismatch",
+                    "noncompliant_invoice_obtained",
+                    "invoice_information_irregular_fact",
+                    "explicit_invoice_characterization_request",
+                    "explicit_invoice_legality_question",
+                    "true_transaction",
+                    "false_invoicing_evidence_absent"
+                  ]
+                },
+                "polarity": {
+                  "type": "string",
+                  "enum": [
+                    "affirmative",
+                    "negative",
+                    "hypothetical"
+                  ]
+                },
+                "source_id": {
+                  "type": "string",
+                  "enum": [
+                    "prompt",
+                    "context"
+                  ],
+                  "description": "Immutable source snippet the quote was taken from; 'expected' or any other id is illegal."
+                },
+                "quote": {
+                  "type": "string",
+                  "minLength": 1
+                },
+                "start": {
+                  "type": "integer",
+                  "minimum": 0
+                },
+                "end": {
+                  "type": "integer",
+                  "minimum": 0
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "dependentRequired": {
