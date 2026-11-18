@@ -12,7 +12,7 @@ from typing import NamedTuple
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.2.3"
+CONTRACT_VERSION = "2.2.4"
 RESULT_SCHEMA_PATH = ROOT / "evals" / "result.schema.json"
 
 STRUCTURED_LIST_FIELDS = (
@@ -54,6 +54,7 @@ ALLOWED_RESULT_FIELDS = {
     "report_mode",
     "report_sections",
     "fact_grounding",
+    "audit_objects",
 }
 
 KNOWN_FINDING_TYPES = {
@@ -241,6 +242,42 @@ def _case_source_text(case: dict) -> str:
     if isinstance(context, dict):
         parts.append(json.dumps(context, ensure_ascii=False))
     return "\n".join(parts)
+
+
+def _score_audit_objects(case: dict, result: dict, failures: list[str]) -> None:
+    """Global (not expected-dependent) V2.2.4 check: an invoice-level claim
+    (invoice_information_irregularity finding type or category=SW) requires at
+    least one authorized_sw audit object whose assertion quotes verify
+    verbatim against the immutable case source."""
+    finding_types = result.get("finding_types")
+    invoice_claim = (
+        isinstance(finding_types, list) and "invoice_information_irregularity" in finding_types
+    ) or result.get("category") == "SW"
+    if not invoice_claim:
+        return
+    objects = result.get("audit_objects")
+    if not isinstance(objects, list) or not objects:
+        failures.append(
+            "audit_objects: SW_WITHOUT_AUTHORIZED_OBJECT — invoice finding requires at "
+            "least one authorized_sw audit object verified against the source input"
+        )
+        return
+    authorized = [o for o in objects if isinstance(o, dict) and o.get("decision") == "authorized_sw"]
+    if not authorized:
+        failures.append(
+            "audit_objects: SW_WITHOUT_AUTHORIZED_OBJECT — no authorized_sw object in delivery"
+        )
+        return
+    spec = importlib.util.spec_from_file_location(
+        "audit_object_grounding_for_eval", ROOT / "scripts" / "audit_object_grounding.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    source_text = _case_source_text(case)
+    sources = {"prompt": source_text, "context": ""}
+    for obj in authorized:
+        for violation in module.verify_audit_objects([obj], sources):
+            failures.append(f"audit_objects: AUDIT_OBJECT_UNVERIFIED:{violation}")
 
 
 def _score_conclusion_grounding(case: dict, result: dict, failures: list[str]) -> None:
@@ -621,6 +658,7 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
     _score_format_lint(case, text, failures)
     _score_result_invariants(case, result, failures)
     _score_conclusion_grounding(case, result, failures)
+    _score_audit_objects(case, result, failures)
 
     for field in STRUCTURED_SCALAR_FIELDS:
         if field in expected and result.get(field) != expected[field]:
