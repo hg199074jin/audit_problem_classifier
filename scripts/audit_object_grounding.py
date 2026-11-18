@@ -60,7 +60,7 @@ ASSERTION_ANCHORS: dict[str, tuple[str, ...]] = {
         "购买方信息", "抬头不一致", "抬头不符", "开票单位与收款单位不一致",
         "不符合规定的发票", "发票记载", "记载信息", "票面信息",
     ),
-    "explicit_invoice_characterization_request": ("请定性", "如何认定", "定性该", "如何定性"),
+    "explicit_invoice_characterization_request": ("定性", "如何认定", "请认定"),
     "explicit_invoice_legality_question": (
         "是否合规", "能否作为财务报销凭证", "能否报销", "是否合法", "合规性",
     ),

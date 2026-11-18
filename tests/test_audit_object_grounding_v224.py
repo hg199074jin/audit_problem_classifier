@@ -212,6 +212,20 @@ def test_whitespace_mutation_breaks_quote():
     assert any("QUOTE_NOT_IN_SOURCE" in v for v in violations)
 
 
+def test_characterization_request_paraphrases_are_supported():
+    """Anchor family must cover professional paraphrases of the 定性 request
+    ('请对该发票问题定性'), not only the formal-case wording ('请定性')."""
+    mod = load_module()
+    src = "某单位一笔报销发票购买方信息与实际报销单位不一致，交易真实。请对该发票问题定性。"
+    obj = case10_object()
+    obj["assertions"] = [
+        assertion("invoice_buyer_mismatch", "购买方信息与实际报销单位不一致"),
+        assertion("explicit_invoice_characterization_request", "请对该发票问题定性"),
+    ]
+    decision = mod.authorize_audit_objects([obj], {"prompt": src, "context": ""})
+    assert decision["objects"][0]["decision"] == "authorized_sw", decision["objects"][0]["reason_codes"]
+
+
 def test_false_invoicing_absent_alone_cannot_authorize_sw():
     """The negative sentence alone must never trigger SW (R3 root cause)."""
     mod = load_module()
