@@ -279,7 +279,33 @@ audit_problem_classifier/
 
 ## 安装
 
-将整个仓库作为 Skill 安装到所用 Agent runtime 的用户级技能目录，并重新加载 runtime。不同 runtime 的具体目录以其官方文档为准。
+仓库地址（SKILL.md 位于根目录，技能名 `audit-problem-classifier`）：
+
+```
+https://github.com/hg199074jin/audit_problem_classifier
+```
+
+**方式 A：CC Switch 面板安装（推荐，支持自动更新检查）**
+
+Skills 面板 → 从 GitHub 安装，填：
+
+| 字段 | 值 |
+|---|---|
+| Owner | `hg199074jin` |
+| Repo | `audit_problem_classifier` |
+| Branch | `main` |
+
+安装后可在技能详情中随时"检查更新"（更新策略建议 notify-only：提示后由使用者决定是否更新）。
+
+**方式 B：手动安装**
+
+```bash
+git clone https://github.com/hg199074jin/audit_problem_classifier.git
+```
+
+将仓库目录（或其中技能部分）拷贝到所用 Agent runtime 的用户级技能目录，并重新加载 runtime。不同 runtime 的具体目录以其官方文档为准。也可在 GitHub 页面 Code → Download ZIP 下载后解压安装。
+
+**版本**：正式版本以 Release/tag 为准（当前 v2.2.4，contract_version=2.2.4）；main 分支为最新已验证状态。
 
 ## 专业边界
 
