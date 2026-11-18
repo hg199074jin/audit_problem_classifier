@@ -110,6 +110,31 @@ def test_cli_delivery_enforcement(tmp_path):
     assert "VIOLATION" in proc.stderr
 
 
+def test_delivery_refuses_self_authorized_object_missing_focus():
+    """F-002 probe A: a defect-only object that self-fills
+    decision=authorized_sw + directness=primary (no focus assertion) is
+    needs_review per the frozen decision table — the delivery boundary must
+    re-derive the decision, not trust the literal field."""
+    mod = load_delivery()
+    rogue = [{
+        "object_id": "AO-1",
+        "source_record_id": None,
+        "object_kind": "invoice_compliance",
+        "directness": "primary",
+        "decision": "authorized_sw",
+        "assertions": [
+            {"assertion_kind": "invoice_buyer_mismatch", "polarity": "affirmative",
+             "source_id": "prompt", "quote": "购买方信息与实际报销单位存在不一致"},
+        ],
+    }]
+    result = sw_result(with_objects=False)
+    result["audit_objects"] = rogue
+    failures = mod.verify_delivery(result, SOURCES)
+    assert failures, "self-authorized object without focus must be refused"
+    assert any("DECISION_MISMATCH" in f for f in failures)
+    assert any("SW_WITHOUT_AUTHORIZED_OBJECT" in f for f in failures)
+
+
 def test_cli_invoice_object_subcommand(tmp_path):
     facts = {
         "audit_objects": authorized_objects(),

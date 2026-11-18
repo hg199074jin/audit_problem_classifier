@@ -35,3 +35,7 @@
 ## 泄漏边界
 
 runtime 安装树不含 evals/（含 holdout）、tests/、docs/、fixtures、任何 expected；holdout 输入在运行前才写入隔离 inputs 目录；评分器与 expected 只存在于评分侧。
+
+## 版本记录（协议 §1：修改必须重新封存并声明版本）
+
+- **v2（2026-11-18，preflight F-001 修复）**：h12 expected 改为空集 exact 钉空性（原 {} 违反 case.schema minProperties）；h15/h24 补 applicability_target 成对（dependentRequired）；h24 重构为询问结构化对象 HENAN-GP-2020-TENDER-WORKS-DELEGATED（对齐正式 p1-henan-works 形态，消除不可满足缺陷）。专业结论未变（独立裁定 26/26 AGREE 针对 v1 专业内容，v2 仅机器 schema 对齐）；v2 经冻结 scorer load_cases 26/26 可加载验证。新 SHA256 见执行台账。

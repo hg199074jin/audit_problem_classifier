@@ -99,7 +99,23 @@ def test_sw_with_unauthorized_decision_fails():
     case["expected"] = {}
     outcome = scorer.score_case(case, sw_result(objects))
     assert not outcome.passed
-    assert any("SW_WITHOUT_AUTHORIZED_OBJECT" in f for f in outcome.failures)
+    assert any("DECISION_MISMATCH" in f for f in outcome.failures), outcome.failures
+
+
+def test_scorer_refuses_self_authorized_object_missing_focus():
+    """F-002: scorer re-derives the gate decision; a defect-only object with
+    self-filled authorized_sw cannot make an SW result pass."""
+    scorer = load_scorer()
+    rogue = verified_objects()
+    rogue[0]["assertions"] = [rogue[0]["assertions"][0]]  # defect only, no focus
+    case = p2_case()
+    case["expected"] = {"conclusion_codes": ["invoice_irregularity_not_false_invoicing_established"]}
+    outcome = scorer.score_case(case, sw_result(rogue))
+    assert not outcome.passed
+    assert any(
+        "DECISION_MISMATCH" in f or "SW_WITHOUT_AUTHORIZED_OBJECT" in f
+        for f in outcome.failures
+    ), outcome.failures
 
 
 def test_fy_without_objects_passes():
@@ -125,3 +141,28 @@ def test_invoice_finding_type_alone_triggers_object_requirement():
     outcome = scorer.score_case(case, result)
     assert not outcome.passed
     assert any("SW_WITHOUT_AUTHORIZED_OBJECT" in f for f in outcome.failures)
+
+
+def test_honest_context_attribution_passes():
+    """F-004: a fact that lives in context and is honestly attributed to
+    source_id=context must verify (scorer rebuilds both buckets)."""
+    scorer = load_scorer()
+    case = {
+        "contract_version": "2.2.4", "id": "z", "domain": "evidence-wording",
+        "prompt": "请对该发票问题定性。",
+        "context": {"invoice_fact": "购买方信息与实际报销单位存在不一致"},
+        "expected": {"conclusion_codes": ["invoice_irregularity_not_false_invoicing_established"]},
+    }
+    objects = [{
+        "object_id": "AO-1", "source_record_id": None,
+        "object_kind": "invoice_compliance", "directness": "primary",
+        "decision": "authorized_sw",
+        "assertions": [
+            {"assertion_kind": "invoice_buyer_mismatch", "polarity": "affirmative",
+             "source_id": "context", "quote": "购买方信息与实际报销单位存在不一致"},
+            {"assertion_kind": "explicit_invoice_characterization_request", "polarity": "affirmative",
+             "source_id": "prompt", "quote": "请对该发票问题定性"},
+        ],
+    }]
+    outcome = scorer.score_case(case, sw_result(objects))
+    assert outcome.passed, outcome.failures

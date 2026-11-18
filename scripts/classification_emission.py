@@ -279,6 +279,24 @@ def invoice_object_gate(
     aog = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(aog)
 
+    reason_codes: list[str] = []
+    source_key_violations = aog.validate_sources(sources or {})
+    if source_key_violations:
+        # F-005: only prompt/context are legitimate source identities.
+        reason_codes.extend(source_key_violations)
+        return {
+            "decision": "needs_review",
+            "primary_class": None,
+            "emit_invoice_information_irregularity": False,
+            "authorized_object_ids": [],
+            "incidental_object_ids": [],
+            "needs_review_object_ids": [],
+            "restrictions": [],
+            "reason_codes": reason_codes,
+            "authorization_summary": {"rejected": 0},
+            "rationale": "illegal source keys; fail closed",
+        }
+
     decision_result = aog.authorize_audit_objects(audit_objects or [], sources or {})
     decided = decision_result["objects"]
     summary = decision_result["summary"]

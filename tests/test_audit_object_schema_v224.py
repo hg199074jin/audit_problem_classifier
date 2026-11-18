@@ -106,14 +106,21 @@ def test_unknown_decision_rejected():
     raise AssertionError("unknown decision must be rejected")
 
 
-def test_duplicated_object_id_rejected():
-    schema = load_schema()
+def test_duplicated_object_id_detected_by_gate_verification():
+    """Duplicate object_ids are not expressible in JSON Schema array terms;
+    they are detected by the gate verification layer (F-006: the old test
+    passed for the wrong reason — a type mismatch)."""
+    import importlib.util
+    spec = importlib.util.spec_from_file_location(
+        "aog_dup", ROOT / "scripts" / "audit_object_grounding.py"
+    )
+    aog = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(aog)
     twin = base_object()
-    try:
-        jsonschema.validate([twin, twin], schema)
-    except jsonschema.ValidationError:
-        return
-    raise AssertionError("duplicated object_id must be rejected by array-level constraint")
+    twin["decision"] = "candidate"
+    sources = {"prompt": "购买方信息与实际报销单位存在不一致", "context": ""}
+    violations = aog.verify_audit_objects([twin, dict(twin)], sources)
+    assert any("OBJECT_ID_DUPLICATED" in v for v in violations)
 
 
 def test_assertions_must_not_be_empty():

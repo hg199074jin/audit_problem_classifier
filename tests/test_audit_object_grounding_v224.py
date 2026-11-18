@@ -269,3 +269,53 @@ def test_cli_rejected_object_exits_nonzero(tmp_path):
         capture_output=True, text=True,
     )
     assert proc.returncode == 1
+
+
+# ---------------- F-003: statute quote must not authorize SW ----------------
+
+
+def test_statute_quote_cannot_authorize_noncompliant_object():
+    """F-003 probe B: quoting the LAW TEXT (normative sentence) as a
+    noncompliant_invoice_obtained fact must not authorize SW — anchors
+    require factual phrasing (取得/开具/收到…), normative sentences
+    (不得/应当/必须) are rejected."""
+    mod = load_module()
+    sources = {
+        "prompt": "某单位一笔报销，请处理。",
+        "context": "{\"law_text\": \"不符合规定的发票不得作为财务报销凭证。\"}",
+    }
+    obj = case10_object()
+    obj["assertions"] = [
+        assertion("noncompliant_invoice_obtained",
+                  "不符合规定的发票不得作为财务报销凭证。", source_id="context"),
+    ]
+    decision = mod.authorize_audit_objects([obj], sources)
+    assert decision["objects"][0]["decision"] != "authorized_sw", (
+        decision["objects"][0]["reason_codes"]
+    )
+
+
+def test_factual_noncompliant_phrasing_still_authorizes():
+    mod = load_module()
+    src = {"prompt": "某事业单位报销取得不符合规定的发票并作为财务报销凭证。", "context": ""}
+    obj = case10_object()
+    obj["assertions"] = [
+        assertion("noncompliant_invoice_obtained", "取得不符合规定的发票并作为财务报销凭证"),
+    ]
+    decision = mod.authorize_audit_objects([obj], src)
+    assert decision["objects"][0]["decision"] == "authorized_sw"
+
+
+def test_gate_rejects_illegal_source_keys():
+    """F-005: source maps may only carry prompt/context keys."""
+    import importlib.util as _ilu
+    spec = _ilu.spec_from_file_location(
+        "classification_emission_v224b", ROOT / "scripts" / "classification_emission.py"
+    )
+    eng = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(eng)
+    out = eng.invoice_object_gate(
+        audit_objects=[case10_object()], sources={"prompt": PROMPT, "expected": "leak"},
+    )
+    assert out["decision"] != "sw_independent"
+    assert any("SOURCE_KEYS_ILLEGAL" in rc for rc in out["reason_codes"])

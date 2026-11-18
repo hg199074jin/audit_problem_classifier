@@ -34,7 +34,11 @@ def _load_aog():
 
 
 def verify_delivery(result: dict, sources: dict[str, str]) -> list[str]:
-    """Return violation codes; empty list = deliverable."""
+    """Return violation codes; empty list = deliverable.
+
+    F-002: the recorded `decision` field is NOT trusted — decisions are
+    re-derived through the frozen gate; a self-filled authorized_sw that the
+    gate would not grant is a refusal (DECISION_MISMATCH)."""
     violations: list[str] = []
     finding_types = result.get("finding_types") or []
     category = result.get("category")
@@ -53,16 +57,11 @@ def verify_delivery(result: dict, sources: dict[str, str]) -> list[str]:
         return violations
 
     aog = _load_aog()
-    authorized = [
-        o for o in objects
-        if isinstance(o, dict) and o.get("decision") == "authorized_sw"
-    ]
-    if not authorized:
-        violations.append("SW_WITHOUT_AUTHORIZED_OBJECT: no authorized_sw object in delivery")
-        return violations
-    for obj in authorized:
-        for violation in aog.verify_audit_objects([obj], sources):
-            violations.append(f"AUDIT_OBJECT_UNVERIFIED:{violation}")
+    delivery_violations, authorized_ids = aog.verify_delivery_objects(objects, sources)
+    if not authorized_ids:
+        violations.append("SW_WITHOUT_AUTHORIZED_OBJECT: no gate-recomputed authorized_sw object")
+    for violation in delivery_violations:
+        violations.append(f"AUDIT_OBJECT_UNVERIFIED:{violation}")
     return violations
 
 
