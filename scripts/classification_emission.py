@@ -250,6 +250,89 @@ def expense_supporting_finding_gate(
     }
 
 
+def invoice_object_gate(
+    *,
+    audit_objects: list[dict],
+    sources: dict[str, str],
+    legacy: dict | None = None,
+) -> dict:
+    """Production FY/SW split entry (V2.2.4): consumes VERIFIED audit objects
+    only. `legacy` naked booleans are accepted for telemetry/compatibility but
+    can never authorize SW on this path (LEGACY_BOOL_UNVERIFIED).
+
+    Decision mapping (frozen decision table in
+    docs/decisions/v224-invoice-audit-object-adjudication.md):
+    - any authorized_sw object        -> sw_independent + emit invoice finding
+      (restriction facts become `restrictions`, e.g. no_false_invoicing_finding)
+    - needs_review / rejected objects -> needs_review (fail closed, never
+      quietly absorbed into FY)
+    - only incidental_fy objects      -> fy_incidental
+    - no objects at all               -> no_invoice_finding (gate abstains)
+    """
+    import importlib.util
+    from pathlib import Path as _Path
+
+    spec = importlib.util.spec_from_file_location(
+        "audit_object_grounding_for_gate",
+        _Path(__file__).resolve().parent / "audit_object_grounding.py",
+    )
+    aog = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(aog)
+
+    decision_result = aog.authorize_audit_objects(audit_objects or [], sources or {})
+    decided = decision_result["objects"]
+    summary = decision_result["summary"]
+
+    reason_codes: list[str] = []
+    authorized = [o for o in decided if o["decision"] == "authorized_sw"]
+    incidental = [o for o in decided if o["decision"] == "incidental_fy"]
+    blocked = [o for o in decided if o["decision"] in ("needs_review", "rejected")]
+
+    restrictions: list[str] = []
+    for o in authorized:
+        if any(rc == "RESTRICT_NO_FALSE_INVOICING_FINDING" for rc in o["reason_codes"]):
+            restrictions.append("no_false_invoicing_finding")
+
+    out: dict = {
+        "decision": None,
+        "primary_class": None,
+        "emit_invoice_information_irregularity": False,
+        "authorized_object_ids": [o["object_id"] for o in authorized],
+        "incidental_object_ids": [o["object_id"] for o in incidental],
+        "needs_review_object_ids": [o["object_id"] for o in blocked],
+        "restrictions": restrictions,
+        "reason_codes": reason_codes,
+        "authorization_summary": summary,
+    }
+
+    if legacy and not authorized:
+        reason_codes.append("LEGACY_BOOL_UNVERIFIED")
+
+    if authorized:
+        out["decision"] = "sw_independent"
+        out["primary_class"] = "SW"
+        out["emit_invoice_information_irregularity"] = True
+        out["rationale"] = "verified audit object authorizes independent invoice finding"
+        return out
+    if blocked:
+        out["decision"] = "needs_review"
+        out["rationale"] = "audit objects require review or failed verification; fail closed"
+        for o in blocked:
+            reason_codes.append(
+                f"UNVERIFIED_OBJECT:{o['object_id']}" if o["decision"] == "rejected"
+                else f"OBJECT_NEEDS_REVIEW:{o['object_id']}"
+            )
+        return out
+    if incidental:
+        out["decision"] = "fy_incidental"
+        out["primary_class"] = "FY"
+        out["rationale"] = "invoice defects are incidental to expense documents; FY absorbs"
+        return out
+    out["decision"] = "no_invoice_finding"
+    out["rationale"] = "no verified invoice audit object; the gate abstains"
+    return out
+
+
 # --------------------------- CLI (runtime invokable) ---------------------------
 
 def _read_input(path: str) -> dict:
