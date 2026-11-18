@@ -30,16 +30,17 @@ description: 中小会计师事务所收支审计、合规审计问题报告化�
 
 1. **读取材料**：读取全部原始问题、凭证/合同/表格字段和用户已给出的报告口径；非空问题必须进入覆盖检查。
 2. **建立 Project Context**：确认地区、单位层级、单位性质、审计期间、资金性质、报告模式和 profile。已知稳定事实直接沿用。
-3. **生成待决策事项**：依据 `rules/decision-gate.md` 汇总会改变分类、定性、金额或法规适用的未决事项。
+3. **生成待决策事项**：依据 `rules/decision-gate.md` 汇总会改变分类、定性、金额或法规适用的未决事项。存在待决策事实时，调用 `python3 scripts/classification_emission.py decision-required --input <facts.json>`（facts：`blank_record`、`inclusion_decision_needed`、`pending_or_unconfirmed_facts` 三个布尔），按其输出 `codes` **完整发射**兄弟结论码——一个事实一个码，不得用 `decision_required_pending_items` 吞并 `decision_required_blank_record` 或 `decision_required_record_inclusion`。
 4. **HARD-GATE**：重大事项未解决前不得形成正式认定；用户未答复的保持“待核实”。格式习惯从 profile 读取，不重复追问。
 5. **构建 Source Records**：为每条原始记录建立唯一 `source_record_id`，保留主体、期间、凭证号、合同号、金额、审批、支付对象、证据缺失等回查信息。
 6. **拆分 Findings**：一个 Source Record 可拆多个独立 Finding；每个 Finding 只回答一个核心问题，原始记录数和 `voucher_amount` 仍只统计一次。
-7. **分类**：按 `rules/classification.md` 选择唯一主类和最具体二级类型，不让附件、发票或会计瑕疵覆盖主要审计认定对象。
+7. **分类（V2.2.4：审计认定对象先于类别）**：按 `rules/classification.md` 选择唯一主类和最具体二级类型。**FY/SW 分流不得使用裸布尔判断**：先从源输入提出带逐字引文的类型化 `audit_objects`（断言含 assertion_kind/polarity/source_id/quote，引文须在 prompt+context 原文中逐字存在且支持所声明事实），运行 `python3 scripts/classification_emission.py invoice-object --input <facts.json>`（facts：`audit_objects` + `sources`），按其输出执行——`sw_independent` 才可发射 SW/`invoice_information_irregularity`（并把 `authorized_sw` 对象写入机器结果 `audit_objects`，`restrictions` 中的 `no_false_invoicing_finding` 转化为"不认定虚开"的措辞限制）；`fy_incidental` 归 FY 不拆 SW；`needs_review` 不得默认 FY；`no_invoice_finding` 不凭否定证据生成发票 Finding。附件维度类型仍用 `expense-documents` 门判定（`distribution_list_missing` 须具体清单对象引文）。
 8. **证据等级**：标记 confirmed / partially_confirmed / pending / conflicting；证据不足事项不得混入已确认结论。
-9. **法规适用过滤**：先查结构化法规库；按 `rules/law-applicability.md` 的时效→地域→主体→事项→资金→事实/证据顺序过滤。`needs_review` 不得伪装为正式直接依据。
+9. **法规适用过滤**：先查结构化法规库；按 `rules/law-applicability.md` 的时效→地域→主体→事项→资金→事实/证据顺序过滤。`needs_review` 不得伪装为正式直接依据。机器结果中 `applicability_status` 与 `applicability_target` 按 `applicability_pair_requirement` 成对发射（Mode A/B 同一规则），发射前调用 `python3 scripts/law_applicability.py applicability-pair --input <facts.json>` 判定（facts：`asked_candidate_target`、`direct_basis_law_ids`），按其输出执行：`emit_pair` 成对发射（target 按输出）、`disambiguate` 先消歧不得猜测、`no_applicable_pair` 不发 applicable 配对。
 10. **定性措辞**：按 `rules/evidence-and-wording.md` 控制定性梯度，嫌疑不写认定、占用不写挪用、少收不写损失、补签不写倒签。
 11. **报告化输出**：根据用户确认的模式选择分类整理报告或专项审核报告模板；同一小项集中列示直接依据，必要时再列支持性依据。
 12. **覆盖/金额/法规/格式自检**：核对 Source Record 覆盖、Finding 数、金额去重、法规效力/适用性，并按 `rules/report-format.md` 做独立最终格式 lint 后再交付。调用方要求机器结果时，同时按 `rules/result-contract.md` 输出结构化字段。
+13. **交付前双重边界（V2.2.4 强制，不得跳步）**：①结论事实 grounding：受保护结论码（`decision_required_blank_record`、`decision_required_record_inclusion`、`decision_required_pending_items`、`reimbursement_review_insufficient`）必须附 `fact_grounding` 记录（citation 逐字存在且含对应专业锚点词），运行 `python3 scripts/conclusion_grounding.py --result <result.json> --source <source.txt> --enforce`，exit 0 按 stdout 交付；exit 1 不得交付，自行移除未 grounded 码后重跑至 exit 0，无法达到时按 HARD-GATE blocked 处理。②审计对象交付边界：机器结果含 `invoice_information_irregularity` 或 `category=SW` 时必须携带经 `authorized_sw` 的 `audit_objects`，运行 `python3 scripts/verify_skill_delivery.py --result <result.json> --source <source.json>`，exit 1 时不得交付，修正对象/引文后重跑至 exit 0。两个边界均不做跨字段改写。
 
 ## 法规使用原则
 

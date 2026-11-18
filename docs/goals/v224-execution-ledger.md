@@ -1,0 +1,37 @@
+# V2.2.4 Execution Ledger（append-only）
+
+## [ZCODE-V224-BASELINE] — 2026-11-18
+
+- Branch: `feature/v2.2.4-audit-object-grounding` @ `a3cde83375feddbce2406863ee35620ea43d8aa7`
+  - Ancestor verified: `0ec55b8243e14e1de5b59a8571e524e7da04443b`…（准确值 `0ec55b8243e14e1de5b59a8571e524e7da044...` 以 `git merge-base --is-ancestor` 实测通过为准；branch 含 6 个 docs-only 提交：设计/计划/goal 入口）
+  - Working tree clean（.DS_Store 已清）
+- Runtime: macOS arm64, Python 3.12.14（venv `/tmp/goal-venv` 本日重建：pytest / PyYAML / jsonschema）
+- Baseline commands & actual counts（本次实跑）:
+  - `pytest -q` → **280 passed**（4.31s）
+  - `python evals/score.py --cases evals/cases --results evals/fixtures/passing-results.jsonl` → **SUMMARY 26/26 passed**, exit 0
+  - negative fixture（failing-results.jsonl）→ **exit 1**（负控有效）
+- 历史定位（不重跑、不改写）：
+  - V2.2.3 Gate D = 25/26 **BLOCKED**（Issue #8 issuecomment-6631961306）
+  - 唯一 FAIL = case-10 `p2-invoice-irregularity-not-false-invoicing`：runtime 输出 FY `expense_supporting_documents_nonstandard`，oracle 要求 `invoice_information_irregularity`（SW）
+  - case-10 raw 存档：`~/workspace/default/audit-skill-goal-20261103/v2.2.3-gate-d/runtime-outputs/case-10.{json,md}`（sha256 见同目录 evidence-hashes.json；本地私有，不上传公开仓库）
+  - case-10 oracle（frozen，不改）：prompt="报销发票记载的购买方信息与实际报销单位存在不一致，但交易真实、货物确已取得，目前没有虚构交易、无真实业务开票或其他虚开发票证据。请定性。" expected finding_types=["invoice_information_irregularity"], conclusion_codes=["invoice_irregularity_not_false_invoicing_established"]
+- 根因（承接 R3-FINAL）：`invoice_split_gate` 的 `independent_invoice_object` / `false_invoicing_dispute` 输入是模型裸 bool；"没有…虚开发票证据"被解读为"无虚开争议"，Gate B 未触发，发票维度被 expense-context FY 默认吸收。输入权威不受证据约束 = 架构缺陷。
+- 模型/runtime 记录：ZCode Goal controller（GLM-5.3-Flash 主模型 + fresh general-purpose subagents 做 runtime/裁定/审查）；模型/参数在每次真实运行批次记录于对应 checkpoint。
+
+下一步：Task 1 专业裁定入档（用户 2026-11-18 APPROVED 的《V2.2.4 审计认定对象分类专业规则裁定》全文 + fresh reviewer 反例挑战）。
+
+## [T7] Holdout 预注册封存 — 2026-11-18
+
+- evals/holdout/v224-holdout.jsonl（26 例全新合成，措辞与正式 26 例不重合）
+- docs/validation/v224-holdout-protocol.md（预注册协议：封存/first-valid/评分/稳定性/泄漏边界）
+- 独立裁定员（fresh-context，未接触任何模型输出）预注册审核：**26/26 AGREE，0 DISPUTE**
+- 变形测试 tests/test_audit_object_metamorphic_v224.py：8 项 change-only-one-fact 全部通过
+- SHA256 封存（提交 38c1d3f..f4e5fee 之后的冻结值，见 Issue #9 checkpoint）：
+  - v224-holdout.jsonl sha256=c7589931c104a5cf3ae8363f5df2e1df4f310f065b67e78ae7da5733822ce3c4
+  - v224-holdout-protocol.md sha256=e6a50923afad0a9927d5ca5c8c48b83ef10c0dc5289aacd79041937c0a26e98f
+
+## [T9 续] 复核修复 — 2026-11-18
+
+- Reviewer 复核：F-001/002/003/004/006 **CLOSED**；新发现 F-009（负控 fixture 重复 id → 加载崩溃）**已修**（mode-a 行替换为剥离行，26 唯一行，负控恢复评分式 24/26 exit 1 且覆盖 SW_WITHOUT_AUTHORIZED_OBJECT）；F-005 遥测残留**已修**（SW 路径同批 rejected/needs_review 对象顶层显性 UNVERIFIED_OBJECT/OBJECT_NEEDS_REVIEW）；F-008 test-prompts.json 已在 Gate D 安装排除清单（rsync exclude）。
+- holdout **v2 SHA256 = 6d8c7025b249a0b5e8fbf67fc832d7a026df6fc83508b2678d809b81e1dd6f50**（协议 §1 悬空引用闭合）。
+- 复核结论原文："具备冻结并启动 ONE formal 26-case Gate D 的条件"。

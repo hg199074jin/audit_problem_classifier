@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Deterministic classification / emission decision tables (V2.2.0).
+"""Deterministic classification / emission decision tables (V2.2.3).
 
 The runtime derives factual inputs from the case, then invokes the gate
 functions directly or through the CLI (subcommands) so that the boundaries in
@@ -29,6 +29,20 @@ SAFE_NEGATIVE_CONCLUSION_CODES = {
     "misappropriation_not_established": "misappropriation",
     "post_execution_signing_not_backdating_established": "backdating",
     "recoverable_undercollection_not_loss_established": "established_loss",
+}
+
+# Specific distribution/issue list objects (V2.2.3). `distribution_list_missing`
+# requires a verbatim source citation naming one of these objects; generic
+# "缺少明细 / 附件缺失" facts authorize only the generic code
+# expense_supporting_documents_incomplete.
+DISTRIBUTION_LIST_OBJECT_ANCHORS = ("发放清单", "领用清单", "分配名册")
+
+# V2.2.3: the three decision_required codes map 1:1 to their own fact. One
+# generalization code must never swallow its brother codes' facts.
+DECISION_REQUIRED_BROTHER_CODES = {
+    "blank_record": "decision_required_blank_record",
+    "inclusion_decision_needed": "decision_required_record_inclusion",
+    "pending_or_unconfirmed_facts": "decision_required_pending_items",
 }
 
 
@@ -164,6 +178,186 @@ def decision_required_pending_items_gate(
     return bool(blank_record or inclusion_decision_needed or pending_or_unconfirmed_facts)
 
 
+def decision_required_codes_gate(
+    *,
+    blank_record: bool,
+    inclusion_decision_needed: bool,
+    pending_or_unconfirmed_facts: bool,
+) -> dict:
+    """Complete brother-code emission for pending decision facts (V2.2.3).
+
+    Each decision fact maps to exactly its own conclusion code
+    (DECISION_REQUIRED_BROTHER_CODES). Every fact that is true contributes its
+    own code; a generalization code never replaces a brother code, and a
+    code is never emitted without its own fact.
+    """
+    codes = [
+        DECISION_REQUIRED_BROTHER_CODES[fact]
+        for fact, flag in (
+            ("blank_record", blank_record),
+            ("inclusion_decision_needed", inclusion_decision_needed),
+            ("pending_or_unconfirmed_facts", pending_or_unconfirmed_facts),
+        )
+        if flag
+    ]
+    return {"allowed": bool(codes), "codes": codes}
+
+
+def expense_supporting_finding_gate(
+    *,
+    source_text: str,
+    specific_distribution_list_citation: str = "",
+    generic_supporting_incomplete: bool = False,
+    documents_nonstandard: bool = False,
+) -> dict:
+    """Fact→finding_type authorization at the specific-vs-generic boundary.
+
+    `distribution_list_missing` requires a verbatim source citation naming a
+    specific distribution/issue list object (发放清单 / 领用清单 / 分配名册,
+    DISTRIBUTION_LIST_OBJECT_ANCHORS). Generic "缺少明细 / 附件缺失" facts are
+    NOT specific-object facts: they authorize only
+    `expense_supporting_documents_incomplete`. When both facts exist the
+    specific code wins (最具体稳定代码优先); the nonstandard code is
+    independent of the incompleteness dimension.
+    """
+    citation = (specific_distribution_list_citation or "").strip()
+    specific_ok = (
+        bool(citation)
+        and citation in (source_text or "")
+        and any(anchor in citation for anchor in DISTRIBUTION_LIST_OBJECT_ANCHORS)
+    )
+    finding_types: list[str] = []
+    if specific_ok:
+        finding_types.append("distribution_list_missing")
+    elif generic_supporting_incomplete:
+        finding_types.append("expense_supporting_documents_incomplete")
+    if documents_nonstandard:
+        finding_types.append("expense_supporting_documents_nonstandard")
+    if not finding_types:
+        return {
+            "decision": "no_expense_document_finding",
+            "finding_types": [],
+            "rationale": "no attachment incompleteness/nonstandardness facts; the gate abstains",
+        }
+    return {
+        "decision": "authorized",
+        "finding_types": finding_types,
+        "rationale": (
+            "specific distribution/issue list object cited verbatim"
+            if specific_ok
+            else "generic supporting-document incompleteness; no specific list object cited"
+        ),
+    }
+
+
+def invoice_object_gate(
+    *,
+    audit_objects: list[dict],
+    sources: dict[str, str],
+    legacy: dict | None = None,
+) -> dict:
+    """Production FY/SW split entry (V2.2.4): consumes VERIFIED audit objects
+    only. `legacy` naked booleans are accepted for telemetry/compatibility but
+    can never authorize SW on this path (LEGACY_BOOL_UNVERIFIED).
+
+    Decision mapping (frozen decision table in
+    docs/decisions/v224-invoice-audit-object-adjudication.md):
+    - any authorized_sw object        -> sw_independent + emit invoice finding
+      (restriction facts become `restrictions`, e.g. no_false_invoicing_finding)
+    - needs_review / rejected objects -> needs_review (fail closed, never
+      quietly absorbed into FY)
+    - only incidental_fy objects      -> fy_incidental
+    - no objects at all               -> no_invoice_finding (gate abstains)
+    """
+    import importlib.util
+    from pathlib import Path as _Path
+
+    spec = importlib.util.spec_from_file_location(
+        "audit_object_grounding_for_gate",
+        _Path(__file__).resolve().parent / "audit_object_grounding.py",
+    )
+    aog = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(aog)
+
+    reason_codes: list[str] = []
+    source_key_violations = aog.validate_sources(sources or {})
+    if source_key_violations:
+        # F-005: only prompt/context are legitimate source identities.
+        reason_codes.extend(source_key_violations)
+        return {
+            "decision": "needs_review",
+            "primary_class": None,
+            "emit_invoice_information_irregularity": False,
+            "authorized_object_ids": [],
+            "incidental_object_ids": [],
+            "needs_review_object_ids": [],
+            "restrictions": [],
+            "reason_codes": reason_codes,
+            "authorization_summary": {"rejected": 0},
+            "rationale": "illegal source keys; fail closed",
+        }
+
+    decision_result = aog.authorize_audit_objects(audit_objects or [], sources or {})
+    decided = decision_result["objects"]
+    summary = decision_result["summary"]
+
+    reason_codes: list[str] = []
+    authorized = [o for o in decided if o["decision"] == "authorized_sw"]
+    incidental = [o for o in decided if o["decision"] == "incidental_fy"]
+    blocked = [o for o in decided if o["decision"] in ("needs_review", "rejected")]
+
+    restrictions: list[str] = []
+    for o in authorized:
+        if any(rc == "RESTRICT_NO_FALSE_INVOICING_FINDING" for rc in o["reason_codes"]):
+            restrictions.append("no_false_invoicing_finding")
+
+    out: dict = {
+        "decision": None,
+        "primary_class": None,
+        "emit_invoice_information_irregularity": False,
+        "authorized_object_ids": [o["object_id"] for o in authorized],
+        "incidental_object_ids": [o["object_id"] for o in incidental],
+        "needs_review_object_ids": [o["object_id"] for o in blocked],
+        "restrictions": restrictions,
+        "reason_codes": reason_codes,
+        "authorization_summary": summary,
+    }
+
+    if legacy and not authorized:
+        reason_codes.append("LEGACY_BOOL_UNVERIFIED")
+
+    if authorized:
+        out["decision"] = "sw_independent"
+        out["primary_class"] = "SW"
+        out["emit_invoice_information_irregularity"] = True
+        out["rationale"] = "verified audit object authorizes independent invoice finding"
+        # F-005 telemetry: rejected objects riding along with an SW decision
+        # must be visible at top level, not only in the summary.
+        for o in decided:
+            if o["decision"] == "rejected":
+                reason_codes.append(f"UNVERIFIED_OBJECT:{o['object_id']}")
+            elif o["decision"] == "needs_review":
+                reason_codes.append(f"OBJECT_NEEDS_REVIEW:{o['object_id']}")
+        return out
+    if blocked:
+        out["decision"] = "needs_review"
+        out["rationale"] = "audit objects require review or failed verification; fail closed"
+        for o in blocked:
+            reason_codes.append(
+                f"UNVERIFIED_OBJECT:{o['object_id']}" if o["decision"] == "rejected"
+                else f"OBJECT_NEEDS_REVIEW:{o['object_id']}"
+            )
+        return out
+    if incidental:
+        out["decision"] = "fy_incidental"
+        out["primary_class"] = "FY"
+        out["rationale"] = "invoice defects are incidental to expense documents; FY absorbs"
+        return out
+    out["decision"] = "no_invoice_finding"
+    out["rationale"] = "no verified invoice audit object; the gate abstains"
+    return out
+
+
 # --------------------------- CLI (runtime invokable) ---------------------------
 
 def _read_input(path: str) -> dict:
@@ -196,8 +390,20 @@ def main(argv: list[str] | None = None) -> int:
     p_review = sub.add_parser("review-insufficient", help="reimbursement_review_insufficient gate")
     p_review.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
 
-    p_pending = sub.add_parser("decision-required", help="decision_required_pending_items gate")
+    p_pending = sub.add_parser("decision-required", help="decision_required_* brother-code gate")
     p_pending.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
+
+    p_expdoc = sub.add_parser(
+        "expense-documents",
+        help="specific-vs-generic attachment finding_type authorization gate",
+    )
+    p_expdoc.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
+
+    p_obj = sub.add_parser(
+        "invoice-object",
+        help="V2.2.4 production FY/SW split via verified audit objects",
+    )
+    p_obj.add_argument("--input", required=True, help='facts JSON {"audit_objects":[...], "sources":{"prompt":...,"context":...}}')
 
     args = parser.parse_args(argv)
 
@@ -218,8 +424,8 @@ def main(argv: list[str] | None = None) -> int:
                     return 2
             unknown_kinds = set(ib or ()) - INCIDENTAL_INVOICE_BLEMISH_KINDS - {"noncompliant_invoice_obtained"}
             if unknown_kinds:
-                    print(f"ERROR: unknown invoice blemish kind(s): {sorted(unknown_kinds)}", file=sys.stderr)
-                    return 2
+                print(f"ERROR: unknown invoice blemish kind(s): {sorted(unknown_kinds)}", file=sys.stderr)
+                return 2
             decision = invoice_split_gate(
                 expense_context=bool(ec),
                 invoice_blemish=set(ib or ()),
@@ -260,12 +466,52 @@ def main(argv: list[str] | None = None) -> int:
                 if val is not None and not isinstance(val, bool):
                     print(f"ERROR: {name} must be a JSON boolean, got {type(val).__name__}: {val!r}", file=sys.stderr)
                     return 2
-            allowed = decision_required_pending_items_gate(
+            decision = decision_required_codes_gate(
                 blank_record=bool(facts.get("blank_record")),
                 inclusion_decision_needed=bool(facts.get("inclusion_decision_needed")),
                 pending_or_unconfirmed_facts=bool(facts.get("pending_or_unconfirmed_facts")),
             )
-            print(json.dumps({"allowed": allowed}, ensure_ascii=False, indent=2))
+            print(json.dumps(decision, ensure_ascii=False, indent=2))
+            return 0
+        if args.gate == "expense-documents":
+            facts = _read_input(args.input)
+            citation = facts.get("specific_distribution_list_citation")
+            if citation is not None and not isinstance(citation, str):
+                print("ERROR: specific_distribution_list_citation must be a JSON string", file=sys.stderr)
+                return 2
+            for name in ("generic_supporting_incomplete", "documents_nonstandard"):
+                val = facts.get(name)
+                if val is not None and not isinstance(val, bool):
+                    print(f"ERROR: {name} must be a JSON boolean, got {type(val).__name__}: {val!r}", file=sys.stderr)
+                    return 2
+            source_text = facts.get("source_text")
+            if source_text is not None and not isinstance(source_text, str):
+                print("ERROR: source_text must be a JSON string", file=sys.stderr)
+                return 2
+            decision = expense_supporting_finding_gate(
+                source_text=source_text or "",
+                specific_distribution_list_citation=citation or "",
+                generic_supporting_incomplete=bool(facts.get("generic_supporting_incomplete")),
+                documents_nonstandard=bool(facts.get("documents_nonstandard")),
+            )
+            print(json.dumps(decision, ensure_ascii=False, indent=2))
+            return 0
+        if args.gate == "invoice-object":
+            facts = _read_input(args.input)
+            objects = facts.get("audit_objects")
+            if objects is not None and not isinstance(objects, list):
+                print("ERROR: audit_objects must be a JSON array", file=sys.stderr)
+                return 2
+            sources = facts.get("sources")
+            if sources is not None and not isinstance(sources, dict):
+                print("ERROR: sources must be a JSON object with prompt/context keys", file=sys.stderr)
+                return 2
+            decision = invoice_object_gate(
+                audit_objects=objects or [],
+                sources=sources or {},
+                legacy=facts.get("legacy"),
+            )
+            print(json.dumps(decision, ensure_ascii=False, indent=2))
             return 0
     except (ValueError, TypeError, json.JSONDecodeError) as exc:
         print(f"ERROR: {exc}", file=sys.stderr)

@@ -12,7 +12,7 @@ from typing import NamedTuple
 from jsonschema import Draft202012Validator
 
 ROOT = Path(__file__).resolve().parents[1]
-CONTRACT_VERSION = "2.2.0"
+CONTRACT_VERSION = "2.2.4"
 RESULT_SCHEMA_PATH = ROOT / "evals" / "result.schema.json"
 
 STRUCTURED_LIST_FIELDS = (
@@ -53,6 +53,8 @@ ALLOWED_RESULT_FIELDS = {
     "law_roles",
     "report_mode",
     "report_sections",
+    "fact_grounding",
+    "audit_objects",
 }
 
 KNOWN_FINDING_TYPES = {
@@ -223,6 +225,76 @@ def _load_format_linter():
     return module
 
 
+def _load_grounding_module():
+    path = ROOT / "scripts" / "conclusion_grounding.py"
+    spec = importlib.util.spec_from_file_location("conclusion_grounding_for_eval", path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("unable to load conclusion grounding module")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _case_source_text(case: dict) -> str:
+    """Serialize the source input the runtime saw (prompt + context)."""
+    parts = [str(case.get("prompt") or "")]
+    context = case.get("context") or {}
+    if isinstance(context, dict):
+        parts.append(json.dumps(context, ensure_ascii=False))
+    return "\n".join(parts)
+
+
+def _score_audit_objects(case: dict, result: dict, failures: list[str]) -> None:
+    """Global (not expected-dependent) V2.2.4 check: an invoice-level claim
+    (invoice_information_irregularity finding type or category=SW) requires at
+    least one gate-recomputed authorized_sw audit object. F-002: recorded
+    decision fields are re-derived, never trusted; F-004: prompt/context are
+    rebuilt as separate buckets so honest context attribution verifies."""
+    finding_types = result.get("finding_types")
+    invoice_claim = (
+        isinstance(finding_types, list) and "invoice_information_irregularity" in finding_types
+    ) or result.get("category") == "SW"
+    if not invoice_claim:
+        return
+    objects = result.get("audit_objects")
+    if not isinstance(objects, list) or not objects:
+        failures.append(
+            "audit_objects: SW_WITHOUT_AUTHORIZED_OBJECT — invoice finding requires at "
+            "least one authorized_sw audit object verified against the source input"
+        )
+        return
+    spec = importlib.util.spec_from_file_location(
+        "audit_object_grounding_for_eval", ROOT / "scripts" / "audit_object_grounding.py"
+    )
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    sources = {
+        "prompt": str(case.get("prompt") or ""),
+        "context": json.dumps(case.get("context") or {}, ensure_ascii=False),
+    }
+    delivery_violations, authorized_ids = module.verify_delivery_objects(objects, sources)
+    if not authorized_ids:
+        failures.append(
+            "audit_objects: SW_WITHOUT_AUTHORIZED_OBJECT — no gate-recomputed authorized_sw object"
+        )
+    for violation in delivery_violations:
+        failures.append(f"audit_objects: AUDIT_OBJECT_UNVERIFIED:{violation}")
+
+
+def _score_conclusion_grounding(case: dict, result: dict, failures: list[str]) -> None:
+    """Global (not expected-dependent) fact-grounding check for guarded codes."""
+    codes = result.get("conclusion_codes")
+    if not isinstance(codes, list):
+        return
+    module = _load_grounding_module()
+    guarded = module.GUARDED_CODES
+    if not guarded.intersection(codes):
+        return
+    source_text = _case_source_text(case)
+    for violation in module.verify_grounding(result, source_text):
+        failures.append(f"conclusion grounding: {violation}")
+
+
 def _score_text_checks(case: dict, text: str, failures: list[str]) -> None:
     checks = (case.get("expected") or {}).get("text_checks")
     if checks is None:
@@ -334,18 +406,6 @@ def _score_result_invariants(case: dict, result: dict, failures: list[str]) -> N
     )
     if dangerous:
         failures.append(f"conclusion_codes: substantive code(s) not declared in expected {dangerous!r}")
-    if 'reimbursement_review_insufficient' in conclusions:
-        ctx = case.get('context') or {}
-        has_review_facts = any(
-            ctx.get(key)
-            for key in ('review_procedure_defect', 'required_attachments_missing',
-                        'approval_responsibility_facts', 'review_control_facts_present')
-        )
-        if not has_review_facts:
-            failures.append(
-                'conclusion_codes: reimbursement_review_insufficient requires explicit '
-                'review-control facts in case context'
-            )
 
     law_catalog = _load_law_catalog()
     known_laws = set(law_catalog)
@@ -598,6 +658,8 @@ def score_case(case: dict, result: dict) -> CaseOutcome:
     _score_text_checks(case, text, failures)
     _score_format_lint(case, text, failures)
     _score_result_invariants(case, result, failures)
+    _score_conclusion_grounding(case, result, failures)
+    _score_audit_objects(case, result, failures)
 
     for field in STRUCTURED_SCALAR_FIELDS:
         if field in expected and result.get(field) != expected[field]:

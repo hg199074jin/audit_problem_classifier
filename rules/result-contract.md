@@ -1,4 +1,4 @@
-# Machine Result Contract（V2.2.0）
+# Machine Result Contract（V2.2.4）
 
 本规则仅在调用方**明确要求机器可评测结果**时启用。普通审计报告仍按正常中文报告输出，不强制暴露内部评测字段。
 
@@ -6,7 +6,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 
 ## Contract version
 
-`contract_version = "2.2.0"`
+`contract_version = "2.2.4"`
 
 ## 字段
 
@@ -29,8 +29,36 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `report_sections`: **仅在输入 context 明确带有 `report_mode` 时输出**，并且只能使用下面的稳定章节代码，不得输出中文标题、编号前缀、封面/目录页等展示文本：
   - Mode A：`mode_a_overview_coverage`、`mode_a_classification_summary`、`mode_a_classification_details`、`mode_a_management_recommendations`、`mode_a_followup_materials`
   - Mode B：`mode_b_engagement_purpose`、`mode_b_entity_overview`、`mode_b_major_findings`、`mode_b_opinions_recommendations`、`mode_b_report_use_scope`
+- `audit_objects`（V2.2.4）：**发票维度 Finding（`invoice_information_irregularity` 或 `category=SW`）的强制授权记录**，数组元素为经 `scripts/audit_object_grounding.py` 判定的审计对象（schema 见 `schemas/audit-object.schema.json`）：`decision` 必须为 `authorized_sw`（门输出，runtime 不得自填），每条断言的 `quote` 须在源输入逐字存在且通过字段锚点与极性校验。交付前必须通过 `scripts/verify_skill_delivery.py`（exit 1 = 拒绝交付）。FY/needs_review/blocked 交付无需该字段。
 
 字段按任务需要输出；未发生的语义不要为了“填满字段”而编造。
+
+## 结论事实 grounding（V2.2.4）
+
+受保护结论码必须附 `fact_grounding` 数组，每个授权事实一条记录：
+
+```json
+{"field": "<事实字段名>", "value": true, "citation": "<源输入中逐字存在且支持该事实的引文>"}
+```
+
+受保护结论码与授权事实一一对应（V2.2.4 起 1:1，一个泛化码不得吞并兄弟码的事实）：
+
+| 结论码 | 唯一授权事实 |
+|---|---|
+| `decision_required_blank_record` | `blank_record` |
+| `decision_required_record_inclusion` | `inclusion_decision_needed` |
+| `decision_required_pending_items` | `pending_or_unconfirmed_facts` |
+| `reimbursement_review_insufficient` | `review_procedure_defect` 或 `approval_responsibility_facts`（至少其一）**且** `finding_is_review_control` |
+
+规则：
+
+- `citation` 必须能在源输入（prompt + context 原文）中逐字找到，**且**必须实际支持所声明的事实字段：引文须包含 `scripts/conclusion_grounding.py` 中 `FIELD_SUPPORT_ANCHORS` 为该字段定义的专业锚点词（如空白记录类引文须含"问题描述空白/空白记录/无问题描述"）。引文存在但不支持该字段的，一律 fail-closed；缺陷类字段（`review_procedure_defect`、`finding_is_review_control`）的引文若表述的是已完成/合格的控制状态（如"审核程序完整""审批手续齐全"，见 `COMPLETION_STATE_ANCHORS`），同样 fail-closed；
+- 词表为**主题级 + 极性级**判定：它拦截"主题不符"与"完成态反证"两类不支持引文；引文与事实的最终语义对应仍由事实推导层（decision gate 输入）负责，词表是该层的 fail-closed 边界而非语义分析器；
+- "待核实"两义性裁定：HARD-GATE 的"用户未答复的事项保持待核实"（不阻断成文的后续核查事项）与 `pending_or_unconfirmed_facts` 授权锚点"待核实"并存；仅当未核实事实**会改变分类、定性、金额或法规适用**且需委托人取舍时才发射 `decision_required_pending_items`，仅列入后续核查资料清单的事项不发射；
+- 兄弟码按各自事实分别发射，缺一个事实就少一个码，不得用 `decision_required_pending_items` 替代 `decision_required_blank_record` 或 `decision_required_record_inclusion`；
+- `required_attachments_missing` **不是** `reimbursement_review_insufficient` 的授权事实——附件缺失只支持附件维度 finding 类型，不构成独立的审核控制失效认定；
+- 证据链未闭合、需要补证属于"待补证/待核实"（列入后续核查资料清单），**不构成**需委托人决策的 `decision_required_*` 事项；
+- 交付前必须运行 `python3 scripts/conclusion_grounding.py --result <result.json> --source <source.txt> --enforce`。V2.2.4 起 enforcement 为 fail-closed、不跨字段改写：exit 0 时按 stdout 输出交付；exit 1（VIOLATION）时**不得交付**，由 runtime 按 stderr 明细自行移除未 grounded 的受保护结论码后重跑至 exit 0；无法达到 exit 0 时按 HARD-GATE blocked 处理（`gate_status=blocked`，不发射正式结论字段）。boundary 绝不静默改写 `gate_status`/`applicability_*`/`law_ids`/`law_roles`。
 
 ## 编排器保真规则
 

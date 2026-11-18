@@ -1,7 +1,11 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
+import argparse
+import json
+import sys
 from datetime import date
+from pathlib import Path
 from typing import Any, NamedTuple
 
 RESERVED_PROJECT_FACT_KEYS = {
@@ -16,6 +20,50 @@ RESERVED_PROJECT_FACT_KEYS = {
 class ApplicabilityResult(NamedTuple):
     status: str
     reasons: list[str]
+
+
+def applicability_pair_requirement(
+    *,
+    asked_candidate_target: str | None = None,
+    direct_basis_law_ids: list[str] | tuple[str, ...] = (),
+) -> dict:
+    """Deterministic pairing decision for applicability_status/applicability_target.
+
+    The machine result must emit the applicability fields as a pair exactly
+    when a single target is determinable (V2.2.3, Mode A/B symmetric):
+
+    - an asked structured candidate law is always the determined target, even
+      when several laws apply alongside it;
+    - otherwise, exactly one applicable direct-basis law determines the target;
+    - several direct-basis laws without an asked candidate must be
+      disambiguated (needs_review) — never guess a single target;
+    - no applicable direct-basis law → no applicable pair.
+
+    This is a Mode A/B symmetric engineering rule, not new prose: the same
+    decision applies to classification_report and special_audit_report.
+    """
+    if asked_candidate_target:
+        return {
+            "decision": "emit_pair",
+            "applicability_target": asked_candidate_target,
+        }
+    ids = list(dict.fromkeys(
+        law_id for law_id in (direct_basis_law_ids or ()) if law_id
+    ))
+    if len(ids) == 1:
+        return {
+            "decision": "emit_pair",
+            "applicability_target": ids[0],
+        }
+    if not ids:
+        return {
+            "decision": "no_applicable_pair",
+            "applicability_target": None,
+        }
+    return {
+        "decision": "disambiguate",
+        "applicability_target": None,
+    }
 
 
 class ConditionFactTypeError(ValueError):
@@ -297,3 +345,51 @@ def evaluate_applicability(
     if needs_review:
         return ApplicabilityResult("needs_review", needs_review)
     return ApplicabilityResult("applicable", ["时效、地域、主体、事项、资金及事实/证据条件均满足"])
+
+
+# --------------------------- CLI (runtime invokable) ---------------------------
+
+def _read_input(path: str) -> dict:
+    raw = sys.stdin.read() if path == "-" else Path(path).read_text(encoding="utf-8")
+    data = json.loads(raw)
+    if not isinstance(data, dict):
+        raise ValueError("input JSON must be an object")
+    return data
+
+
+def main(argv: list[str] | None = None) -> int:
+    parser = argparse.ArgumentParser(description="Law applicability decision helpers")
+    sub = parser.add_subparsers(dest="command", required=True)
+
+    p_pair = sub.add_parser(
+        "applicability-pair",
+        help="decide the applicability_status/applicability_target pair (V2.2.3)",
+    )
+    p_pair.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
+
+    args = parser.parse_args(argv)
+    try:
+        if args.command == "applicability-pair":
+            facts = _read_input(args.input)
+            target = facts.get("asked_candidate_target")
+            if target is not None and not isinstance(target, str):
+                print("ERROR: asked_candidate_target must be a JSON string", file=sys.stderr)
+                return 2
+            ids = facts.get("direct_basis_law_ids")
+            if ids is not None and (not isinstance(ids, list) or not all(isinstance(x, str) for x in ids)):
+                print("ERROR: direct_basis_law_ids must be a JSON array of strings", file=sys.stderr)
+                return 2
+            decision = applicability_pair_requirement(
+                asked_candidate_target=target,
+                direct_basis_law_ids=ids or [],
+            )
+            print(json.dumps(decision, ensure_ascii=False, indent=2))
+            return 0
+    except (ValueError, TypeError, json.JSONDecodeError) as exc:
+        print(f"ERROR: {exc}", file=sys.stderr)
+        return 2
+    return 1
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

@@ -109,3 +109,14 @@ Project Context 的 `funding` 可以表示项目可能涉及的资金集合；�
 ## 条件类型 fail-closed
 
 `gte/lte/in/not_in` 等结构化条件如果收到类型不匹配的事实，应转为 `needs_review` 并保留原因，不得把 TypeError 直接冒泡给调用方。
+
+## 适用性字段成对发射（V2.2.3，Mode A/B 对称）
+
+机器结果中 `applicability_status` 与 `applicability_target` 必须成对出现，判定规则由 `scripts/law_applicability.py` 的 `applicability_pair_requirement` 确定：
+
+- 调用方询问了结构化候选法规对象：该候选即唯一 target，无论旁证法规多少，均成对发射（status 按过滤结果取 applicable/needs_review/not_applicable）；
+- 未询问候选但结构化法规层判定出**恰好一个** applicable 的 direct_basis 法规：以该法规为 target 成对发射；
+- 未询问候选且有**多个** applicable direct_basis 法规：不得猜测唯一 target，按 needs_review 消歧后再定；
+- 没有 applicable direct_basis 法规：不发 applicable 配对（询问候选的情形按候选契约仍须成对发射其 not_applicable 状态）。
+
+分类整理报告（Mode A）与专项审核报告（Mode B）适用同一规则，不得因报告模式不同而漏发射适用性字段。

@@ -1,4 +1,4 @@
-"""V2.2.0 contract tests: version alignment, frozen oracles, positive-protection, stale-version cleanup."""
+"""V2.2.2 contract tests: version alignment, frozen oracles, positive-protection, stale-version cleanup."""
 
 import json
 from pathlib import Path
@@ -26,26 +26,26 @@ def _fixture_rows(name):
 
 def test_v211_version_everywhere():
     case_schema = json.loads((ROOT / "evals/case.schema.json").read_text(encoding="utf-8"))
-    assert case_schema["properties"]["contract_version"]["const"] == "2.2.0"
+    assert case_schema["properties"]["contract_version"]["const"] == "2.2.4"
     result_schema = json.loads((ROOT / "evals/result.schema.json").read_text(encoding="utf-8"))
-    assert result_schema["properties"]["contract_version"]["const"] == "2.2.0"
-    assert {row["contract_version"] for row in _all_cases()} == {"2.2.0"}
+    assert result_schema["properties"]["contract_version"]["const"] == "2.2.4"
+    assert {row["contract_version"] for row in _all_cases()} == {"2.2.4"}
     for name in ("passing-results", "failing-results"):
         rows = [
             json.loads(line)
             for line in (ROOT / "evals/fixtures" / f"{name}.jsonl").read_text(encoding="utf-8").splitlines()
             if line.strip()
         ]
-        assert {row["contract_version"] for row in rows} == {"2.2.0"}
+        assert {row["contract_version"] for row in rows} == {"2.2.4"}
     scorer_text = (ROOT / "evals" / "score.py").read_text(encoding="utf-8")
-    assert 'CONTRACT_VERSION = "2.2.0"' in scorer_text
+    assert 'CONTRACT_VERSION = "2.2.4"' in scorer_text
     assert "2.0.9" not in scorer_text
 
 
 def test_contract_docs_reference_v211():
     for rel in ("rules/result-contract.md", "evals/README.md"):
         text = (ROOT / rel).read_text(encoding="utf-8")
-        assert "2.2.0" in text, rel
+        assert "2.2.4" in text, rel
 
 
 def test_frozen_oracle_live_20260629_unchanged():
@@ -103,10 +103,11 @@ def test_result_schema_pairing_invariants_unchanged():
 
 def test_classification_documents_fy_sw_decision_gate_with_engine():
     text = (ROOT / "rules/classification.md").read_text(encoding="utf-8")
-    assert "FY 与 SW：附带发票瑕疵拆分决策门" in text
+    assert "FY 与 SW：审计认定对象证据授权（V2.2.4）" in text
+    assert "invoice-object" in text
     assert "scripts/classification_emission.py" in text
     assert "invoice_information_irregularity" in text
-    assert "不得额外拆出" in text or "DO NOT SPLIT" in text
+    assert "不得额外拆出" in text or "DO NOT SPLIT" in text or "不拆 SW" in text
 
 
 def test_classification_independent_finding_criteria_conjunctive():

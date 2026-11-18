@@ -2,6 +2,16 @@
 
 本规则优先于分类、定性、法规引用和报告成文。目标是把“需要审计人员决策的专业判断”和“可由稳定配置自动执行的格式习惯”分开。
 
+## 待决策结论码与事实一一对应（V2.2.3）
+
+三个待决策结论码各自绑定唯一事实，机器结果中必须**分别完整发射**，不得用一个泛化码吞并兄弟码：
+
+- `blank_record`（问题描述空白）→ `decision_required_blank_record`；
+- `inclusion_decision_needed`（只有摘要和金额的汇总行等纳入/排除取舍）→ `decision_required_record_inclusion`；
+- `pending_or_unconfirmed_facts`（“待落实/是否有文件”等未确认事项）→ `decision_required_pending_items`。
+
+发射前调用 `python3 scripts/classification_emission.py decision-required --input <facts.json>`，按其输出 `codes` 完整发射：有几个事实为真就发几个码，缺一个事实就少一个码。每个码还须通过结论事实 grounding 边界（`rules/result-contract.md`）附各自事实的逐字引文。
+
 ## 必须阻断
 
 以下事项未解决前，不得形成正式审计认定：
