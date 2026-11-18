@@ -374,6 +374,12 @@ def main(argv: list[str] | None = None) -> int:
     )
     p_expdoc.add_argument("--input", required=True, help="facts JSON file path, or '-' for stdin")
 
+    p_obj = sub.add_parser(
+        "invoice-object",
+        help="V2.2.4 production FY/SW split via verified audit objects",
+    )
+    p_obj.add_argument("--input", required=True, help='facts JSON {"audit_objects":[...], "sources":{"prompt":...,"context":...}}')
+
     args = parser.parse_args(argv)
 
     try:
@@ -462,6 +468,23 @@ def main(argv: list[str] | None = None) -> int:
                 specific_distribution_list_citation=citation or "",
                 generic_supporting_incomplete=bool(facts.get("generic_supporting_incomplete")),
                 documents_nonstandard=bool(facts.get("documents_nonstandard")),
+            )
+            print(json.dumps(decision, ensure_ascii=False, indent=2))
+            return 0
+        if args.gate == "invoice-object":
+            facts = _read_input(args.input)
+            objects = facts.get("audit_objects")
+            if objects is not None and not isinstance(objects, list):
+                print("ERROR: audit_objects must be a JSON array", file=sys.stderr)
+                return 2
+            sources = facts.get("sources")
+            if sources is not None and not isinstance(sources, dict):
+                print("ERROR: sources must be a JSON object with prompt/context keys", file=sys.stderr)
+                return 2
+            decision = invoice_object_gate(
+                audit_objects=objects or [],
+                sources=sources or {},
+                legacy=facts.get("legacy"),
             )
             print(json.dumps(decision, ensure_ascii=False, indent=2))
             return 0

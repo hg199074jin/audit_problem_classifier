@@ -25,17 +25,20 @@
 
 - **FY**：核心是费用是否应发生、是否由本单位承担、是否超范围标准、附件能否证明支出、支付对象是否合理。缺名单、明细、验收、配送等真实性附件通常归 FY。
 
-### FY 与 SW：附带发票瑕疵拆分决策门
+### FY 与 SW：审计认定对象证据授权（V2.2.4）
 
-报销/费用凭证/支付审核场景中出现发票瑕疵时，按以下决策门判定。runtime 必须实际调用决策表引擎：将推导出的事实写入 JSON（字段 `expense_context` / `invoice_blemish` / `independent_invoice_object` / `false_invoicing_dispute`），运行 `python3 scripts/classification_emission.py invoice-split --input <facts.json>`，按输出的 `decision`（`no_invoice_finding` / `fy_incidental` / `sw_independent` / `needs_review`）执行；决策状态语义：无发票问题→门 abstain；费用场景偶然瑕疵→FY 不拆；门 B 命中→SW 拆分；事实不足→needs_review 不发射。决策门条文：
+**按直接审计认定对象分类，不按"报销/发票"表面关键词机械分类**（用户 2026-11-18 裁定，见 `docs/decisions/v224-invoice-audit-object-adjudication.md`）。runtime **不得以裸布尔**（`independent_invoice_object` / `false_invoicing_dispute` 等）作为 FY/SW 分流依据——该输入权威自 V2.2.4 起失效。必须执行：
 
-- **门 A（费用场景默认 → FY）**：同时满足 ①场景是报销、费用凭证、支付审核或费用附件；②发票瑕疵仅表现为抬头不一致、开票主体与收款主体不一致、一般发票信息不规范；③输入未把发票法定效力/税务违法作为独立审计认定对象 —— 则主类 = FY，归入 `expense_supporting_documents_nonstandard`（必要时与 `expense_supporting_documents_incomplete` 并列），**不得额外拆出 `invoice_information_irregularity`**。
-- **门 B（独立发票/税务对象 → SW）**：至少命中一种才进入 SW 并发射 `invoice_information_irregularity`：prompt/context 明确要求判断发票是否合法/是否违反发票管理规定；事实明确表述"取得不符合规定的发票"且该违规本身是认定对象；明确询问/讨论虚开发票、无真实交易、发票法定效力；直接审计对象是纳税扣缴、税种税率、税务义务。
-- **门 C（优先级）**：门 A 与一般发票瑕疵同时出现而门 B 未满足时：**FY wins，DO NOT SPLIT SW**。"可以独立引用发票管理法规"不构成自动拆 SW 的充分条件。
-- **KJ**：只有直接认定对象是会计科目、确认计量、账务处理或会计信息错误时归 KJ。
-- **SW**：只有直接认定对象是纳税扣缴义务、税种税率或发票法定效力时归 SW。
+1. **提出类型化审计对象**：从源输入提取带逐字引文的 `audit_objects` 断言（`assertion_kind`/`polarity`/`source_id`/`quote`，引文须在 prompt+context 原文中逐字存在且支持所声明事实）。缺陷类断言（购买方不符/开收不一致/不合规发票/发票信息异常）须 affirmative；焦点类断言（对该发票事项的定性要求/单独合法性发问）须 affirmative；限制类断言（交易真实、无虚开证据）只封堵虚开定性结论，**永不授权、也永不吸灭审计对象**。
+2. **机器授权**：运行 `python3 scripts/classification_emission.py invoice-object --input <facts.json>`（facts：`audit_objects` + `sources`），按输出 `decision` 执行：
+   - `sw_independent`：SW + `invoice_information_irregularity`；`authorized_sw` 对象写入机器结果 `audit_objects`；`restrictions.no_false_invoicing_finding` 转化为措辞限制（**不认定虚开**，区分"现有证据不足以认定虚开"与"已证明不存在虚开"）；
+   - `fy_incidental`：发票瑕疵为费用凭证附带瑕疵，FY 内归入 `expense_supporting_documents_nonstandard`，**不拆 SW**；
+   - `needs_review`：不得默认 FY，列明待确认事实（如仅否定证据+定性请求而无具体缺陷事实）；
+   - `no_invoice_finding`：无有效发票对象，门 abstain；
+   - 门内断言引文不可验证时 fail-closed 降级，不得交付未经授权的 SW。
+3. **专业性收口**：唯一独立问题为发票信息异常且用户要求定性 → 发票是直接认定对象（报销是背景）；多事项报销附带瑕疵且无独立发票认定请求 → FY；单独发问某发票合规性且缺陷事实成立 → 独立 SW Finding（金额不重复计算）；归入 SW ≠ 认定违反发票管理法规。
 
-发票主体与收款主体不一致，如果核心是费用承担或支付审核，仍归 FY；只有已经能够直接认定违反发票管理规定或影响纳税义务时才归 SW。
+KJ/SW 归属不变：直接认定对象是会计科目/确认计量/账务处理 → KJ；纳税扣缴义务/税种税率/发票法定效力 → SW。
 
 ## 其他交叉边界
 

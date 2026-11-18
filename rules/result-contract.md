@@ -29,6 +29,7 @@ Gate D / 自动化测试等场景要求机器结果时，runtime 应同时返回
 - `report_sections`: **仅在输入 context 明确带有 `report_mode` 时输出**，并且只能使用下面的稳定章节代码，不得输出中文标题、编号前缀、封面/目录页等展示文本：
   - Mode A：`mode_a_overview_coverage`、`mode_a_classification_summary`、`mode_a_classification_details`、`mode_a_management_recommendations`、`mode_a_followup_materials`
   - Mode B：`mode_b_engagement_purpose`、`mode_b_entity_overview`、`mode_b_major_findings`、`mode_b_opinions_recommendations`、`mode_b_report_use_scope`
+- `audit_objects`（V2.2.4）：**发票维度 Finding（`invoice_information_irregularity` 或 `category=SW`）的强制授权记录**，数组元素为经 `scripts/audit_object_grounding.py` 判定的审计对象（schema 见 `schemas/audit-object.schema.json`）：`decision` 必须为 `authorized_sw`（门输出，runtime 不得自填），每条断言的 `quote` 须在源输入逐字存在且通过字段锚点与极性校验。交付前必须通过 `scripts/verify_skill_delivery.py`（exit 1 = 拒绝交付）。FY/needs_review/blocked 交付无需该字段。
 
 字段按任务需要输出；未发生的语义不要为了“填满字段”而编造。
 
