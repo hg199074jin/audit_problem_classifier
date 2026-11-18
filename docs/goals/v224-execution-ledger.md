@@ -19,3 +19,13 @@
 - 模型/runtime 记录：ZCode Goal controller（GLM-5.3-Flash 主模型 + fresh general-purpose subagents 做 runtime/裁定/审查）；模型/参数在每次真实运行批次记录于对应 checkpoint。
 
 下一步：Task 1 专业裁定入档（用户 2026-11-18 APPROVED 的《V2.2.4 审计认定对象分类专业规则裁定》全文 + fresh reviewer 反例挑战）。
+
+## [T7] Holdout 预注册封存 — 2026-11-18
+
+- evals/holdout/v224-holdout.jsonl（26 例全新合成，措辞与正式 26 例不重合）
+- docs/validation/v224-holdout-protocol.md（预注册协议：封存/first-valid/评分/稳定性/泄漏边界）
+- 独立裁定员（fresh-context，未接触任何模型输出）预注册审核：**26/26 AGREE，0 DISPUTE**
+- 变形测试 tests/test_audit_object_metamorphic_v224.py：8 项 change-only-one-fact 全部通过
+- SHA256 封存（提交 38c1d3f..f4e5fee 之后的冻结值，见 Issue #9 checkpoint）：
+  - v224-holdout.jsonl sha256=c7589931c104a5cf3ae8363f5df2e1df4f310f065b67e78ae7da5733822ce3c4
+  - v224-holdout-protocol.md sha256=e6a50923afad0a9927d5ca5c8c48b83ef10c0dc5289aacd79041937c0a26e98f
