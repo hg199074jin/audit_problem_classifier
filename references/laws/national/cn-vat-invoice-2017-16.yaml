@@ -1,0 +1,37 @@
+{
+  "id": "CN-VAT-INVOICE-2017-16",
+  "title": "国家税务总局关于增值税发票开具有关问题的公告",
+  "document_no": "国家税务总局公告2017年第16号",
+  "article": "全文",
+  "issuer": "国家税务总局",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2017-07-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "invoice_reimbursement"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "一、自2017年7月1日起，购买方为企业的，索取增值税普通发票时，应向销售方提供纳税人识别号或统一社会信用代码；销售方为其开具增值税普通发票时，应在“购买方纳税人识别号”栏填写购买方的纳税人识别号或统一社会信用代码。不符合规定的发票，不得作为税收凭证。……二、销售方开具增值税发票时，发票内容应按照实际销售情况如实开具，不得根据购买方要求填开与实际交易不符的内容。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国家税务总局",
+    "url": null,
+    "identifier": "国家税务总局公告2017年第16号，2017年5月19日发布，第一条自2017年7月1日起执行；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

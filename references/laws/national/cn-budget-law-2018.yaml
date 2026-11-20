@@ -1,0 +1,37 @@
+{
+  "id": "CN-BUDGET-LAW-2018",
+  "title": "中华人民共和国预算法",
+  "document_no": null,
+  "article": "第十三条、第五十七条、第七十二条",
+  "issuer": "全国人民代表大会常务委员会",
+  "legal_level": "law",
+  "status": "effective",
+  "effective_from": "1995-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "budget_execution"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十三条 经人民代表大会批准的预算，非经法定程序，不得调整。各级政府、各部门、各单位的支出必须以经批准的预算为依据，未列入预算的不得支出。第五十七条 各级政府财政部门必须依照法律、行政法规和国务院财政部门的规定，及时、足额地拨付预算支出资金，加强对预算支出的管理和监督。各级政府、各部门、各单位的支出必须按照预算执行，不得虚假列支。第七十二条 各部门、各单位的预算支出应当按照预算科目执行。严格控制不同预算科目、预算级次或者项目间的预算资金的调剂，确需调剂使用的，按照国务院财政部门的规定办理。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "全国人民代表大会常务委员会",
+    "url": null,
+    "identifier": "1994年3月22日通过，1995年1月1日施行；经2014年8月31日、2018年8月31日两次修正。生效日期按原法施行日填写，条文按现行修正版录入（2018修正）。适用主体：各级政府、各部门、各单位（含国家机关、事业单位、团体组织）；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

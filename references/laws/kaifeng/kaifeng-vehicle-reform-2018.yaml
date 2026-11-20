@@ -1,0 +1,45 @@
+{
+  "id": "KAIFENG-VEHICLE-REFORM-2018",
+  "title": "开封市国有企业公务用车制度改革实施意见",
+  "document_no": "汴车改组〔2018〕1号",
+  "article": "改革范围与保障方式部分",
+  "issuer": "开封市公务用车制度改革领导小组",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2018-08-23",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "official_vehicle"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "《开封市国有企业公务用车制度改革实施意见》（汴车改组〔2018〕1号附件2）：市管企业公务用车制度改革按本意见执行；取消一般公务用车，公务活动出行实行社会化，采取报销公务交通费用、适度发放公务交通补贴或其他符合规定的社会化方式保障公务出行，从严配备定向化保障的公务用车。具体补贴标准与发放范围按本意见分档规定执行。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市公务用车制度改革领导小组",
+    "url": null,
+    "identifier": "汴车改组〔2018〕1号，2018年8月23日印发，含《开封市事业单位公务用车制度改革实施意见》与《开封市国有企业公务用车制度改革实施意见》两个附件。本对象条文为附件2要点摘录，补贴分档标准须对照原件表格；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

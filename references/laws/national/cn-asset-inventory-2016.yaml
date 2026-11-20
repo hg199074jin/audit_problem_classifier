@@ -1,0 +1,43 @@
+{
+  "id": "CN-ASSET-INVENTORY-2016",
+  "title": "行政事业单位资产清查核实管理办法",
+  "document_no": "财资〔2016〕1号",
+  "article": "第十五条、第二十条",
+  "issuer": "财政部",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2016-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "asset_inventory_verification"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十五条 资产清查工作内容主要包括单位基本情况清理、账务清理、财产清查和完善制度等。账务清理是指对行政事业单位的各种银行账户、各类库存现金、有价证券、各项资金往来和会计核算科目等基本账务情况进行全面核对和清理。财产清查是指对行政事业单位的各项资产进行全面的清理、核对和查实。行政事业单位对清查出的各种资产盘盈、损失和资金挂账应当按照资产清查要求进行分类，提出相关处理建议。第二十条 对外投资盘盈是指行政事业单位清查出的无账面记载或者反映的单位对外投资。对外投资盘盈，根据对外投资合同（协议）、价值确定依据、情况说明等进行认定。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_public_institution",
+      "operator": "eq",
+      "value": false
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": null,
+    "identifier": "财资〔2016〕1号印发。第四条适用范围：执行行政或者事业单位财务、会计制度的各级各类行政事业单位和社会团体。effective_from 按印发年度填写，精确施行日期以原件为准；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

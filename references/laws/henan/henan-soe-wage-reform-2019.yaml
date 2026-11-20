@@ -1,0 +1,44 @@
+{
+  "id": "HENAN-SOE-WAGE-REFORM-2019",
+  "title": "河南省人民政府关于改革国有企业工资决定机制的实施意见",
+  "document_no": "豫政〔2019〕2号",
+  "article": "一、（二）适用范围",
+  "issuer": "河南省人民政府",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2019-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "total_wage_management"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "（二）适用范围。本实施意见适用于各级政府代表国家出资的国有独资及国有控股企业，包括国有企业本部及其所出资的各级独资、控股的子企业，有关部门及下属机构、直属事业单位管理的国有企业。……本实施意见所称工资总额，是指由国有企业在一个会计年度内直接支付给与本企业建立劳动关系的全部职工的劳动报酬总额，包括工资、奖金、津贴、补贴、加班加点工资、特殊情况下支付的工资等。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_state_owned",
+      "operator": "eq",
+      "value": false
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "河南省人民政府",
+    "url": null,
+    "identifier": "豫政〔2019〕2号印发，依据《国务院关于改革国有企业工资决定机制的意见》（国发〔2018〕16号）制定。effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

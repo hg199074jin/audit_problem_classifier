@@ -1,0 +1,37 @@
+{
+  "id": "CN-INTERNAL-AUDIT-11",
+  "title": "审计署关于内部审计工作的规定",
+  "document_no": "审计署令第11号",
+  "article": "第三条、第十二条",
+  "issuer": "审计署",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "2018-03-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "internal_audit"
+  ],
+  "funding_scope": [],
+  "rule_role": "supporting_basis",
+  "text": "第三条 本规定所称内部审计，是指对本单位及所属单位财政财务收支、经济活动、内部控制、风险管理实施独立、客观的监督、评价和建议，以促进单位完善治理、实现目标的活动。第十二条 内部审计机构或者履行内部审计职责的内设机构应当按照国家有关规定和本单位的要求，履行下列职责：（一）对本单位及所属单位贯彻落实国家重大政策措施情况进行审计；（二）对本单位及所属单位发展规划、战略决策、重大措施以及年度业务计划执行情况进行审计；（三）对本单位及所属单位财政财务收支进行审计；……（八）对本单位及所属单位内部控制及风险管理情况进行审计。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "审计署",
+    "url": null,
+    "identifier": "审计署令第11号，2018年1月12日公布，自2018年3月1日起施行；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

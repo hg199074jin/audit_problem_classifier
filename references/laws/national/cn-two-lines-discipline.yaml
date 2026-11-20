@@ -1,0 +1,37 @@
+{
+  "id": "CN-TWO-LINES-DISCIPLINE",
+  "title": "违反行政事业性收费和罚没收入收支两条线管理规定行政处分暂行规定",
+  "document_no": "国务院令第281号",
+  "article": "第五条、第六条",
+  "issuer": "国务院",
+  "legal_level": "administrative_regulation",
+  "status": "effective",
+  "effective_from": "2000-02-12",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "non_tax_revenue_discipline"
+  ],
+  "funding_scope": [],
+  "rule_role": "liability_basis",
+  "text": "第五条 违反规定，擅自设立行政事业性收费项目或者设置罚没处罚的，对直接负责的主管人员和其他直接责任人员给予降级或者撤职处分。第六条 违反规定，擅自变更行政事业性收费或者罚没范围、标准的，对直接负责的主管人员和其他直接责任人员给予记大过处分；情节严重的，给予降级或者撤职处分。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国务院",
+    "url": null,
+    "identifier": "国务院令第281号，2000年2月1日国务院第26次常务会议通过，2000年2月12日发布施行。仅适用于行政事业性收费与罚没收入事项；引用前须确认收费属于第三条界定的行政事业性收费（经营服务性收费不属于）；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

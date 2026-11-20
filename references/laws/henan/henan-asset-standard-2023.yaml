@@ -1,0 +1,38 @@
+{
+  "id": "HENAN-ASSET-STANDARD-2023",
+  "title": "河南省省级行政事业单位通用资产配置标准（2023年版）",
+  "document_no": "豫财资〔2023〕238号",
+  "article": "第五条、第六条、第十一条",
+  "issuer": "河南省财政厅",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2023-10-25",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "asset_configuration"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第五条 本标准为配置资产的最高限额标准和最低使用年限标准，各单位应当严格落实过“紧日子”的要求，按照厉行节约的原则，结合工作需要在限额内编制预算和配置资产。第六条 本标准包括资产品目、配置数量上限、价格上限、最低使用年限和性能要求等内容。同品目资产均按照本标准执行。资产未达到最低使用年限的，除损毁且无法修复外，原则上不得更新。已达到使用年限仍可以使用的，应当继续使用。第十一条 省级行政事业单位应当严格执行本标准及有关规定，不得超标准配置资产。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省财政厅",
+    "url": null,
+    "identifier": "豫财资〔2023〕238号，2023年10月25日印发。第二条适用范围：省级党政机关及执行政府会计制度的事业单位。开封市市级单位按《开封市市级行政事业单位国有资产配置管理暂行办法》（汴财资〔2023〕216号）第十一条参照本标准执行；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

@@ -1,0 +1,37 @@
+{
+  "id": "CN-TENDER-LAW",
+  "title": "中华人民共和国招标投标法",
+  "document_no": null,
+  "article": "第三条、第四条",
+  "issuer": "全国人民代表大会常务委员会",
+  "legal_level": "law",
+  "status": "effective",
+  "effective_from": "2000-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "mandatory_tender_scope"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第三条 在中华人民共和国境内进行下列工程建设项目包括项目的勘察、设计、施工、监理以及与工程建设有关的重要设备、材料等的采购，必须进行招标：（一）大型基础设施、公用事业等关系社会公共利益、公众安全的项目；（二）全部或者部分使用国有资金投资或者国家融资的项目；（三）使用国际组织或者外国政府贷款、援助资金的项目。前款所列项目的具体范围和规模标准，由国务院发展计划部门会同国务院有关部门制订，报国务院批准。第四条 任何单位和个人不得将依法必须进行招标的项目化整为零或者以其他任何方式规避招标。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "全国人民代表大会常务委员会",
+    "url": null,
+    "identifier": "1999年8月30日通过，自2000年1月1日起施行。具体范围和规模标准按《必须招标的工程项目规定》（国家发展改革委令第16号，2018年6月1日起施行）执行；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

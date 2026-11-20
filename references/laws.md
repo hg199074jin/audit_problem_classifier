@@ -56,6 +56,38 @@
 
 **文本来源**：2.2、2.3 两批对象中，部分取自用户政策文件库的政府文件原件（`source.url` 为空、`source.identifier` 载明文号与文件形态）。扫描件经 OCR 录入的，`identifier` 已注明可能存在个别字符识别差异，交付正式报告前应回原件核对。
 
+## 2.4 第三批：按目录顺序全量结构化（2026-11-20）
+
+对用户政策文件库 453 份文件按 37 个目录逐一甄别后新增 **53 个对象**，库内合计 103 个。
+
+### national/ 新增（30）
+
+- 预算与会计：预算法（`CN-BUDGET-LAW-2018`）、政府会计准则——基本准则（`CN-GOV-ACCOUNTING-BASIC-78`）、部门预算支出经济分类科目（`CN-BUDGET-ECONOMIC-CLASS`）、事业单位财务规则（`CN-PUBLIC-INST-FINANCE-RULE`）、企业会计准则第17号借款费用（`CN-EAS-17-BORROWING`）、行政事业单位资产清查核实管理办法（`CN-ASSET-INVENTORY-2016`）；
+- 采购与招投标：招标投标法（`CN-TENDER-LAW`）、实施条例（`CN-TENDER-LAW-REG`）、政府采购法（`CN-GP-LAW`）、实施条例（`CN-GP-LAW-REG`）、87号令（`CN-GP-87`）、74号令（`CN-GP-74`）；
+- 内控与财经纪律：行政事业单位内部控制规范（`CN-IC-2012`）、收支两条线处分暂行规定（`CN-TWO-LINES-DISCIPLINE`）、增值税发票开具公告2017年第16号（`CN-VAT-INVOICE-2017-16`）、八项规定及实施细则（`CN-EIGHT-RULES`）、厉行节约反对浪费条例2025修订（`CN-ANTI-WASTE-2025`）、纪律处分条例（`CN-PARTY-DISCIPLINE-2023`）、党费规定（`CN-PARTY-DUES-2008`）、公务接待管理规定（`CN-DOMESTIC-RECEPTION-2013`）；
+- 绩效、建设、国资、工会、内审：项目支出绩效评价管理办法（`CN-PERFORMANCE-EVAL-2020`）、建设工程价款结算暂行办法（`CN-CONSTRUCTION-SETTLEMENT-2004`）、质量保证金管理办法（`CN-CONSTRUCTION-DEPOSIT-2017`）、企业国有资产交易监督管理办法32号令（`CN-SOE-ASSET-TRANSACTION-32`）、国有企业参股管理暂行办法（`CN-SOE-EQUITY-PARTICIPATION-2023`）、国有企业领导人员廉洁从业规定2026修订（`CN-SOE-INTEGRITY-2026`）、基层工会经费收支管理办法（`CN-UNION-FUND-2017`）、审计署关于内部审计工作的规定11号令（`CN-INTERNAL-AUDIT-11`）、中国内部审计准则（`CN-INTERNAL-AUDIT-STANDARDS`）、第2205号经济责任审计准则（`CN-INTERNAL-AUDIT-2205`）。
+
+### historical/ 新增（2）
+
+- 工程建设项目招标范围和规模标准规定（`CN-ENG-TENDER-SCOPE-2000`）：规模标准已被16号令的 400/200/100 万元取代，仅适用于 2018/05/31 前业务；
+- 开封市市级会议费管理办法2014年版（`KAIFENG-MEETING-2014-HIST`）：已被汴财规〔2025〕2号替代，仅适用于 2025/12/30 前业务。
+
+### henan/ 新增（11）
+
+差旅费办法（`HENAN-TRAVEL-2016`）与公杂费改市内交通费通知（`HENAN-TRAVEL-2019-108`）、公务接待办法（`HENAN-RECEPTION-2014`）、培训费管理通知（`HENAN-TRAINING-2025`）、国企工资总额预算编制指引（`HENAN-SOE-WAGE-GUIDE-2023`）与工资决定机制实施意见（`HENAN-SOE-WAGE-REFORM-2019`）、省级财政专项资金管理办法（`HENAN-SPECIAL-FUND-2014`）、政府投资基金管理办法（`HENAN-GOV-FUND-2023`）、驻村干部补助标准（`HENAN-VILLAGE-SUBSIDY-2018`）、省级通用资产配置标准2023版（`HENAN-ASSET-STANDARD-2023`）、基本公共卫生服务补助资金管理办法（`HENAN-PUBLIC-HEALTH-FUND-2024`）。
+
+### kaifeng/ 新增（10）
+
+行政事业单位国有资产配置办法（`KAIFENG-ASSET-CONFIG-2023`）、党政机关公务用车办法（`KAIFENG-OFFICIAL-VEHICLE-2020`）、国有企业公务用车制度改革实施意见（`KAIFENG-VEHICLE-REFORM-2018`）、市直机关培训费办法（`KAIFENG-TRAINING-2018`）、差旅住宿费标准调整通知（`KAIFENG-TRAVEL-LODGING-2016`）、机关事业单位岗位津贴和福利管理通知（`KAIFENG-ALLOWANCE-2019`）、党政机关办公用房办法（`KAIFENG-OFFICE-SPACE-2020`）、驻村第一书记专项经费办法（`KAIFENG-VILLAGE-FUND-2021`）、集体土地附着物和青苗补偿标准（`KAIFENG-LAND-COMP-2021`）、房屋征收工作经费管理通知（`KAIFENG-HOUSING-LEVY-2017`）。
+
+### 未入库文件及原因
+
+见 `references/laws/NOT-INCLUDED.md`——其中 4 份因**版本失效或部分失效**被主动排除（预算法实施条例本地为1995年版、资产损失税前扣除办法已改留存备查、研发费加计比例已调整、河南省级会议费办法已被2025版取代），引用时须另行取得现行文本。
+
+### 业务标签（business_scope）词表
+
+新增对象的 `business_scope` 使用稳定英文标签，便于 runtime 传参匹配。接待类统一包含 `reception`（并保留 `official_reception` / `business_reception`），差旅 `travel_expense`、会议 `meeting_expense`、培训 `training_expense`、公务用车 `official_vehicle`、工资总额 `total_wage_management`、专项资金 `special_fund_use`、内审 `internal_audit`、工会 `union_fund` 等。Project Context 的 `business_type` 应与对象标签一致，否则会被事项过滤为 `not_applicable`。
+
 ### 河南政府采购特别提醒
 
 不得再使用“河南分散采购统一100万元、公开招标统一400万元”的概括口径。市级（不含郑州）和县级存在不同限额，工程公开招标数额标准还要另按工程招标规定判断。

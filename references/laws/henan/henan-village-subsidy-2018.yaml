@@ -1,0 +1,38 @@
+{
+  "id": "HENAN-VILLAGE-SUBSIDY-2018",
+  "title": "河南省财政厅关于调整省直机关驻村干部驻村补助标准的通知",
+  "document_no": "豫财行〔2018〕104号",
+  "article": "第一、二条",
+  "issuer": "河南省财政厅",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2017-12-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "village_subsidy"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "一、将省直驻村人员生活补助标准由每人每天70元调整至每人每天100元。二、省直驻村人员每人每天增加40元交通补助。三、因补助标准提高增加的经费从单位公用经费中调剂解决。四、以上标准自2017年12月份起执行。《河南省省直机关差旅费管理办法》（豫财行〔2016〕109号）中省直驻村人员补助标准自行废止。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省财政厅",
+    "url": null,
+    "identifier": "豫财行〔2018〕104号，2018年8月17日印发；标准自2017年12月起执行；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

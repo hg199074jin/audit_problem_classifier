@@ -1,0 +1,37 @@
+{
+  "id": "CN-ENG-TENDER-SCOPE-2000",
+  "title": "工程建设项目招标范围和规模标准规定",
+  "document_no": "原国家发展计划委员会令第3号",
+  "article": "第七条",
+  "issuer": "国家发展计划委员会",
+  "legal_level": "department_rule",
+  "status": "superseded",
+  "effective_from": "2000-05-01",
+  "effective_to": "2018-05-31",
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "mandatory_tender_scope"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第七条 本规定第二条至第六条规定范围内的各类工程建设项目，包括项目的勘察、设计、施工、监理以及与工程建设有关的重要设备、材料等的采购，达到下列标准之一的，必须进行招标：（一）施工单项合同估算价在200万元人民币以上的；（二）重要设备、材料等货物的采购，单项合同估算价在100万元人民币以上的；（三）勘察、设计、监理等服务的采购，单项合同估算价在50万元人民币以上的；（四）单项合同估算价低于第（一）、（二）、（三）项规定的标准，但项目总投资额在3000万元人民币以上的。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国家发展计划委员会",
+    "url": null,
+    "identifier": "2000年4月4日国务院批准，2000年5月1日发布。⚠本对象仅为历史业务（2018年5月31日之前）保留：其规模标准已被《必须招标的工程项目规定》（国家发展改革委令第16号，2018年6月1日起施行）的400/200/100万元标准取代，现行业务不得再按本规定门槛判断；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": "CN-MANDATORY-TENDER-NDRC16-ART5"
+}

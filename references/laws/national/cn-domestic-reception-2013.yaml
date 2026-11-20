@@ -1,0 +1,39 @@
+{
+  "id": "CN-DOMESTIC-RECEPTION-2013",
+  "title": "党政机关国内公务接待管理规定",
+  "document_no": "中办发〔2013〕22号",
+  "article": "第十条、第十四条、第十六条",
+  "issuer": "中共中央办公厅、国务院办公厅",
+  "legal_level": "party_rule",
+  "status": "effective",
+  "effective_from": "2013-12-08",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "official_reception",
+    "business_reception",
+    "reception"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十条 接待对象应当按照规定标准自行用餐。确因工作需要，接待单位可以安排工作餐一次，并严格控制陪餐人数。接待对象在10人以内的，陪餐人数不得超过3人；超过10人的，不得超过接待对象人数的三分之一。工作餐应当供应家常菜，不得提供鱼翅、燕窝等高档菜肴和用野生保护动物制作的菜肴，不得提供香烟和高档酒水，不得使用私人会所、高消费餐饮场所。第十四条 接待费报销凭证应当包括财务票据、派出单位公函和接待清单。接待费资金支付应当严格按照国库集中支付制度和公务卡管理有关规定执行。第十六条 接待单位不得超标准接待，不得组织旅游和与公务活动无关的参观，不得组织到营业性娱乐、健身场所活动，不得安排专场文艺演出，不得以任何名义赠送礼金、有价证券、纪念品和土特产品等。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中共中央办公厅、国务院办公厅",
+    "url": null,
+    "identifier": "中办发〔2013〕22号，2013年12月8日发布施行。适用范围为党政机关；国有企业商务接待应优先适用《国有企业商务招待管理规定》及地方国资规定；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

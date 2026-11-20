@@ -1,0 +1,37 @@
+{
+  "id": "CN-GP-LAW-REG",
+  "title": "中华人民共和国政府采购法实施条例",
+  "document_no": "国务院令第658号",
+  "article": "第二十八条",
+  "issuer": "国务院",
+  "legal_level": "administrative_regulation",
+  "status": "effective",
+  "effective_from": "2015-03-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "government_procurement"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二十八条 在一个财政年度内，采购人将一个预算项目下的同一品目或者类别的货物、服务采用公开招标以外的方式多次采购，累计资金数额超过公开招标数额标准的，属于以化整为零方式规避公开招标，但项目预算调整或者经批准采用公开招标以外方式采购除外。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国务院",
+    "url": null,
+    "identifier": "国务院令第658号，2014年12月31日国务院第75次常务会议通过，自2015年3月1日起施行；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

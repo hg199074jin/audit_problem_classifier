@@ -1,0 +1,37 @@
+{
+  "id": "CN-BUDGET-ECONOMIC-CLASS",
+  "title": "部门预算支出经济分类科目",
+  "document_no": null,
+  "article": "301类、302类、303类、310类",
+  "issuer": "财政部",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2007-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "budget_classification"
+  ],
+  "funding_scope": [],
+  "rule_role": "supporting_basis",
+  "text": "302 商品和服务支出：反映单位购买商品和服务的支出，不包括用于购置固定资产、战略性和应急物资储备等资本性支出。（含01办公费、02印刷费、03咨询费、07邮电费、11差旅费、13维修（护）费、14租赁费、15会议费、16培训费等款级科目）303 对个人和家庭的补助：反映政府用于对个人和家庭的补助支出。（含05生活补助、06救济费、07医疗费补助等款级科目）310 资本性支出（基本建设）：含01房屋建筑物购建、02办公设备购置、03专用设备购置、05基础设施建设、06大型修缮、12拆迁补偿等。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": null,
+    "identifier": "本对象为《政府收支分类科目》中部门预算支出经济分类部分的速查对象，用于判断支出经济分类归属（如商品服务支出误列对个人和家庭的补助）。科目每年随年度《政府收支分类科目》调整，具体款级科目以当年度版本为准；本对象仅收录类级说明与常用款级科目，不替代年度版本；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

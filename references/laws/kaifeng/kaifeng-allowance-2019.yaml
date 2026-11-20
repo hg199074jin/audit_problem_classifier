@@ -1,0 +1,45 @@
+{
+  "id": "KAIFENG-ALLOWANCE-2019",
+  "title": "开封市关于进一步加强机关事业单位岗位津贴和福利管理工作的通知",
+  "document_no": "汴人社〔2019〕286号",
+  "article": "第一、二部分",
+  "issuer": "中共开封市委组织部、开封市人力资源和社会保障局、开封市财政局",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2019-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "allowance_welfare"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "一、严格执行岗位津贴补贴政策。要认真落实国家对特殊岗位津贴补贴实行统一管理的规定，任何地区、部门和单位不得自行建立特殊岗位津贴补贴项目，扩大实施范围和提高标准，各地各单位要严格按照国家政策规定的项目、范围和标准执行。二、认真落实与工资相关的福利待遇。要严格执行国家和我省关于福利待遇方面的政策规定……（一）年休假……（三）探亲假……在规定的探亲假期和路程假期内，正常发放基本工资和各项津贴补贴。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中共开封市委组织部、开封市人力资源和社会保障局、开封市财政局",
+    "url": null,
+    "identifier": "汴人社〔2019〕286号，依据《中共河南省委组织部河南省人力资源和社会保障厅河南省财政厅关于进一步加强机关事业单位岗位津贴和福利管理工作的通知》（豫人社办〔2019〕77号）制定。适用范围：机关事业单位（含所辖区县）。effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

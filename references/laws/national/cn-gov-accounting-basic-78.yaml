@@ -1,0 +1,43 @@
+{
+  "id": "CN-GOV-ACCOUNTING-BASIC-78",
+  "title": "政府会计准则——基本准则",
+  "document_no": "财政部令第78号",
+  "article": "第十一条、第十七条",
+  "issuer": "财政部",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "2017-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "accounting_authenticity"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十一条 政府会计主体应当以实际发生的经济业务或者事项为依据进行会计核算，如实反映各项会计要素的情况和结果，保证会计信息真实可靠。第十七条 政府会计主体应当按照经济业务或者事项的经济实质进行会计核算，不限于以经济业务或者事项的法律形式为依据。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_public_institution",
+      "operator": "eq",
+      "value": false
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": null,
+    "identifier": "财政部令第78号，2015年10月23日公布，自2017年1月1日起施行。适用范围：各级政府、各部门、各单位（政府会计主体）；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

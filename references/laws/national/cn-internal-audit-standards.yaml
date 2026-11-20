@@ -1,0 +1,37 @@
+{
+  "id": "CN-INTERNAL-AUDIT-STANDARDS",
+  "title": "中国内部审计准则",
+  "document_no": "中国内部审计协会公告2013年第1号",
+  "article": "第三条、第五条、第六条",
+  "issuer": "中国内部审计协会",
+  "legal_level": "other",
+  "status": "effective",
+  "effective_from": "2014-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "internal_audit"
+  ],
+  "funding_scope": [],
+  "rule_role": "supporting_basis",
+  "text": "第三条 本准则适用于各类组织的内部审计机构、内部审计人员及其从事的内部审计活动。其他组织或者人员接受委托、聘用，承办或者参与内部审计业务，也应当遵守本准则。第五条 内部审计的目标、职责和权限等内容应当在组织的内部审计章程中明确规定。第六条 内部审计机构和内部审计人员应当保持独立性和客观性，不得负责被审计单位的业务活动、内部控制和风险管理的决策与执行。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中国内部审计协会",
+    "url": null,
+    "identifier": "中国内部审计协会公告2013年第1号发布。effective_from 按发布公告年度填写，精确施行日期以原件为准。本对象为准则体系总纲（第1101号）条款，具体业务准则另行适用；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

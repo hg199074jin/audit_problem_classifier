@@ -18,6 +18,8 @@
   },
   "business_scope": [
     "business_reception",
+    "official_reception",
+    "reception",
     "entertainment_expense"
   ],
   "funding_scope": [],

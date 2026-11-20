@@ -1,0 +1,37 @@
+{
+  "id": "CN-CONSTRUCTION-SETTLEMENT-2004",
+  "title": "建设工程价款结算暂行办法",
+  "document_no": "财建〔2004〕369号",
+  "article": "第十三条、第二十一条",
+  "issuer": "财政部、建设部",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2004-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "construction_settlement"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十三条 工程进度款结算与支付应当符合下列规定：（一）工程进度款结算方式：1.按月结算与支付。即实行按月支付进度款，竣工后清算的办法。合同工期在两个年度以上的工程，在年终进行工程盘点，办理年度结算。2.分段结算与支付。……（二）工程量计算：承包人应当按照合同约定的方法和时间，向发包人提交已完工程量的报告。发包人接到报告后14天内核实已完工程量……第二十一条 工程竣工后，发、承包双方应及时办清工程竣工结算，否则，工程不得交付使用，有关部门不予办理权属登记。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部、建设部",
+    "url": null,
+    "identifier": "财建〔2004〕369号印发。effective_from 按印发年度填写，精确施行日期以原件为准；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

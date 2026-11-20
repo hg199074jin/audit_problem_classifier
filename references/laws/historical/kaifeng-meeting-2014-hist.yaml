@@ -1,0 +1,45 @@
+{
+  "id": "KAIFENG-MEETING-2014-HIST",
+  "title": "开封市市级会议费管理办法（2014年版）",
+  "document_no": "汴政办〔2014〕98号",
+  "article": "第十六条、第十八条",
+  "issuer": "开封市人民政府办公室",
+  "legal_level": "local_regulation",
+  "status": "superseded",
+  "effective_from": "2014-12-16",
+  "effective_to": "2025-12-29",
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "meeting_expense"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十六条 市直部门在会议结束后应当及时办理报销手续。报销会议费时应当提供会议审批文件、会议通知和实际参会人员签到表、定点饭店等会议服务单位提供的费用原始明细单据、电子结算单等凭证。财务部门应当严格按规定审核会议费开支，对未列入年度会议计划以及超范围、超标准开支的经费不予报销。第十八条 加强会议费管理。严禁市直部门借会议名义组织会餐或安排宴请，严禁套取、虚列会议费用于其他开支和设立账外账，严禁在会议费中列支公务接待费等与会议无关的任何费用。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市人民政府办公室",
+    "url": null,
+    "identifier": "汴政办〔2014〕98号，2014年12月16日印发。⚠已被《开封市市级会议费管理办法》（汴财规〔2025〕2号，2025年12月30日印发）修订替代；2025年12月30日之前的会议费业务适用本对象；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": "KAIFENG-MEETING-2025"
+}

@@ -1,0 +1,43 @@
+{
+  "id": "CN-SOE-EQUITY-PARTICIPATION-2023",
+  "title": "国有企业参股管理暂行办法",
+  "document_no": "国资发改革规〔2023〕41号",
+  "article": "第十一条、第十二条、第二十一条",
+  "issuer": "国务院国资委",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2023-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "soe_equity_participation"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十一条 严格落实国有资产投资监督管理有关要求，健全参股投资决策机制，强化投资决策统一管理。参股投资决策权向下授权应当作为重大经营管理事项经党委（党组）前置研究讨论，由董事会或未设董事会的经理层决定，授权的企业管理层级原则上不超过两级。达到一定额度的参股投资，应当纳入“三重一大”范围，由集团公司决策。第十二条 国有企业作为参股股东与其他股东共同出资新设企业，不得对其他股东出资提供垫资……第二十一条 加强无形资产管理，严格规范无形资产使用……不得将字号、经营资质和特许经营权等提供给参股企业使用。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_state_owned",
+      "operator": "eq",
+      "value": false
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "国务院国资委",
+    "url": null,
+    "identifier": "国资发改革规〔2023〕41号印发。effective_from 按印发年度填写，精确施行日期以原件为准；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

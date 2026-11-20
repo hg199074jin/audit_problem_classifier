@@ -1,0 +1,43 @@
+{
+  "id": "CN-EAS-17-BORROWING",
+  "title": "企业会计准则第17号——借款费用",
+  "document_no": null,
+  "article": "第四条、第十二条",
+  "issuer": "财政部",
+  "legal_level": "accounting_standard",
+  "status": "effective",
+  "effective_from": "2007-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "borrowing_cost_capitalization"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第四条 企业发生的借款费用，可直接归属于符合资本化条件的资产的购建或者生产的，应当予以资本化，计入相关资产成本；其他借款费用，应当在发生时根据其发生额确认为费用，计入当期损益。符合资本化条件的资产，是指需要经过相当长时间的购建或者生产活动才能达到预定可使用或者可销售状态的固定资产、投资性房地产和存货等资产。第十二条 购建或者生产符合资本化条件的资产达到预定可使用或者可销售状态时，借款费用应当停止资本化。在符合资本化条件的资产达到预定可使用或者可销售状态之后所发生的借款费用，应当在发生时根据其发生额确认为费用，计入当期损益。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_public_institution",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": null,
+    "identifier": "2006年2月15日发布，自2007年1月1日起在上市公司施行。适用于执行企业会计准则的企业；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

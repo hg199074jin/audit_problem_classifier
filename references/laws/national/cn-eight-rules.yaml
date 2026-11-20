@@ -1,0 +1,37 @@
+{
+  "id": "CN-EIGHT-RULES",
+  "title": "中共中央八项规定及其实施细则",
+  "document_no": null,
+  "article": "八项规定第八项、实施细则有关条款",
+  "issuer": "中共中央政治局",
+  "legal_level": "party_rule",
+  "status": "effective",
+  "effective_from": "2012-12-04",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "work_style_discipline"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "八、要厉行勤俭节约，严格遵守廉洁从政有关规定，严格执行住房、车辆配备等有关工作和生活待遇的规定。实施细则（节录）：3.简化接待工作。……不安排超规格套房，一般不安排接见合影，不赠送各类纪念品或土特产，不安排宴请，不上高档菜肴，自助餐也要注意节俭。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中共中央政治局",
+    "url": null,
+    "identifier": "八项规定由中共中央政治局2012年12月4日会议审议通过；本对象同时收录《中央八项规定实施细则》相关条款。作为作风纪律类问题的原则性依据，具体标准应结合地方和部门配套规定；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

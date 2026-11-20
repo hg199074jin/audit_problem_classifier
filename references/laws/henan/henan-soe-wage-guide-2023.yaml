@@ -1,0 +1,44 @@
+{
+  "id": "HENAN-SOE-WAGE-GUIDE-2023",
+  "title": "河南省国有企业工资总额预算编制管理指引",
+  "document_no": "豫人社办〔2023〕77号",
+  "article": "第十条、第十五条",
+  "issuer": "河南省人力资源和社会保障厅、河南省财政厅、河南省人民政府国资委",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2023-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "total_wage_management"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十条 企业人工成本由工资总额、社会保险费、福利费、职工教育经费、劳动保护费、住房费用、其他人工成本构成，是支付给全部从业人员的全部劳动报酬。……其增速用人工成本指数……表示。第十一条 人事费用率、劳动分配率……第十五条 各类企业应合理确定年度生产经营预期目标，突出不同考核重点，科学设置工资效益联动指标，形成适合自身特点的科学合理的工资效益联动模式。设置工资效益联动指标，除利润总额或净利润、经济增加值等经济效益指标和劳动生产率指标外，按照企业功能性质定位、不同发展阶段和行业特点，可增加1至2个工资效益联动指标为宜。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_state_owned",
+      "operator": "eq",
+      "value": false
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "河南省人力资源和社会保障厅、河南省财政厅、河南省人民政府国资委",
+    "url": null,
+    "identifier": "豫人社办〔2023〕77号印发。effective_from 按印发年度填写，精确施行日期以原件为准；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

@@ -1,0 +1,44 @@
+{
+  "id": "CN-PUBLIC-INST-FINANCE-RULE",
+  "title": "事业单位财务规则",
+  "document_no": "财政部令第68号",
+  "article": "第二十三条、第二十七条",
+  "issuer": "财政部",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "2012-04-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "special_fund_use",
+    "voucher_management"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二十三条 事业单位从财政部门和主管部门取得的有指定项目和用途的专项资金，应当专款专用、单独核算，并按照规定向财政部门或者主管部门报送专项资金使用情况；项目完成后，应当报送专项资金支出决算和使用效果的书面报告，接受财政部门或者主管部门的检查、验收。第二十七条 事业单位应当依法加强各类票据管理，确保票据来源合法、内容真实、使用正确，不得使用虚假票据。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_public_institution",
+      "operator": "eq",
+      "value": false
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": null,
+    "identifier": "财政部令第68号，2012年2月7日公布，自2012年4月1日起施行。适用范围：各级各类事业单位；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

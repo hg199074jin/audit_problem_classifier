@@ -1,0 +1,40 @@
+{
+  "id": "HENAN-RECEPTION-2014",
+  "title": "河南省党政机关国内公务接待管理办法",
+  "document_no": "豫办〔2014〕36号",
+  "article": "第十条、第十二条、第十八条",
+  "issuer": "中共河南省委办公厅、河南省人民政府办公厅",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2014-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "official_reception",
+    "business_reception",
+    "reception"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十条 接待住宿应严格执行差旅、会议管理的有关规定。住宿用房以标准间为主，接待省部级干部可以安排普通套间。接待单位不得超标准安排接待住房，不得额外配发洗漱用品。第十二条 接待对象应按规定标准自行用餐，需接待单位协助安排用餐的，接待对象应主动缴纳伙食费。确因工作需要，接待单位可以安排工作餐一次……第十八条 国内公务接待经费实行属地管理，由各级财政部门统筹安排。……严格执行国内公务接待预算制度，合理限定接待费预算总额。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中共河南省委办公厅、河南省人民政府办公厅",
+    "url": null,
+    "identifier": "豫办〔2014〕36号。适用范围：全省各级党的机关、人大机关、行政机关、政协机关、审判机关、检察机关，以及工会、共青团、妇联等人民团体和参照公务员法管理的事业单位。effective_from 按印发年度填写，精确施行日期以原件为准；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

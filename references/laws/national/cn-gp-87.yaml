@@ -1,0 +1,37 @@
+{
+  "id": "CN-GP-87",
+  "title": "政府采购货物和服务招标投标管理办法",
+  "document_no": "财政部令第87号",
+  "article": "第四十四条",
+  "issuer": "财政部",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "2017-10-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "government_procurement"
+  ],
+  "funding_scope": [],
+  "rule_role": "supporting_basis",
+  "text": "第四十四条 公开招标采购项目开标结束后，采购人或者采购代理机构应当依法对投标人的资格进行审查。合格投标人不足3家的，不得评标。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": null,
+    "identifier": "财政部令第87号，2017年7月11日公布，自2017年10月1日起施行。修订替代财政部令第18号；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

@@ -1,0 +1,45 @@
+{
+  "id": "CN-IC-2012",
+  "title": "行政事业单位内部控制规范（试行）",
+  "document_no": "财会〔2012〕21号",
+  "article": "第二十六条、第二十九条、第三十条、第三十六条、第五十四条",
+  "issuer": "财政部",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2014-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "internal_control",
+    "expenditure_reimbursement",
+    "government_procurement"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二十六条 单位的各项收入应当由财会部门归口管理并进行会计核算，严禁设立账外账。……财会部门应当定期检查收入金额是否与合同约定相符；对应收未收项目应当查明情况，明确责任主体，落实催收责任。第二十九条 单位应当建立健全支出内部管理制度，确定单位经济活动的各项支出标准，明确支出报销流程，按照规定办理支出事项。……确保支出申请和内部审批、付款审批和付款执行、业务经办和会计核算等不相容岗位相互分离。第三十条（二）加强支出审核控制。全面审核各类单据。重点审核单据来源是否合法，内容是否真实、完整，使用是否准确，是否符合预算，审批手续是否齐全。支出凭证应当附反映支出明细内容的原始单据，并由经办人员签字或盖章，超出规定标准的支出事项应由经办人员说明原因并附审批依据，确保与经济业务事项相符。第三十六条 单位应当加强对政府采购项目验收的管理。……由指定部门或专人对所购物品的品种、规格、数量、质量和其他相关内容进行验收，并出具验收证明。第五十四条 单位应当建立健全合同内部管理制度。……严禁未经授权擅自以单位名义对外签订合同，严禁违规签订担保、投资和借贷合同。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_public_institution",
+      "operator": "eq",
+      "value": false
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": null,
+    "identifier": "财会〔2012〕21号，自2014年1月1日起施行。适用范围：各级党的机关、人大机关、行政机关、政协机关、审判机关、检察机关、人民团体、事业单位等（第二条）；国有企业不直接适用；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}
