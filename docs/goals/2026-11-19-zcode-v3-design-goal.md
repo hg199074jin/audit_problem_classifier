@@ -4,7 +4,7 @@
 
 ## 一次性 Goal Prompt
 
-启动 Goal 模式，处理 GitHub 仓库 @@hg199074jin/audit_problem_classifier@@ 的 **Issue #12 [ZCODE-V30-DESIGN-GOAL]**。
+启动 Goal 模式，处理 GitHub 仓库 `hg199074jin/audit_problem_classifier` 的 **Issue #12 [ZCODE-V30-DESIGN-GOAL]**。
 
 ### 任务边界（不可改变）
 
@@ -15,19 +15,19 @@
 ### 必须先读
 
 1. GitHub Issue #12: https://github.com/hg199074jin/audit_problem_classifier/issues/12
-2. 设计分支 @@design/v3.0-evidence-law-spec-20261119@@（fetch 后检查 SHA、祖先、工作树）
-3. 规范 @@docs/superpowers/specs/2026-11-19-v3-evidence-law-design.md@@
-4. 计划 @@docs/superpowers/plans/2026-11-19-v3-design-goal-plan.md@@
-5. @@SKILL.md@@、@@rules/@@、@@schemas/@@、@@scripts/@@、@@references/laws/@@、@@evals/@@、@@tests/@@ 及 v2.2.4 Issue #9 最终记录。
+2. 设计分支 `design/v3.0-evidence-law-spec-20261119`（fetch 后检查 SHA、祖先、工作树）
+3. 规范 `docs/superpowers/specs/2026-11-19-v3-evidence-law-design.md`
+4. 计划 `docs/superpowers/plans/2026-11-19-v3-design-goal-plan.md`
+5. `SKILL.md`、`rules/`、`schemas/`、`scripts/`、`references/laws/`、`evals/`、`tests/` 及 v2.2.4 Issue #9 最终记录。
 
 ### 完整执行顺序
 
-- D0: 只读基线审计：旧接口、未完成 Holdout/Gate E、现行数据模型。建立 @@docs/goals/v30-design-ledger.md@@，先在 #12 写 @@[ZCODE-V30-DESIGN-BASELINE]@@。
-- D1-D3: 将 EvidenceArtifact/EvidenceSpan/FactClaim/FactAssessment/RuleDefinition/DecisionTrace/LawDocument/LawVersion/LawProvision/LawChangeEvent/LawRuleBinding/LawRelease 的数据字典、字段约束、引用/时间/状态语义审到开发可直接实现的程度。至少两套可核验 JSON 契约样例，补专门 @@docs/contracts/v30-contract-examples.md@@。补否定、假设、转述、OCR、证据冲突、采购未询价与未见询价资料、发票虚开边界的决策表。
+- D0: 只读基线审计：旧接口、未完成 Holdout/Gate E、现行数据模型。建立 `docs/goals/v30-design-ledger.md`，先在 #12 写 `[ZCODE-V30-DESIGN-BASELINE]`。
+- D1-D3: 将 EvidenceArtifact/EvidenceSpan/FactClaim/FactAssessment/RuleDefinition/DecisionTrace/LawDocument/LawVersion/LawProvision/LawChangeEvent/LawRuleBinding/LawRelease 的数据字典、字段约束、引用/时间/状态语义审到开发可直接实现的程度。至少两套可核验 JSON 契约样例，补专门 `docs/contracts/v30-contract-examples.md`。补否定、假设、转述、OCR、证据冲突、采购未询价与未见询价资料、发票虚开边界的决策表。
 - D4-D5: 核实官方法规渠道现状，逐来源记录检索入口/权限/稳定性/重试/数据许可状态；设计源码保存、条款拆分、时间版本、差异检测、审核 PR、不可变发布与回滚。不要把第三方镜像或未实测 API 当权威法源。
 - D6-D7: 完成 v2.2.4 兼容矩阵、新旧状态映射、报告 A/B、金额去重、历史法效力与新 36+ holdout 蓝图。为全部安全失败建立明确的 fail-closed 口径，Gate D 不复用旧 raw 冒充 fresh。
 - D8: 至少一名 fresh-context 审计专业 reviewer + 一名 fresh-context 技术 reviewer，独立找反例和接口矛盾；记录发现、严重程度、修改、复核，重要问题未关闭则 DESIGN BLOCKED。
-- 回写 #12 各 checkpoint，更新文档 PR。只在达到本设计 Goal 0 Critical / 0 Important 和合同完成度要求后，报告 @@[ZCODE-V30-FINAL] DESIGN_PASS@@；否则 @@BLOCKED@@。
+- 回写 #12 各 checkpoint，更新文档 PR。只在达到本设计 Goal 0 Critical / 0 Important 和合同完成度要求后，报告 `[ZCODE-V30-FINAL] DESIGN_PASS`；否则 `BLOCKED`。
 
 ### 硬禁止
 
@@ -39,4 +39,14 @@
 
 ### 成果交付格式
 
-在 Issue #12 的 @@[ZCODE-V30-FINAL]@@ 评论中提供准确状态、设计分支/PR/commit SHA、已核验来源数/未核验来源、数据模型契约清单、三值规则实例、V2 兼容检查结果、独立 reviewer 两份结论和未解决风险。**整个 Goal 到此停止，不自动开始 V3 实现或建收费系统。**
+在 Issue #12 的 `[ZCODE-V30-FINAL]` 评论中提供准确状态、设计分支/PR/commit SHA、已核验来源数/未核验来源、数据模型契约清单、三值规则实例、V2 兼容检查结果、独立 reviewer 两份结论和未解决风险。**整个 Goal 到此停止，不自动开始 V3 实现或建收费系统。**
+
+## 补充：必须执行开源能力借鉴设计（OS-01 至 OS-07）
+
+在开始 D1 之前阅读 `docs/superpowers/specs/2026-11-19-v3-open-source-capability-matrix.md`。它属于设计规范的组成部分。
+
+**OS-01 至 OS-04 为设计必选项**：cn-law-hub 的法规检索接口、Law-Crawler/china-laws 的增量更新、Docling/MinerU 的文档解析与原文定位选型、cpa-skills/accounting-ai-skills 的审计证据工作底稿。分别写出输入输出合同、真实可用性/许可证/安全选型检查、失败时降级和独立验收案例。记录在 `docs/validation/v30-third-party-evaluation.md`，不得只写“参考某项目”。
+
+**OS-05 至 OS-07**（审计抽样/异常凭证、银行流水核对、XBRL/财报分析）只留兼容性接口和 backlog，不得偏离证据引擎与动态法规库的本期目标。
+
+评审需显式核对以上矩阵；未核实的数据源或第三方代码只标 `pending_review`，不得未经验证直接合并部署。
