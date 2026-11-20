@@ -1,19 +1,19 @@
 # [ZCODE-V30-DESIGN] 一次性 Goal 执行与独立审查计划
 
 > 目标是**形成可直接交给开发实施的 V3.0 技术设计和验收方案**，不是本轮立即实现 V3.0 功能或发布版本。  
-> 唯一设计基线：@@docs/superpowers/specs/2026-11-19-v3-evidence-law-design.md@@；仓库 @@hg199074jin/audit_problem_classifier@@。  
-> 分支：@@design/v3.0-evidence-law-spec-20261119@@；基于 @@main@17d985cec07f9be5dce1e46cd7ba0d5f2005bf39@@。  
+> 唯一设计基线：`docs/superpowers/specs/2026-11-19-v3-evidence-law-design.md`；仓库 `hg199074jin/audit_problem_classifier`。  
+> 分支：`design/v3.0-evidence-law-spec-20261119`；基于 `main@17d985cec07f9be5dce1e46cd7ba0d5f2005bf39`。  
 > 禁止事项：账户/订阅/计费/租户设计、真实用户数据上公共 GitHub、修改 main、改旧 Oracle、伪造已完成验收。
 
 ## 0. 固定输入和检查清单
 
 先读取：
-- @@README.md@@、@@SKILL.md@@、@@rules/*.md@@、@@schemas/*.json@@、@@scripts/{law_applicability,audit_object_grounding,conclusion_grounding,classification_emission,verify_skill_delivery}.py@@；
-- @@references/laws/**@@ 及现行 @@schemas/law.schema.json@@、@@docs/decisions/v224-invoice-audit-object-adjudication.md@@；
+- `README.md`、`SKILL.md`、`rules/*.md`、`schemas/*.json`、`scripts/{law_applicability,audit_object_grounding,conclusion_grounding,classification_emission,verify_skill_delivery}.py`；
+- `references/laws/**` 及现行 `schemas/law.schema.json`、`docs/decisions/v224-invoice-audit-object-adjudication.md`；
 - Issue #9 [ZCODE-V224-FINAL]、发布 v2.2.4 的事实边界，特别是 holdout 14/26、Gate E 未执行、A/B UAT 未完整验收；
 - V3 规范及本文件。查清未审查的最近分支变化后，仅在隔离设计分支编修文档。
 
-产物 @@docs/goals/v30-design-ledger.md@@（追加式）：当前 main SHA/tag/CI、文件树、核心接口、已有测试数、遗留 V2.2.4 风险、外部官方来源可访问结果、差异清单。不得宣称“所有法规核验通过”。
+产物 `docs/goals/v30-design-ledger.md`（追加式）：当前 main SHA/tag/CI、文件树、核心接口、已有测试数、遗留 V2.2.4 风险、外部官方来源可访问结果、差异清单。不得宣称“所有法规核验通过”。
 
 ## 1. Goal 的任务拆解（设计级，不写产品代码）
 
@@ -30,13 +30,13 @@
 | D8 | 独立复核与成稿 | fresh-context 审计专业 reviewer + fresh-context 技术 reviewer 两份报告；合并勘误与最终 spec | Critical/Important 全部关闭，Minor 排期；不能自称真人审查 |
 
 D0-D8 的文档至少落到：
-- @@docs/superpowers/specs/2026-11-19-v3-evidence-law-design.md@@（规范主文）；
-- @@docs/superpowers/plans/2026-11-19-v3-design-goal-plan.md@@（本执行计划）；
-- @@docs/goals/2026-11-19-zcode-v3-design-goal.md@@（本地 Goal 启动入口）；
-- @@docs/goals/v30-design-ledger.md@@（任务运行时创建，真实检查后才填写）；
-- @@docs/validation/v30-design-review-matrix.md@@（任务运行时创建，审核结论/缺口/责任/风险）。
+- `docs/superpowers/specs/2026-11-19-v3-evidence-law-design.md`（规范主文）；
+- `docs/superpowers/plans/2026-11-19-v3-design-goal-plan.md`（本执行计划）；
+- `docs/goals/2026-11-19-zcode-v3-design-goal.md`（本地 Goal 启动入口）；
+- `docs/goals/v30-design-ledger.md`（任务运行时创建，真实检查后才填写）；
+- `docs/validation/v30-design-review-matrix.md`（任务运行时创建，审核结论/缺口/责任/风险）。
 
-建议补充 @@docs/contracts/v30-contract-examples.md@@，包含标准 JSON 样例、状态机迁移与例外规则，以防主文多是概念描述。可由 ZCode Goal 在审查中自主决定更优文件布局，但不得删除内容或无法追踪决策。
+建议补充 `docs/contracts/v30-contract-examples.md`，包含标准 JSON 样例、状态机迁移与例外规则，以防主文多是概念描述。可由 ZCode Goal 在审查中自主决定更优文件布局，但不得删除内容或无法追踪决策。
 
 ## 2. 独立 reviewer 工作范围
 
@@ -72,13 +72,13 @@ D0-D8 的文档至少落到：
 
 ### DESIGN BLOCKED
 
-任何未完成必需设计、专业争议无法裁决、官方来源不可验证却被写成已就绪、无审查即声称通过、旧架构不兼容、源数据保密风险未关闭，则标记 @@BLOCKED@@，列明最小决策缺口；保留文档与 Issue 评论，不得假装已批准。不要反复要求用户重答已给出的约束。
+任何未完成必需设计、专业争议无法裁决、官方来源不可验证却被写成已就绪、无审查即声称通过、旧架构不兼容、源数据保密风险未关闭，则标记 `BLOCKED`，列明最小决策缺口；保留文档与 Issue 评论，不得假装已批准。不要反复要求用户重答已给出的约束。
 
 ## 4. GitHub 中转与检查点
 
 - GitHub Issue：由本设计 Goal Issue（创建后写入号码）唯一承载状态。
-- 文档 PR：@@design/v3.0-evidence-law-spec-20261119 → main@@，保持 DRAFT，直到设计审查完成。
-- 检查点评论：@@[ZCODE-V30-DESIGN-BASELINE]@@、@@[ZCODE-V30-DATA-CONTRACT]@@、@@[ZCODE-V30-LAW-SOURCES]@@、@@[ZCODE-V30-COMPATIBILITY]@@、@@[ZCODE-V30-REVIEW]@@、@@[ZCODE-V30-FINAL] DESIGN_PASS|BLOCKED@@。
+- 文档 PR：`design/v3.0-evidence-law-spec-20261119 → main`，保持 DRAFT，直到设计审查完成。
+- 检查点评论：`[ZCODE-V30-DESIGN-BASELINE]`、`[ZCODE-V30-DATA-CONTRACT]`、`[ZCODE-V30-LAW-SOURCES]`、`[ZCODE-V30-COMPATIBILITY]`、`[ZCODE-V30-REVIEW]`、`[ZCODE-V30-FINAL] DESIGN_PASS|BLOCKED`。
 - 每条记录包括 HEAD、文件 SHA、已核验证据、风险/未决问题；不要打印凭据或真实客户材料。
 - 交付状态仅表述**设计**通过/阻断；绝不写“V3.0 已实现”或“通过 V3.0 模型 Gate D”。
 
@@ -87,3 +87,16 @@ D0-D8 的文档至少落到：
 经过设计 PASS，才允许另起 **V3.0 IMPLEMENTATION Goal**，按证据引擎→法规版本库→官方适配器→集成→独立实时验收推进。设计 Goal 不能顺手改产品 runtime/发 Release/tag。
 
 **重要：GitHub Issue 和文件只是 ZCode 的中转资料，不会自动在你的 Mac 启动 ZCode。用户需在本机已安装的 ZCode 内开启 Goal 模式，将仓库和 Goal Issue 作为输入。**
+
+## 6. 开源优先能力补充任务（与 D0-D8 同步执行）
+
+必须读取 [V3.0 开源能力借鉴矩阵](../specs/2026-11-19-v3-open-source-capability-matrix.md)，该矩阵是本计划的规范性附件，不是“可选建议”。
+
+- **D4-OS（P0）**：评估 `cn-law-hub`、`Law-Crawler-RPA-RAG-MCP`、`china-laws` 的官方来源、许可证、维护状态、API/采集稳定性，将官方查法与现有 Law Applicability 严格分层。交付 `LawSearchProvider` 和官方 adapter 合同。
+- **D2-OS（P0）**：对 Docling / MinerU 设计基于同一套中英文 PDF（原生/扫描）、跨页表格、DOCX 与 XLSX 合成样本的对照选型；交付 `DocumentParserAdapter`、精确回源 locator 与 OCR 不确定性门。可以判定“选型待验证”，不可虚报安装实测。
+- **D6-OS（P1）**：参考 `cpa-skills` / `accounting-ai-skills`，设计可回查的 `AuditWorkingPaper`，包含证据引用、专业规则决策轨迹、法规版本、待核查和人工复核状态；只设计 MD/DOCX 底稿导出映射，不扩建审计业务 SaaS。
+- **Backlog OS-05/06/07（P2/P3）**：抽样、凭证异常、银行核对、XBRL 仅设计未来输入适配边界，不作为本轮交付或发布门。
+- **必交文档**：`docs/validation/v30-third-party-evaluation.md`：7项能力的范围、`ThirdPartyEvaluation` 和使用/拒绝理由，至少前四项的接口/独立测试可落地。
+- **设计审查增加**：OS-01～OS-04 的实际资料引用、输入输出契约、许可/隐私安全、错误路径和验收；未明确处理即不能标 `DESIGN_PASS`。
+
+不改变“只完成设计、不实施产品功能、不开发任何账户/订阅/计费/客户隔离设施”的边界。
