@@ -1,0 +1,44 @@
+{
+  "id": "CN-SOE-BUSINESS-RECEPTION-2020",
+  "title": "国有企业商务招待管理规定",
+  "document_no": "国资发考分规〔2020〕20号",
+  "article": "第七条、第八条、第九条",
+  "issuer": "国务院国资委、财政部",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2020-03-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "business_reception",
+    "entertainment_expense"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第七条 国有企业开展商务宴请，不得提供用野生保护动物制作的菜肴，不得提供鱼翅、燕窝等高档菜肴，每次人均最高不得超过600元（含酒水），不得提供高档酒水，白酒每500毫升、红酒每750毫升售价不得超过500元。企业应当根据所在地区实际情况，分级分档确定控制标准，并制定相应的实施细则。第八条 接待对象5人（含）以内，陪餐人数可对等；接待对象超过5人的，超过部分陪餐人数原则上不超过接待对象的二分之一。第九条 国有企业商务宴请应当严格执行清单制度，如实反映招待对象、招待费用等情况。不提供宴请清单的，费用不予报销。",
+  "applies_if": [
+    {
+      "field": "business_type",
+      "operator": "eq",
+      "value": "business_reception"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国务院国资委、财政部（文本据用户持有的官方文本逐字录入）",
+    "url": null,
+    "identifier": "国资发考分规〔2020〕20号，2020年3月印发。第二条适用范围：国家出资的国有独资、国有全资及国有控股企业；第三条明确商务招待对象不包括党政军机关工作人员和国有企业集团总部工作人员。注意：地方另有更严格标准的（如开封市300元/人次）应优先适用地方标准。文本来源为用户政策文件库PDF，未取得在线官方链接",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

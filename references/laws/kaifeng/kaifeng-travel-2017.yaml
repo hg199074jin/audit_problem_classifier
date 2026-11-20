@@ -1,0 +1,39 @@
+{
+  "id": "KAIFENG-TRAVEL-2017",
+  "title": "开封市市直机关差旅费管理办法",
+  "document_no": "汴财行〔2017〕18号",
+  "article": "第十八条、第二十条、第二十一条",
+  "issuer": "开封市财政局",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2017-11-08",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "travel_expense"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十八条 公杂费按出差自然(日历)天数计算，每人每天80元包干使用（其中：本市所辖县出差每人每天40元包干使用），不再报销与市内交通（含往返驻地到机场、车站的交通费）、通讯相关的费用支出。第二十条 出差人员应当严格按规定开支差旅费，费用由所在单位承担，不得向下级单位、企业或其他单位转嫁。第二十一条 城市间交通费按乘坐公共交通工具的等级凭据报销……住宿费在标准限额之内凭发票据实报销。伙食补助费按出差目的地的标准报销，在途期间的伙食补助费按当天最后到达目的地的标准报销。公杂费按规定标准报销。未按规定开支差旅费的，超支部分由个人自理。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市财政局（文本据用户持有的官方文本经OCR录入）",
+    "url": null,
+    "identifier": "汴财行〔2017〕18号，2017年11月8日印发。第二条适用范围：市级党的机关、人大机关、行政机关、政协机关、审判机关、检察机关、各人民团体、各民主党派市委和市工商联，以及参照公务员法管理的事业单位。注意：第十八条、第十九条关于“公杂费”及“免费提供交通工具减半发放”的口径已被汴财行〔2019〕18号调整（公杂费改为市内交通费，免费提供交通工具不再发放），引用市内交通费口径时应使用 KAIFENG-TRAVEL-2019。文本来源为用户政策文件库扫描件OCR",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

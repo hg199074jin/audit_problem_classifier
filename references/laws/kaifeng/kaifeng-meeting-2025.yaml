@@ -1,0 +1,39 @@
+{
+  "id": "KAIFENG-MEETING-2025",
+  "title": "开封市市级会议费管理办法",
+  "document_no": "汴财规〔2025〕2号",
+  "article": "第十七条",
+  "issuer": "开封市财政局",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2025-12-30",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "meeting_expense"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十七条 会议费核算列支。（一）线下会议的费用开支实行综合限额控制，各项费用之间可以调剂使用，在综合限额标准内据实报销，超支不补。综合限额标准如下：一类会议：每人每天460元（其中伙食费100元、住宿费280元、公杂费80元），一类会议所需电子表决（选举）系统租赁费和无工资代表误工费、城市间交通费等不在会议费综合限额之内，根据会议实际支出情况核定；二类会议：每人每天380元（其中伙食费90元、住宿费230元、公杂费60元）；三类会议：每人每天350元（其中伙食费90元、住宿费210元、公杂费50元）；四类会议：每人每天300元（其中伙食费90元、住宿费180元、公杂费30元）。以上标准为会议费限额标准，市直部门应根据本单位业务和经费情况，在会议费限额标准之内，制定满足自身会议需求的会议费综合限额标准。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市财政局（文本据用户持有的官方文本逐字录入）",
+    "url": null,
+    "identifier": "汴财规〔2025〕2号，2025年12月30日印发，替代汴政办〔2014〕98号。第二条适用范围：市级党的机关、人大机关、行政机关、政协机关、监察机关、审判机关、检察机关、各人民团体、各民主党派市委和市工商联（市直部门）。注意：2025年12月30日之前发生的会议费仍应按汴政办〔2014〕98号核定；企业参照适用时应说明参照关系。文本来源为用户政策文件库PDF",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

@@ -6,12 +6,22 @@
 
 - `national/`：全国现行法律、行政法规、部门规章、国家统一会计制度等；
 - `henan/`：河南省现行地方政策和参数规则；
+- `kaifeng/`：开封市（及所辖区县）现行地方规则，`jurisdiction.city = "Kaifeng"`；
 - `historical/`：已经废止或被替代、仅可能适用于历史业务期间的法规；
 - `watchlist/`：已发布未生效、效力待核或正在修订的候选规则。
 
 每个 `.yaml` 文件保存一个 Law Object，并必须通过 `schemas/law.schema.json`。JSON 是 YAML 1.2 的子集，因此部分对象使用 JSON 风格序列化，但按 YAML 解析和校验。
 
 `verified_at` 表示最近一次人工/工具核验日期，不代表法规永久有效。正式引用仍须经过 `rules/law-applicability.md`。
+
+## 文本来源与核验方式
+
+本库对象的 `text` 均逐字取自官方文本，来源分两类，均记录在 `source.identifier` 中：
+
+1. **在线官方页面/官方 PDF**：`source.url` 给出可检索链接；
+2. **本地持有的官方文本**（用户政策文件库中的政府文件原件）：`source.url` 为空，`source.identifier` 载明文号、印发日期与文件形态（PDF 原件 / 扫描件 OCR），并注明「未取得在线官方链接」或「OCR 可能存在识别误差，正式引用前应对照原件」。
+
+扫描件经 OCR 录入的对象，其 `text` 与原件可能存在个别字符差异；该类对象在 `identifier` 中已显式标注，交付正式报告前应回原件核对条号与关键金额标准。
 
 ## 河南采购特别说明
 
