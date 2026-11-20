@@ -31,7 +31,7 @@ description: 中小会计师事务所收支审计、合规审计问题报告化�
 1. **读取材料**：读取全部原始问题、凭证/合同/表格字段和用户已给出的报告口径；非空问题必须进入覆盖检查。
 2. **建立 Project Context**：确认地区、单位层级、单位性质、审计期间、资金性质、报告模式和 profile。已知稳定事实直接沿用。
 3. **生成待决策事项**：依据 `rules/decision-gate.md` 汇总会改变分类、定性、金额或法规适用的未决事项。存在待决策事实时，调用 `python3 scripts/classification_emission.py decision-required --input <facts.json>`（facts：`blank_record`、`inclusion_decision_needed`、`pending_or_unconfirmed_facts` 三个布尔），按其输出 `codes` **完整发射**兄弟结论码——一个事实一个码，不得用 `decision_required_pending_items` 吞并 `decision_required_blank_record` 或 `decision_required_record_inclusion`。
-4. **HARD-GATE**：重大事项未解决前不得形成正式认定；用户未答复的保持“待核实”。格式习惯从 profile 读取，不重复追问。
+4. **HARD-GATE**：重大事项未解决前不得形成正式认定；用户未答复的保持“待核实”。**无人可答时（子 agent、批处理、委托方未回函）不得以假设替代确认**：凡会改变定性、分类或金额的未决事实，一律置 `pending_or_unconfirmed_facts=true`，该记录在产出中标注“待核实/需补充依据”并只写可核实事实与证据缺口，不得径行给出违规结论；只有数据、没有问题结论的记录（如表内仅有计提金额与结算单人数、仅有补助天数与金额）一律按此处理。格式习惯从 profile 读取，不重复追问。
 5. **构建 Source Records**：为每条原始记录建立唯一 `source_record_id`，保留主体、期间、凭证号、合同号、金额、审批、支付对象、证据缺失等回查信息。
 6. **拆分 Findings**：一个 Source Record 可拆多个独立 Finding；每个 Finding 只回答一个核心问题，原始记录数和 `voucher_amount` 仍只统计一次。
 7. **分类（V2.2.4：审计认定对象先于类别）**：按 `rules/classification.md` 选择唯一主类和最具体二级类型。**FY/SW 分流不得使用裸布尔判断**：先从源输入提出带逐字引文的类型化 `audit_objects`（断言含 assertion_kind/polarity/source_id/quote，引文须在 prompt+context 原文中逐字存在且支持所声明事实），运行 `python3 scripts/classification_emission.py invoice-object --input <facts.json>`（facts：`audit_objects` + `sources`），按其输出执行——`sw_independent` 才可发射 SW/`invoice_information_irregularity`（并把 `authorized_sw` 对象写入机器结果 `audit_objects`，`restrictions` 中的 `no_false_invoicing_finding` 转化为"不认定虚开"的措辞限制）；`fy_incidental` 归 FY 不拆 SW；`needs_review` 不得默认 FY；`no_invoice_finding` 不凭否定证据生成发票 Finding。附件维度类型仍用 `expense-documents` 门判定（`distribution_list_missing` 须具体清单对象引文）。
