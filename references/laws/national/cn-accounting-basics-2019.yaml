@@ -1,0 +1,38 @@
+{
+  "id": "CN-ACCOUNTING-BASICS-2019",
+  "title": "会计基础工作规范",
+  "document_no": "财政部令第98号修改",
+  "article": "第四十八条、第五十一条",
+  "issuer": "财政部",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "1996-06-17",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "original_voucher",
+    "accounting_voucher"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第四十八条 原始凭证的基本要求是：（一）原始凭证的内容必须具备：凭证的名称；填制凭证的日期；填制凭证单位名称或者填制人姓名；经办人员的签名或者盖章；接受凭证单位名称；经济业务内容；数量、单价和金额。……（三）凡填有大写和小写金额的原始凭证，大写与小写金额必须相符。购买实物的原始凭证，必须有验收证明。支付款项的原始凭证，必须有收款单位和收款人的收款证明。第五十一条 记帐凭证的基本要求是：……（四）除结帐和更正错误的记帐凭证可以不附原始凭证外，其他记帐凭证必须附有原始凭证。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部（文本据用户持有的官方文本逐字录入）",
+    "url": null,
+    "identifier": "1996年6月17日财会字〔1996〕19号公布，根据2019年3月14日财政部令第98号《财政部关于修改〈代理记账管理办法〉等2部部门规章的决定》修改。第二条适用范围：国家机关、社会团体、企业、事业单位、个体工商户和其他组织。文本来源为用户政策文件库DOCX，未取得在线官方链接",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

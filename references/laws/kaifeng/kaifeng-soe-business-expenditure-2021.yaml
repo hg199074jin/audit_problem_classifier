@@ -1,0 +1,48 @@
+{
+  "id": "KAIFENG-SOE-BUSINESS-EXPENDITURE-2021",
+  "title": "开封市市管国有企业负责人履职待遇、业务支出管理暂行办法",
+  "document_no": "汴办〔2021〕16号",
+  "article": "第二十一条、第二十二条、第二十四条、第二十八条",
+  "issuer": "中共开封市委办公室、开封市人民政府办公室",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2021-10-12",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "business_reception",
+    "entertainment_expense",
+    "official_vehicle",
+    "communication_allowance"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二十一条 企业负责人开展商务活动，宴请标准按每人每次不超过300元（含酒水）控制；企业负责人开展外事活动，宴请标准按每人每次不超过400元（含酒水）控制；其他公务招待活动按照《中共河南省委办公厅、河南省人民政府办公厅关于印发〈河南省党政机关国内公务接待管理办法〉的通知》（豫办〔2014〕36号）执行。宴请不得提供用野生保护动物制作的菜肴，不得提供鱼翅、燕窝等高档菜肴。第二十二条 企业要明确业务招待活动的审批、报销程序。对企业负责人每次业务招待活动实行招待费用总额和人均费用双控管理，严格控制陪同人数。第二十四条 企业负责人业务招待活动所发生的费用应当由相关部门及时结算。业务招待费用报销应当提供内部审核流程、发票以及招待清单，如实反映招待对象、业务招待活动内容、招待费用、陪同人数等情况，不得将业务招待费用以会议、培训、调研等费用的名义虚列、隐匿。第二十八条 企业应结合生产经营特点，参照电信市场资费标准，根据企业负责人岗位要求和履职需要，合理确定通信费用年度预算控制额度，在预算额度内按照财务制度严格规范执行，不得以任何名目为企业负责人发放通信补贴。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中共开封市委办公室、开封市人民政府办公室（文本据用户持有的官方文本经OCR录入）",
+    "url": null,
+    "identifier": "汴办〔2021〕16号，2021年10月12日印发。第二条适用范围：市管国有独资及国有控股企业；企业负责人指董事长、副董事长、党委书记、党委副书记、总经理、副总经理、监事会主席、纪委书记。注意：宴请标准300元/人次严于国家层面国资发考分规〔2020〕20号的600元/人次，本地规则优先。文本来源为用户政策文件库扫描件OCR，个别字符可能存在识别误差，正式引用前应对照原件",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

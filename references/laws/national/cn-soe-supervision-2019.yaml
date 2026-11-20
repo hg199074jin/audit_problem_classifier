@@ -1,0 +1,50 @@
+{
+  "id": "CN-SOE-SUPERVISION-2019",
+  "title": "企业国有资产监督管理暂行条例",
+  "document_no": "国务院令第378号",
+  "article": "第二十一条、第二十四条",
+  "issuer": "国务院",
+  "legal_level": "administrative_regulation",
+  "status": "effective",
+  "effective_from": "2003-05-27",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "major_capital_operation_decision",
+    "subsidiary_major_matter"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二十一条 国有资产监督管理机构依照法定程序决定其所出资企业中的国有独资企业、国有独资公司的分立、合并、破产、解散、增减资本、发行公司债券等重大事项。其中，重要的国有独资企业、国有独资公司分立、合并、破产、解散的，应当由国有资产监督管理机构审核后，报本级人民政府批准。第二十四条 所出资企业投资设立的重要子企业的重大事项，需由所出资企业报国有资产监督管理机构批准的，管理办法由国务院国有资产监督管理机构另行制定，报国务院批准。",
+  "applies_if": [
+    {
+      "field": "matter.major_capital_operation",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "excludes_if": [
+    {
+      "field": "organization.is_financial_institution",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "国务院（文本据用户持有的官方文本逐字录入）",
+    "url": null,
+    "identifier": "国务院令第378号，2003年5月27日公布；经2011年1月8日、2019年3月2日两次修订。文本来源为用户政策文件库《企业国有资产监督管理暂行条例（2019）》PDF；未取得可公开检索的在线官方链接，引用前建议再次核对现行文本。适用范围以第二条为限：金融机构中的国有资产监督管理不适用本条例",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

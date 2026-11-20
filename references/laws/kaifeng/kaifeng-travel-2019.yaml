@@ -1,0 +1,39 @@
+{
+  "id": "KAIFENG-TRAVEL-2019",
+  "title": "开封市财政局关于规范差旅伙食费和市内交通费收交管理有关事项的通知",
+  "document_no": "汴财行〔2019〕18号",
+  "article": "第二条",
+  "issuer": "开封市财政局",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2019-11-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "travel_expense"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "二、将《开封市市直机关差旅费管理办法》（汴财行〔2017〕18号）中“公杂费”调整为“市内交通费”，不再包含通讯费用支出，市内交通费按每人每天80元包干使用。市辖县、祥符区市内交通费按每人每天40元包干使用。出差人员出差期间按规定领取市内交通费。接待单位协助提供交通工具并有收费标准的，出差人员按标准交纳，最高不超过日市内交通费标准；没有收费标准的，每人每半天按照日市内交通费标准的50%交纳。出差人员由所在单位免费提供交通工具或租车出行的，应如实申报，不再发放市内交通费。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市财政局（文本据用户持有的官方文本经OCR录入）",
+    "url": null,
+    "identifier": "汴财行〔2019〕18号，2019年10月28日印发，自2019年11月1日起施行；第八条明确“其他与此相抵触的文件条款自行废止”。本条已取代汴财行〔2017〕18号第十九条“由所在单位免费提供交通工具或租车出行的，公杂费减半发放”的口径，改为不再发放。适用范围为市直单位出差人员；企业参照适用时应说明参照关系。文本来源为用户政策文件库扫描件OCR",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

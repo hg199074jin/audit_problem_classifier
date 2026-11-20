@@ -1,0 +1,39 @@
+{
+  "id": "HENAN-SOE-INVEST-LIABILITY-2017",
+  "title": "河南省省属国有企业违规经营投资责任追究暂行办法",
+  "document_no": "豫国资〔2017〕80号",
+  "article": "第六条、第七条、第八条",
+  "issuer": "河南省人民政府国有资产监督管理委员会",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2017-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "soe_operating_investment_liability",
+    "procurement_inquiry_price"
+  ],
+  "funding_scope": [],
+  "rule_role": "supporting_basis",
+  "text": "第六条 企业经营管理有关人员违反法律法规和企业内部管理规定，未履行或未正确履行职责，发生本办法第七条至第十六条情形造成资产损失以及其他严重不良后果的，应当追究责任。第七条 集团管控方面：（一）所属子企业发生重大违纪违法问题，造成重大资产损失，影响其持续经营能力或造成企业资不抵债、关闭破产、拖巨额债务、职工群体性上访事件等严重不良后果；（二）未履行或未正确履行职责致使集团发生较大资产损失，对生产经营、财务状况产生重大影响；（三）对集团重大风险隐患、内控缺陷等问题失察，或虽发现但没有及时报告、处理，造成重大风险。第八条 购销管理方面：（一）未按照规定订立、履行合同，未履行或未正确履行职责致使合同标的价格明显不公允；（二）交易行为虚假或违规开展“空转”贸易；（三）利用关联交易输送利益；（四）未按规定进行招标或未执行招标结果。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省人民政府国有资产监督管理委员会（文本据用户持有的官方文本逐字录入）",
+    "url": null,
+    "identifier": "豫国资〔2017〕80号。第二条适用范围：省属国有企业及其各级全资、控股子企业。注意：本对象适用于省属企业，市属企业（如开封市管国企）不宜直接作为直接依据，作为责任追究口径的参照或支持性依据使用；市属企业对应制度需另行取得。文本来源为用户政策文件库DOCX，未取得在线官方链接",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

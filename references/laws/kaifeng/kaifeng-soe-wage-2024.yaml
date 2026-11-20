@@ -1,0 +1,46 @@
+{
+  "id": "KAIFENG-SOE-WAGE-2024",
+  "title": "开封市市管国有企业工资总额管理实施细则（试行）",
+  "document_no": null,
+  "article": "一、（二）；六、（三）",
+  "issuer": "开封市人民政府国有资产监督管理委员会",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2024-11-14",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "total_wage_management",
+    "employee_welfare_fees"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "一、（二）工资总额预算管理的职工范围为与本企业建立劳动关系并由企业直接支付劳动报酬（含生活费）的人员，包括在岗职工、离岗仍保留劳动关系的职工，不包括离退休人员、劳务派遣人员。六、（三）市政府国资委按照国家、河南省和我市收入分配政策有关规定，对备案制和周期预算管理成效进行评估。对连续两年出现超提、超发工资总额或存在重大违规违纪行为的备案制企业，除按规定进行处理外，还将取消其备案制资格，调整为核准制管理；对周期结束后经清算评价认定超提、超发工资总额的周期预算管理企业，将取消周期预算管理资格。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市人民政府国有资产监督管理委员会（文本据用户持有的官方文本经OCR录入）",
+    "url": null,
+    "identifier": "2024年11月14日印发，自印发之日起施行（七、附则）。适用范围（一、（一））：工资总额预算管理的企业范围原则上与财务决算合并报表范围相一致，包括集团总部和所出资控股的各级子企业。本细则确立“超提、超发工资总额”为违规情形并设处理措施，可作为国企工资计提与发放违规的定性依据。文本来源为用户政策文件库扫描件OCR，正式引用前应对照原件",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}
