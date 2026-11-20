@@ -1,0 +1,37 @@
+{
+  "id": "CN-MEDICAL-ALLIANCE-2017",
+  "title": "国务院办公厅关于推进医疗联合体建设和发展的指导意见",
+  "document_no": "国办发〔2017〕32号",
+  "article": "第三部分（组建形式）",
+  "issuer": "国务院办公厅",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2017-04-23",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "medical_alliance"
+  ],
+  "funding_scope": [],
+  "rule_role": "supporting_basis",
+  "text": "三、有序组建医疗联合体。（一）在城市主要组建医疗集团。在设区的市级以上城市，由三级公立医院或者业务能力较强的机构牵头，联合社区卫生服务机构、护理院、专业康复机构等，形成资源共享、分工协作的管理模式。（二）在县域主要组建医疗共同体。重点探索以县级医院为龙头、乡镇卫生院为枢纽、村卫生室为基础的县乡一体化管理，与乡村一体化管理有效衔接。充分发挥县级医院的城乡纽带作用和县域龙头作用，形成县乡村三级医疗卫生机构分工协作机制，构建三级联动的县域医疗服务体系。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国务院办公厅",
+    "url": null,
+    "identifier": "国办发〔2017〕32号。政策指导意见性质，作为医共体/医联体建设的上位政策依据；具体管理要求适用地方实施方案；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

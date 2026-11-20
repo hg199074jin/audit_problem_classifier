@@ -1,0 +1,44 @@
+{
+  "id": "HENAN-PRIMARY-STAFF-2020",
+  "title": "关于完善基层医务人员保障激励政策的意见",
+  "document_no": "豫卫基层〔2020〕12号",
+  "article": "一、提升基层医务人员薪酬待遇",
+  "issuer": "河南省卫生健康委等",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2020-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "primary_medical_staff"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "一、提升基层医务人员薪酬待遇。（一）完善薪酬激励机制。严格落实公益一类财政保障政策，允许基层医疗卫生机构（指政府办乡镇卫生院和社区卫生服务中心／站、村卫生室，下同）突破现行事业单位工资调控水平，自主决定内部绩效工资比例。绩效分配应突出价值导向、业绩导向，多劳多得、同工同酬、优绩优酬。基层医疗卫生机构在当年医疗服务收入扣除成本和提取各项基金后的结余中，可提取60%以上用于增发奖励性绩效工资。",
+  "applies_if": [
+    {
+      "field": "organization.province",
+      "operator": "eq",
+      "value": "Henan"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省卫生健康委等",
+    "url": null,
+    "identifier": "豫卫基层〔2020〕12号。依据豫政办〔2020〕9号制定。适用于政府办基层医疗卫生机构；effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

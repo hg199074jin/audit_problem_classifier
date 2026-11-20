@@ -1,0 +1,45 @@
+{
+  "id": "KAIFENG-MEDICAL-COMMUNITY-2022",
+  "title": "开封市紧密型县域医共体医疗保障管理实施方案（试行）",
+  "document_no": "汴医保〔2022〕1号",
+  "article": "实施范围与总额付费",
+  "issuer": "开封市医疗保障局",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2022-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "medical_alliance"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "凡符合行政、人员、业务、药械、财务、绩效、信息等统一管理要求的紧密型县域医共体，由医共体总医院向市医疗保障局书面申请，并经所在地县（区）卫生健康委员会、医疗保障局确认后实施医保基金总额付费。本通知自2022年1月1日起执行。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市医疗保障局",
+    "url": null,
+    "identifier": "汴医保〔2022〕1号，2022年1月起执行。医保基金总额付费的预算、结算、结余留用与超支分担规则见原件；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

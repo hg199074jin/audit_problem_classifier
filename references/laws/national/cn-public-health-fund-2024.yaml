@@ -1,0 +1,37 @@
+{
+  "id": "CN-PUBLIC-HEALTH-FUND-2024",
+  "title": "基本公共卫生服务补助资金管理办法",
+  "document_no": "财社〔2024〕56号",
+  "article": "第三条、第七条",
+  "issuer": "财政部、国家卫生健康委、国家中医药局、国家疾控局",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2024-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "medical_subsidy_fund"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第三条 基本公共卫生服务项目包括0—6岁儿童、孕产妇、老年人、慢病患者等重点人群健康管理、中医药健康管理、居民健康档案管理、健康教育、预防接种服务、地方病防治、职业病防治、农村妇女“两癌”检查等。第七条 基本公共卫生服务项目由基层医疗卫生机构和其他承担基本公共卫生服务任务的医疗卫生机构按照相应的服务规范组织实施，转移支付资金按照提供服务的数量和质量支付给相关医疗卫生机构。其中，拨付给基层医疗卫生机构的转移支付资金，由其作为公共卫生服务补助收入，统筹用于提供基本公共卫生服务所需支出，包括人员经费、公用经费等，不得用于基本建设、大型设备购置；拨付给其他相关医疗卫生机构的转移支付资金，用于相关机构提供基本公共卫生服务所需支出，包括需方补助、开展随访管理以及相关工作所需经费，不得用于基本建设、大型设备购置。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部、国家卫生健康委、国家中医药局、国家疾控局",
+    "url": null,
+    "identifier": "财社〔2024〕56号附件1，2024年印发。⚠第二条载明实施期限至2025年12月31日，2026年及以后业务须核实是否延续；effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

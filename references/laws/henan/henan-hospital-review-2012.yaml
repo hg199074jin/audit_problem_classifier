@@ -1,0 +1,44 @@
+{
+  "id": "HENAN-HOSPITAL-REVIEW-2012",
+  "title": "河南省二级综合医院执业评审细则（试行）",
+  "document_no": "豫卫医〔2012〕271号",
+  "article": "说明部分（评审标准与判定）",
+  "issuer": "河南省卫生厅",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2012-12-31",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "hospital_review"
+  ],
+  "funding_scope": [],
+  "rule_role": "supporting_basis",
+  "text": "本细则依据国务院《医疗机构管理条例》、卫生部《医疗机构基本标准（试行）》及《河南省医疗机构管理办法》等有关规定制定，用于二级综合医院执业评审验收。细则满分1000分，评审得分在800分以上为合格，低于800分为不合格。",
+  "applies_if": [
+    {
+      "field": "organization.province",
+      "operator": "eq",
+      "value": "Henan"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省卫生厅",
+    "url": null,
+    "identifier": "豫卫医〔2012〕271号，2012年12月31日印发。本对象为执业评审技术标准，具体评审条目与分值见原件；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

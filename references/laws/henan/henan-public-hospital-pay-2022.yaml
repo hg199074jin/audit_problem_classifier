@@ -1,0 +1,44 @@
+{
+  "id": "HENAN-PUBLIC-HOSPITAL-PAY-2022",
+  "title": "河南省深化公立医院薪酬制度改革实施方案",
+  "document_no": "豫人社〔2022〕1号",
+  "article": "薪酬水平与绩效分配部分",
+  "issuer": "河南省人力资源社会保障厅、财政厅、卫生健康委、医疗保障局",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2022-04-12",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "public_hospital_pay"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "为贯彻落实《人力资源社会保障部 财政部 国家卫生健康委 国家医保局 国家中医药局关于深化公立医院薪酬制度改革的指导意见》（人社部发〔2021〕52号）精神，经省政府同意，制定本实施方案。方案要求合理确定并动态调整公立医院薪酬水平，落实公立医院内部分配自主权，健全以公益性为导向的考核评价机制，规范公立医院负责人薪酬，完善薪酬经费保障机制。",
+  "applies_if": [
+    {
+      "field": "organization.province",
+      "operator": "eq",
+      "value": "Henan"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省人力资源社会保障厅、财政厅、卫生健康委、医疗保障局",
+    "url": null,
+    "identifier": "豫人社〔2022〕1号，2022年4月印发。原件为扫描件OCR，具体薪酬水平核定口径、绩效工资总量核定办法须对照原件条款；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}
