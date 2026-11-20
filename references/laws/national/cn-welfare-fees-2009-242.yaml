@@ -1,0 +1,43 @@
+{
+  "id": "CN-WELFARE-FEES-2009-242",
+  "title": "财政部关于企业加强职工福利费财务管理的通知",
+  "document_no": "财企〔2009〕242号",
+  "article": "第三部分",
+  "issuer": "财政部",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2009-11-12",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "employee_welfare_fees"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "三、企业为职工提供的交通、住房、通讯待遇，已经实行货币化改革的，按月按标准发放或支付的住房补贴、交通补贴或者车改补贴、通讯补贴，应当纳入职工工资总额，不再纳入职工福利费管理。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_public_institution",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "上海市黄浦区人民政府（中央文件官方转载）；条款表述另经长春市财政局官方政策解读PDF比对确认",
+    "url": "https://www.shhuangpu.gov.cn/zw/009005/009005002/009005002010/009005002010002/009005002010002001/20091231/hp3524.html",
+    "identifier": "财企〔2009〕242号，2009年11月12日印发，自印发之日起施行；本对象仅收录货币化改革部分，尚未实行货币化改革的部分仍作职工福利费管理",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}
