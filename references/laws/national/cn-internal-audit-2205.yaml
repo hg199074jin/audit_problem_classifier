@@ -1,0 +1,37 @@
+{
+  "id": "CN-INTERNAL-AUDIT-2205",
+  "title": "第2205号内部审计具体准则——经济责任审计",
+  "document_no": "中内协发〔2021〕6号",
+  "article": "第六条、第八条",
+  "issuer": "中国内部审计协会",
+  "legal_level": "other",
+  "status": "effective",
+  "effective_from": "2021-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "economic_responsibility_audit"
+  ],
+  "funding_scope": [],
+  "rule_role": "supporting_basis",
+  "text": "第六条 经济责任审计的对象包括：……企业（含金融机构）本级中层主要领导干部，下属全资、控股或占主导地位企业的主要领导干部，以及对经营效益产生重大影响或掌握重要资产的部门和机构的主要领导干部；上级要求以及本单位内部确定的其他重要岗位人员等。第八条 经济责任审计应当根据干部监督管理需要和审计资源等实际情况有计划地进行，对审计对象实行分类管理，科学制定年度审计计划，推进领导干部履行经济责任情况审计全覆盖。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中国内部审计协会",
+    "url": null,
+    "identifier": "中内协发〔2021〕6号，与《党政主要领导干部和国有企事业单位主要领导人员经济责任审计规定》（2019年7月）相衔接修订。effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

@@ -1,0 +1,37 @@
+{
+  "id": "CN-GP-74",
+  "title": "政府采购非招标采购方式管理办法",
+  "document_no": "财政部令第74号",
+  "article": "第十二条、第四十四条",
+  "issuer": "财政部",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "2014-02-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "government_procurement"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十二条 采购人、采购代理机构应当通过发布公告、从省级以上财政部门建立的供应商库中随机抽取或者采购人和评审专家分别书面推荐的方式邀请不少于3家符合相应资格条件的供应商参与竞争性谈判或者询价采购活动。第四十四条 询价采购需求中的技术、服务等要求应当完整、明确，符合相关法律、行政法规和政府采购政策的规定。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部",
+    "url": null,
+    "identifier": "财政部令第74号，2013年12月19日公布，自2014年2月1日起施行；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

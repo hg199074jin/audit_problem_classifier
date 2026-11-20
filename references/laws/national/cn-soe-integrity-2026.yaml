@@ -1,0 +1,43 @@
+{
+  "id": "CN-SOE-INTEGRITY-2026",
+  "title": "国有企业领导人员廉洁从业规定",
+  "document_no": null,
+  "article": "第七条、第八条",
+  "issuer": "中共中央办公厅、国务院办公厅",
+  "legal_level": "party_rule",
+  "status": "effective",
+  "effective_from": "2026-02-28",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "soe_integrity"
+  ],
+  "funding_scope": [],
+  "rule_role": "liability_basis",
+  "text": "第七条 禁止利用职权或者职务上的影响谋取私利。不准有下列行为：（一）接受、索取本企业的关联企业、与本企业及其出资企业有业务关系的企业，以及管理和服务对象提供的礼品、礼金、有价证券、虚拟货币等财物，或者约定在离职或者退休后接受；……（八）将企业经济往来中的折扣费、中介费，因企业行为受到有关部门和单位奖励、返还的财物等据为己有或者私分。第八条 禁止违反规定从事营利活动。不准有下列行为：（一）个人或者以他人名义从事营利性经营活动和有偿中介活动；（二）个人直接或者以委托代持、隐名投资等形式在本企业的同类经营企业、关联企业或者与本企业及其出资企业有业务关系的企业投资入股；（三）未经批准或者备案在本企业所出资企业或者其他企业、事业单位、社会团体、中介机构、基金会、国际组织等单位中兼职，或者经批准或者备案兼职，但领取薪酬、奖金、津贴、补贴等额外利益。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_state_owned",
+      "operator": "eq",
+      "value": false
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "中共中央办公厅、国务院办公厅",
+    "url": null,
+    "identifier": "2009年7月1日首次发布；2026年2月28日中共中央修订，中共中央办公厅、国务院办公厅发布。⚠2026年2月28日之前的业务适用2009年版（未入库，需人工核对）。适用对象为国有独资、全资企业和国有控股、实际控制企业的领导人员；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

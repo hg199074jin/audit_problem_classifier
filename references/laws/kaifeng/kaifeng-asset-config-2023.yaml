@@ -1,0 +1,45 @@
+{
+  "id": "KAIFENG-ASSET-CONFIG-2023",
+  "title": "开封市市级行政事业单位国有资产配置管理暂行办法",
+  "document_no": "汴财资〔2023〕216号",
+  "article": "第七条、第十一条、第十二条",
+  "issuer": "开封市财政局",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2023-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "asset_configuration"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第七条 行政事业单位配置规定限额以上资产应当编制年度新增资产配置预算，按程序报市财政局审批。第十一条 市级行政事业单位通用资产配置标准参照《河南省省级行政事业单位通用资产配置标准（2023年版）》（详见附件）执行，并根据国家有关政策、社会经济发展状况、物价水平、财力状况、技术水平以及资产普及程度等因素适时调整和更新。第十二条 行政事业单位资产配置应当严格执行规定的配置标准。无资产配置标准的，应当从严控制，合理配置，避免浪费。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市财政局",
+    "url": null,
+    "identifier": "汴财资〔2023〕216号印发。effective_from 按印发年度填写，精确施行日期以原件为准；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

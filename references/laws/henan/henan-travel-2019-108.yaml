@@ -1,0 +1,38 @@
+{
+  "id": "HENAN-TRAVEL-2019-108",
+  "title": "河南省财政厅关于规范差旅伙食费和市内交通费收交管理有关事项的通知",
+  "document_no": "豫财行〔2019〕108号",
+  "article": "第二条",
+  "issuer": "河南省财政厅",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2019-09-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "travel_expense"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "二、将《河南省省直机关差旅费管理办法》（豫财行〔2016〕109号）中“公杂费”调整为“市内交通费”，不再包含通讯费用支出，市内交通费按每人每天80元包干使用。出差人员出差期间按规定领取市内交通费。接待单位协助提供交通工具并有收费标准的，出差人员按标准交纳，最高不超过日市内交通费标准；没有收费标准的，每人每半天按照日市内交通费标准的50%交纳。出差人员由所在单位免费提供交通工具或租车出行的，应如实申报，不再发放市内交通费。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省财政厅",
+    "url": null,
+    "identifier": "豫财行〔2019〕108号，自2019年9月1日起施行；第八条明确“其他与此相抵触的文件条款自行废止”；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

@@ -1,0 +1,45 @@
+{
+  "id": "KAIFENG-OFFICE-SPACE-2020",
+  "title": "开封市党政机关办公用房管理办法",
+  "document_no": "汴办〔2020〕12号",
+  "article": "第十条、第十二条",
+  "issuer": "中共开封市委办公室、开封市人民政府办公室",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2020-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "office_space"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十条 党政机关办公用房配置应当严格执行《党政机关办公用房建设标准》等规定，从严核定面积。第十一条 党政机关办公用房配置方式包括调剂、置换、租用和建设。第十二条 使用单位需要配置办公用房的，由机关事务管理部门优先整合现有办公用房资源调剂解决。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中共开封市委办公室、开封市人民政府办公室",
+    "url": null,
+    "identifier": "汴办〔2020〕12号，与《开封市党政机关公务用车管理办法》同一通知印发。effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

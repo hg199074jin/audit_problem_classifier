@@ -1,0 +1,37 @@
+{
+  "id": "CN-PARTY-DUES-2008",
+  "title": "中共中央组织部关于中国共产党党费收缴、使用和管理的规定",
+  "document_no": "中组发〔2008〕3号",
+  "article": "第二条、第六条",
+  "issuer": "中共中央组织部",
+  "legal_level": "party_rule",
+  "status": "effective",
+  "effective_from": "2008-02-04",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "party_dues"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二条 党员交纳党费的比例为：每月工资收入（税后）在3000元以下（含3000元）者，交纳月工资收入的0.5%；3000元以上至5000元（含5000元）者，交纳1%；5000元以上至10000元（含10000元）者，交纳1.5%；10000元以上者，交纳2%。第六条 农民党员每月交纳党费0.2元-1元。学生党员、下岗失业的党员、依靠抚恤或救济生活的党员、领取当地最低生活保障金的党员，每月交纳党费0.2元。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中共中央组织部",
+    "url": null,
+    "identifier": "中组发〔2008〕3号，2008年2月4日发布施行；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

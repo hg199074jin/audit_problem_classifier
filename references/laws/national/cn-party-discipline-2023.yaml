@@ -1,0 +1,37 @@
+{
+  "id": "CN-PARTY-DISCIPLINE-2023",
+  "title": "中国共产党纪律处分条例",
+  "document_no": null,
+  "article": "第九十七条、第一百零三条",
+  "issuer": "中共中央",
+  "legal_level": "party_rule",
+  "status": "effective",
+  "effective_from": "2024-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "party_discipline"
+  ],
+  "funding_scope": [],
+  "rule_role": "liability_basis",
+  "text": "第九十七条 收受可能影响公正执行公务的礼品、礼金、消费卡（券）和有价证券、股权、其他金融产品等财物，情节较轻的，给予警告或者严重警告处分；情节较重的，给予撤销党内职务或者留党察看处分；情节严重的，给予开除党籍处分。第一百零三条 违反有关规定从事营利活动，有下列行为之一……（一）经商办企业；……违反有关规定在经济组织、社会组织等单位中兼职，或者经批准兼职但获取薪酬、奖金、津贴等额外利益的，依照第一款规定处理。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中共中央",
+    "url": null,
+    "identifier": "2023年12月19日中共中央发布，自2024年1月1日起施行。适用对象为党员；作为责任追究类问题的依据时，须先确认人员党员身份与违纪事实；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

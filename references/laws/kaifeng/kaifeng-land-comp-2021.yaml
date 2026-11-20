@@ -1,0 +1,45 @@
+{
+  "id": "KAIFENG-LAND-COMP-2021",
+  "title": "开封市人民政府关于调整征收集体土地地上附着物和青苗补偿标准的通知",
+  "document_no": "汴政〔2021〕16号",
+  "article": "第一、三条及附件",
+  "issuer": "开封市人民政府",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2021-06-30",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "land_acquisition_compensation"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "一、全市征收集体土地地上附着物和青苗补偿标准按照本通知附件执行，其补偿标准有行业规定的以行业标准为准。二、对补偿标准没有涵盖到的附着物，原则上可由征地和被征地双方协商确定，协商不成的由各级价格事务评估机构通过评估确定补偿标准。三、大田包干补偿标准为12000元/亩，大田包干包含除构筑物、坟墓、机井、桥涵、水渠、线杆外的所有地上附着物和青苗。八、此标准适用于杞县、通许县、尉氏县、祥符区、龙亭区、顺河回族区、鼓楼区、禹王台区和城乡一体化示范区。九、本通知自发布之日起执行。《开封市人民政府印发关于调整开封市市区国家建设征收集体土地地上附着物补偿标准的通知》（汴政〔2015〕84号）同时废止。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市人民政府",
+    "url": null,
+    "identifier": "汴政〔2021〕16号，2021年6月30日印发；汴政〔2015〕84号同时废止。附件按建筑物及构筑物、林木及果木、青苗费、过渡费及搬家费四类分列具体标准（如砖木结构房屋600元/平方米、砖混700元/平方米、框架1200元/平方米）；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

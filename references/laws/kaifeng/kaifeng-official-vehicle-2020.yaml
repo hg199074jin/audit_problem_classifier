@@ -1,0 +1,45 @@
+{
+  "id": "KAIFENG-OFFICIAL-VEHICLE-2020",
+  "title": "开封市党政机关公务用车管理办法",
+  "document_no": "汴办〔2020〕12号",
+  "article": "第八条、第二十条、第二十一条",
+  "issuer": "中共开封市委办公室、开封市人民政府办公室",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2020-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "official_vehicle"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第八条 党政机关配备公务用车应当严格执行以下标准：（一）机要通信用车配备价格12万元以内、排气量1.6升（含）以下的轿车或者其他小型客车。（二）应急保障用车和其他按照规定配备的公务用车标准：县（处）级及以下党政机关配备价格16万元以内、排气量1.8升（含）以下的轿车或者其他小型客车……第二十条 党政机关应当建立公务用车管理台账……将公务用车纳入省公务用车主管部门建立的统一的公务用车管理信息系统。第二十一条 党政机关应当建立健全公务用车使用管理制度……严格公务用车使用时间、事由、地点、里程、油耗、费用等信息登记和公示制度。……实行公务用车保险、维修、加油政府集中采购和定点保险、定点维修、定点加油制度，健全公务用车油耗、运行费用单车核算和年度绩效评价制度。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "中共开封市委办公室、开封市人民政府办公室",
+    "url": null,
+    "identifier": "汴办〔2020〕12号，与《开封市党政机关办公用房管理办法》同一通知印发。effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

@@ -1,0 +1,38 @@
+{
+  "id": "HENAN-PUBLIC-HEALTH-FUND-2024",
+  "title": "河南省基本公共卫生服务补助资金管理办法",
+  "document_no": "豫财社〔2024〕197号",
+  "article": "第三条、第十条",
+  "issuer": "河南省财政厅、河南省卫生健康委员会",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2024-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "special_fund_use"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第三条 基本公共卫生服务项目包括0-6岁儿童、孕产妇、老年人、慢病患者等重点人群健康管理、中医药健康管理、居民健康档案管理、健康教育、预防接种服务、地方病防治、职业病防治、农村妇女“两癌”检查等。第十条 转移支付资金采用因素法分配。转移支付资金分配时主要考虑各地实施基本公共卫生服务常住人口数量、国家基础标准、中央和省级分担比例以及绩效等因素。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省财政厅、河南省卫生健康委员会",
+    "url": null,
+    "identifier": "豫财社〔2024〕197号印发，依据《中华人民共和国预算法实施条例》（国务院令第729号）等制定。effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

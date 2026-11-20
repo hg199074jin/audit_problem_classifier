@@ -1,0 +1,37 @@
+{
+  "id": "CN-TENDER-LAW-REG",
+  "title": "中华人民共和国招标投标法实施条例",
+  "document_no": "国务院令第613号",
+  "article": "第四十条、第四十一条",
+  "issuer": "国务院",
+  "legal_level": "administrative_regulation",
+  "status": "effective",
+  "effective_from": "2012-02-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "tender_collusion"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第四十条 有下列情形之一的，视为投标人相互串通投标：（一）不同投标人的投标文件由同一单位或者个人编制；（二）不同投标人委托同一单位或者个人办理投标事宜；（三）不同投标人的投标文件载明的项目管理成员为同一人；（四）不同投标人的投标文件异常一致或者投标报价呈规律性差异；（五）不同投标人的投标文件相互混装；（六）不同投标人的投标保证金从同一单位或者个人的账户转出。第四十一条 禁止招标人与投标人串通投标。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国务院",
+    "url": null,
+    "identifier": "国务院令第613号，2011年11月30日国务院第183次常务会议通过，自2012年2月1日起施行；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

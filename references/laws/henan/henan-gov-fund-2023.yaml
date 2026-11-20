@@ -1,0 +1,38 @@
+{
+  "id": "HENAN-GOV-FUND-2023",
+  "title": "河南省政府投资基金管理办法",
+  "document_no": "豫财基金〔2023〕4号",
+  "article": "第二十条、第二十二条、第二十三条",
+  "issuer": "河南省财政厅",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2023-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "government_investment_fund"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二十条 政府委托出资方式下的财政资金实施专户管理、政府以注资国有企业出资方式下的财政资金实施专账管理，以实现政府出资与受托管理机构自有财产的相互独立。第二十二条 政府投资基金应选择在中国境内设立的商业银行进行托管。托管机构依据托管协议负责账户管理、资金清算、资产保管等事务，对投资活动实施动态监管。第二十三条 政府投资基金应设立投资决策委员会，行使项目投资、退出及重大风险处置预案等重大事项决策权。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省财政厅",
+    "url": null,
+    "identifier": "豫财基金〔2023〕4号印发。effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}
