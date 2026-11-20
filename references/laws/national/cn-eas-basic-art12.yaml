@@ -1,0 +1,43 @@
+{
+  "id": "CN-EAS-BASIC-ART12",
+  "title": "企业会计准则——基本准则",
+  "document_no": "财政部令第33号发布，财政部令第76号修改",
+  "article": "第十二条",
+  "issuer": "财政部",
+  "legal_level": "accounting_standard",
+  "status": "effective",
+  "effective_from": "2007-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "accounting_authenticity"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第十二条 企业应当以实际发生的交易或者事项为依据进行会计确认、计量和报告，如实反映符合确认和计量要求的各项会计要素及其他相关信息，保证会计信息真实可靠、内容完整。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_public_institution",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "财政部条法司（部门规章栏目，经财政部令第76号修改后的现行文本）",
+    "url": "http://tfs.mof.gov.cn/caizhengbuling/201407/t20140729_1119494.htm",
+    "identifier": "财政部令第33号发布（2007年1月1日施行），财政部令第76号修改（2014年7月23日施行）",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

@@ -1,0 +1,43 @@
+{
+  "id": "CN-MANDATORY-TENDER-NDRC16-ART5",
+  "title": "必须招标的工程项目规定",
+  "document_no": "国家发展改革委令第16号",
+  "article": "第五条",
+  "issuer": "国家发展改革委",
+  "legal_level": "department_rule",
+  "status": "effective",
+  "effective_from": "2018-06-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "mandatory_tender_scope"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第五条 本规定第二条至第四条规定范围内的项目，其勘察、设计、施工、监理以及与工程建设有关的重要设备、材料等的采购达到下列标准之一的，必须招标：（一）施工单项合同估算价在400万元人民币以上；（二）重要设备、材料等货物的采购，单项合同估算价在200万元人民币以上；（三）勘察、设计、监理等服务的采购，单项合同估算价在100万元人民币以上。同一项目中可以合并进行的勘察、设计、施工、监理以及与工程建设有关的重要设备、材料等的采购，合同估算价合计达到前款规定标准的，必须招标。",
+  "applies_if": [
+    {
+      "field": "project.within_mandatory_tender_scope",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国家发展改革委（政府信息公开官方PDF，逐字核对）",
+    "url": "https://zfxxgk.ndrc.gov.cn/upload/images/202111/2021112312134234.pdf",
+    "identifier": "国家发展改革委令第16号，2018年6月1日起施行；适用范围以第二条至第四条为前提",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

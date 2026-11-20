@@ -1,0 +1,43 @@
+{
+  "id": "CN-IC-GUIDE-6-FUNDING-2010",
+  "title": "企业内部控制应用指引第6号——资金活动",
+  "document_no": "财会〔2010〕11号",
+  "article": "第四条、第二十一条",
+  "issuer": "财政部、证监会、审计署、银监会、保监会",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2011-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "funding_payment_authorization"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第四条 企业应当根据自身发展战略，科学确定投融资目标和规划，完善严格的资金授权、批准、审验等相关管理制度，加强资金活动的集中归口管理，明确筹资、投资、营运等各环节的职责权限和岗位分离要求，定期或不定期检查和评价资金活动情况，落实责任追究制度，确保资金安全和有效运行。第二十一条 企业应当加强对营运资金的会计系统控制，严格规范资金的收支条件、程序和审批权限。企业在生产经营及其他业务活动中取得的资金收入应当及时入账，不得账外设账，严禁收款不入账、设立“小金库”。企业办理资金支付业务，应当明确支出款项的用途、金额、预算、限额、支付方式等内容，并附原始单据或相关证明，履行严格的授权审批程序后，方可安排资金支出。企业办理资金收付业务，应当遵守现金和银行存款管理的有关规定，不得由一人办理货币资金全过程业务，严禁将办理资金支付业务的相关印章和票据集中一人保管。",
+  "applies_if": [],
+  "excludes_if": [
+    {
+      "field": "organization.is_public_institution",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "source": {
+    "type": "official",
+    "authority": "财政部会计司（财会〔2010〕11号配套指引原文PDF，逐字核对）",
+    "url": "http://kjs.mof.gov.cn/zhengcefabu/201005/P020230421440664863663.pdf",
+    "identifier": "财会〔2010〕11号印发；自2011年1月1日起在境内外同时上市公司施行，2012年起扩大到主板上市公司，鼓励非上市大中型企业执行",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

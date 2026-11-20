@@ -1,0 +1,48 @@
+{
+  "id": "CN-SOE-ASSETS-LAW-2008-ART30",
+  "title": "中华人民共和国企业国有资产法",
+  "document_no": null,
+  "article": "第三十条",
+  "issuer": "全国人民代表大会常务委员会",
+  "legal_level": "law",
+  "status": "effective",
+  "effective_from": "2009-05-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "major_capital_operation_decision"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第三十条 国家出资企业合并、分立、改制、上市，增加或者减少注册资本，发行债券，进行重大投资，为他人提供大额担保，转让重大财产，进行大额捐赠，分配利润，以及解散、申请破产等重大事项，应当遵守法律、行政法规以及企业章程的规定，不得损害出资人和债权人的权益。",
+  "applies_if": [
+    {
+      "field": "organization.is_state_owned",
+      "operator": "eq",
+      "value": true
+    },
+    {
+      "field": "matter.major_capital_operation",
+      "operator": "eq",
+      "value": true
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "唐山市人民政府网站（法律全文官方转载）",
+    "url": "http://www.cnts.gov.cn/zsdw/sgyzcglwyhbgs/zwgk/zfxxgkml/bmwj/content/post_697529.html",
+    "identifier": "2008年10月28日第十一届全国人民代表大会常务委员会第五次会议通过，自2009年5月1日起施行；2026年修订草案审议中，未生效",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}
