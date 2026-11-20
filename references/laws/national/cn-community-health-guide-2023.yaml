@@ -1,0 +1,37 @@
+{
+  "id": "CN-COMMUNITY-HEALTH-GUIDE-2023",
+  "title": "社区卫生服务中心服务能力评价指南（2023版）",
+  "document_no": null,
+  "article": "服务能力判定标准",
+  "issuer": "国家卫生健康委",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2023-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "primary_care_capacity"
+  ],
+  "funding_scope": [],
+  "rule_role": "supporting_basis",
+  "text": "《社区卫生服务中心服务能力评价指南（2023版）》规定社区卫生服务中心服务能力判定标准，包括适用范围、标准分类及具体评价指标；用于社区卫生服务中心服务能力评价与建设达标验收。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "国家卫生健康委",
+    "url": null,
+    "identifier": "《社区卫生服务中心服务能力评价指南（2023版）》为国家卫生健康委基层卫生健康司组织制定。本对象为技术评价标准，具体指标条目见原件（约130千字，未逐条收录）；effective_from 按发布年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

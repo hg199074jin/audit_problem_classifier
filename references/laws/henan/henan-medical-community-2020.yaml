@@ -1,0 +1,44 @@
+{
+  "id": "HENAN-MEDICAL-COMMUNITY-2020",
+  "title": "河南省人民政府办公厅关于加快推进紧密型县域医疗卫生共同体建设的指导意见",
+  "document_no": "豫政办〔2020〕9号",
+  "article": "总体要求与主要任务",
+  "issuer": "河南省人民政府办公厅",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2020-04-03",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "medical_alliance"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "为推动县域医疗卫生事业高质量发展，加快推进分级诊疗、实现有序就医，现就加快推进紧密型县域医疗卫生共同体（以下简称医共体）建设提出如下意见。……（总体要求）坚持以人民健康为中心，深入推进县域医疗卫生服务供给侧结构性改革，加快推进医共体建设，构建定位明确、分工协作、运行高效的县域整合型医疗卫生服务体系。",
+  "applies_if": [
+    {
+      "field": "organization.province",
+      "operator": "eq",
+      "value": "Henan"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "河南省人民政府办公厅",
+    "url": null,
+    "identifier": "豫政办〔2020〕9号，成文日期2020年4月3日，发布2020年4月9日。主要任务与保障措施部分见原件；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

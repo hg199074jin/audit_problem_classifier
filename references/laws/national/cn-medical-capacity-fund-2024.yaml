@@ -1,0 +1,37 @@
+{
+  "id": "CN-MEDICAL-CAPACITY-FUND-2024",
+  "title": "医疗服务与保障能力提升补助资金管理办法",
+  "document_no": "财社〔2024〕56号",
+  "article": "第二条、第三条（五）",
+  "issuer": "财政部、国家卫生健康委、国家医保局、国家中医药局、国家疾控局",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2024-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "medical_subsidy_fund"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二条 医疗服务与保障能力提升补助资金，是指通过共同财政事权转移支付方式安排，用于支持医疗服务与保障能力提升方面的转移支付资金。转移支付资金实施期限至2025年12月31日。第三条（五）医疗保障服务能力建设方面的转移支付资金重点用于各地医保信息化标准化、基金监管、医保支付方式改革、宣传引导、经办管理服务体系建设、药品和医用耗材集中带量采购、医疗服务价格改革、医保目录实施监管等方面工作，不得用于基础设施建设、公用经费、人员工资及津贴补贴等支出。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部、国家卫生健康委、国家医保局、国家中医药局、国家疾控局",
+    "url": null,
+    "identifier": "财社〔2024〕56号附件2，2024年印发。⚠第二条载明实施期限至2025年12月31日，期满前经绩效评估决定是否延续；2026年及以后业务须先核实补助政策是否延续及新期限；effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

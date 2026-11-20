@@ -1,0 +1,45 @@
+{
+  "id": "KAIFENG-MEDICAL-COMMUNITY-KPI-2022",
+  "title": "开封市紧密型县域医共体医保绩效考核办法（试行）",
+  "document_no": "汴医保〔2022〕36号",
+  "article": "第一条及考核指标部分",
+  "issuer": "开封市医疗保障局",
+  "legal_level": "local_regulation",
+  "status": "effective",
+  "effective_from": "2022-09-30",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN",
+    "province": "Henan",
+    "city": "Kaifeng"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "medical_alliance"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第一条 为加强紧密型县域医共体绩效考核，建立健全利益调控和激励约束机制，确保紧密型县域医共体各项医保管理政策正确执行，规范医保基金合理使用、收支平衡、略有结余，保障参保人员合法权益，促进医疗保障制度健康可持续发展。考核指标、评分标准与结果运用见原件附表。",
+  "applies_if": [
+    {
+      "field": "organization.city",
+      "operator": "eq",
+      "value": "Kaifeng"
+    }
+  ],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "开封市医疗保障局",
+    "url": null,
+    "identifier": "汴医保〔2022〕36号，2022年9月30日印发；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

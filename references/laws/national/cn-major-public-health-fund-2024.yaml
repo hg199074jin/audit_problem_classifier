@@ -1,0 +1,37 @@
+{
+  "id": "CN-MAJOR-PUBLIC-HEALTH-FUND-2024",
+  "title": "重大公共卫生服务补助资金管理办法",
+  "document_no": "财社〔2024〕56号",
+  "article": "第二条、第三条",
+  "issuer": "财政部、国家卫生健康委、国家疾控局",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2024-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "medical_subsidy_fund"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二条 本办法所称转移支付资金，是指用于支持各地实施重大公共卫生服务的专项补助资金。实施期限至2027年12月31日，期满前财政部会同国家卫生健康委、国家疾控局，根据有关法律、行政法规和国务院相关规定及工作需要，组织开展绩效评估，根据评估结果确定是否延续补助政策及延续期限。第三条 重大公共卫生服务主要包括纳入国家免疫规划的常规免疫及补充免疫，艾滋病、结核病、血吸虫病、包虫病防控，精神心理疾病综合管理、重大慢性病防控管理模式和适宜技术探索、重点传染病及健康危害因素监测等内容。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部、国家卫生健康委、国家疾控局",
+    "url": null,
+    "identifier": "财社〔2024〕56号附件5，2024年印发。资金用途与禁止性条款见原件第六条（本对象未收录）；effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}

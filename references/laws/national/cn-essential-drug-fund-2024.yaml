@@ -1,0 +1,37 @@
+{
+  "id": "CN-ESSENTIAL-DRUG-FUND-2024",
+  "title": "基本药物制度补助资金管理办法",
+  "document_no": "财社〔2024〕56号",
+  "article": "第二条、第七条",
+  "issuer": "财政部、国家卫生健康委",
+  "legal_level": "normative_document",
+  "status": "effective",
+  "effective_from": "2024-01-01",
+  "effective_to": null,
+  "jurisdiction": {
+    "country": "CN"
+  },
+  "subject_scope": {
+    "organization_types": [],
+    "organization_levels": [],
+    "person_types": []
+  },
+  "business_scope": [
+    "medical_subsidy_fund"
+  ],
+  "funding_scope": [],
+  "rule_role": "direct_basis",
+  "text": "第二条 本办法所称基层医疗卫生机构，包括城市社区卫生服务中心（站）、乡镇卫生院和村卫生室等机构。第七条 拨付给基层医疗卫生机构的转移支付资金，由其作为实施基本药物制度的收入补助，按照《基层医疗卫生机构财务制度》（财社〔2010〕307号）有关规定使用，不得用于基本建设、大型设备购置。拨付给村卫生室的转移支付资金，主要用于乡村医生的收入补助。",
+  "applies_if": [],
+  "excludes_if": [],
+  "source": {
+    "type": "official",
+    "authority": "财政部、国家卫生健康委",
+    "url": null,
+    "identifier": "财社〔2024〕56号附件，2024年印发。⚠第三条载明实施期限至2025年12月31日，2026年及以后业务须核实是否延续；effective_from 按印发年度填写；文本来源为用户政策文件库官方原件；未取得可公开检索的在线官方链接，正式引用前建议再次核对现行文本。",
+    "verified": true
+  },
+  "verified_at": "2026-11-20",
+  "supersedes": [],
+  "superseded_by": null
+}
